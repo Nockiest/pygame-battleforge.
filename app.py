@@ -18,8 +18,8 @@ my_font_text_rect.center = (width//2, height//2)
 
 # Create a Unit object with the desired attributes
 selected_unit = None
-unit1 = Unit(hp=100, attack_range=3, base_movement=100, x=0,
-             y=0, size=20, ammo=50, icon="warrior_img", selected=False)
+unit1 = Unit(hp=100, attack_range=3, base_movement=100, x=100,
+             y=100, size=20, ammo=50, icon="warrior_img", selected=False)
 
 warrior_img = pygame.image.load("img/spear.png")
 warrior_img_rect = warrior_img.get_rect()
@@ -69,6 +69,7 @@ while lets_continue:
         outline_rect = pygame.Rect(
             unit1.x - 2, unit1.y - 2, unit1.size + 4, unit1.size + 4)
         pygame.draw.rect(screen, BLACK, outline_rect)
+        pygame.draw.circle(screen, YELLOW, unit1.start_turn_position, unit1.base_movement, 1)
 
     screen.blit(canon_img, canon_img_rect)
     warrior_img_rect.topleft = (unit1.x, unit1.y)

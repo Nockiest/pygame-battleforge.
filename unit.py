@@ -1,19 +1,22 @@
 import pygame
 from globalVars import width, height
 import math
+
+
 class Unit:
-    def __init__(self, hp, attack_range, base_movement,size, x, y, ammo, icon, selected ):
+    def __init__(self, hp, attack_range, base_movement, size, x, y, ammo, icon, selected):
         self.hp = hp
         self.attack_range = attack_range
         self.base_movement = base_movement
-        self.remaining_momvement = base_movement
+
         self.x = x
         self.y = y
-        self.start_turn_position = (self.x, self.y)
         self.size = size
+        self.start_turn_position = (
+            self.x + self.size//2, self.y + self.size//2)
         self.ammo = ammo
         self.icon = icon
-        self.rect = pygame.Rect(x, y, size  , size)
+        self.rect = pygame.Rect(x, y, size, size)
         self.selected = selected
 
     def move_in_game_field(self, click_pos):
@@ -22,13 +25,18 @@ class Unit:
         new_top_left_x_in_window = max(0, min(top_left_x, width - self.size))
         new_top_left_y_in_window = max(0, min(top_left_y, height - self.size))
 
-        # Calculate the absolute difference between the new position and the starting position
-        delta_x = abs(new_top_left_x_in_window - self.start_turn_position[0])
-        delta_y = abs(new_top_left_y_in_window - self.start_turn_position[1])
+        # Calculate the distance between the new position and the starting position in both x and y directions
+        centered_new_top_left_x_in_window = new_top_left_x_in_window + self.size // 2
+        centered_new_top_left_y_in_window = new_top_left_y_in_window + self.size // 2
+        delta_x = centered_new_top_left_x_in_window - self.start_turn_position[0]
+        delta_y = centered_new_top_left_y_in_window - self.start_turn_position[1]
 
-        # Check if the movement in either x or y direction exceeds the limit of 100 units
-        if delta_x > 100 or delta_y > 100:
-            # print("Unit can't move that far")
+        # Calculate the distance from the starting position to the new position
+        distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
+
+        # Check if the distance exceeds the limit of base_movement
+        if distance > self.base_movement:
+            # The move is not allowed, so return without changing the position
             return "Unit can't move that far"
 
         self.x = new_top_left_x_in_window
