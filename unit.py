@@ -13,12 +13,15 @@ class Unit:
         self.rect = pygame.Rect(x, y, size  , size)
         self.selected = selected
 
-    def move_in_game_field(self, new_x, new_y):
-        new_x_in_window = max(0, min(new_x, width - self.size))
-        new_y_in_window = max(0, min(new_y, height - self.size))
-        self.rect.topleft = (new_x_in_window, new_y_in_window)
-        self.x = new_x_in_window
-        self.y = new_y_in_window
+    def move_in_game_field(self, click_pos):
+        top_left_x = click_pos[0] - self.size // 2
+        top_left_y = click_pos[1] - self.size // 2
+        new_top_left_x_in_window = max(0, min(top_left_x, width - self.size))
+        new_top_left_y_in_window = max(0, min(top_left_y, height - self.size))
+        # self.rect.topleft = (new_top_left_x_in_window, new_top_left_y_in_window)
+        self.x = new_top_left_x_in_window
+        self.y = new_top_left_y_in_window
+        self.rect= pygame.Rect(self.x, self.y, self.x + self.size, self.y + self.size)
 
     def attack(self, target_unit):
         pass

@@ -5,7 +5,6 @@ from globalVars import width, height
 pygame.init()
 
 # Vytvoření obrazovky
- 
 screen = pygame.display.set_mode((width, height))
 
 # colors
@@ -19,8 +18,8 @@ my_font_text_rect.center = (width//2, height//2)
 
 # Create a Unit object with the desired attributes
 selected_unit = None
-unit1 = Unit(hp=100, attack_range=3, base_movement=5, x=0,
-             y=0, size=20, ammo=50, icon="warrior_img", selected= False)
+unit1 = Unit(hp=100, attack_range=3, base_movement=100, x=0,
+             y=0, size=20, ammo=50, icon="warrior_img", selected=False)
 
 warrior_img = pygame.image.load("img/spear.png")
 warrior_img_rect = warrior_img.get_rect()
@@ -50,34 +49,23 @@ while lets_continue:
                 break
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                selected_unit = None
-                break
-             
+            selected_unit = None
+            break
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
-            if selected_unit:
-                print( selected_unit.rect)
-               
-                new_x = event.pos[0] - unit1.size // 2
-                new_y = event.pos[1] - unit1.size // 2
-                print(new_x , new_y )
-                unit1.move_in_game_field(new_x,  new_y)
-                   
-
-          
-
- 
+            if selected_unit:  
+                unit1.move_in_game_field(event.pos)
 
     pygame.display.update()
 
-     # RESET THE GAMEBOARD
+    # RESET THE GAMEBOARD
     screen.fill(GREEN)
 
     if selected_unit:
-        outline_rect = pygame.Rect(unit1.x - 2, unit1.y - 2, unit1.size + 4, unit1.size + 4)
+        outline_rect = pygame.Rect(
+            unit1.x - 2, unit1.y - 2, unit1.size + 4, unit1.size + 4)
         pygame.draw.rect(screen, BLACK, outline_rect)
 
-    
     screen.blit(canon_img, canon_img_rect)
     warrior_img_rect.topleft = (unit1.x, unit1.y)
     screen.blit(warrior_img, warrior_img_rect)
