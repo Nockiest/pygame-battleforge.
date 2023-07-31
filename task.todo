@@ -8,7 +8,7 @@ vytvořit bojovou jednotku
     přidat náboje
     přidat třídy
     přidat movement soundfile
-    
+    propočítat veškerou move calkulaci v unit class
 musika
     najít 5 písniček
     

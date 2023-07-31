@@ -1,7 +1,7 @@
 import pygame
-
+from globalVars import width, height
 class Unit:
-    def __init__(self, hp, attack_range, base_movement,size, x, y, ammo, icon  ):
+    def __init__(self, hp, attack_range, base_movement,size, x, y, ammo, icon, selected ):
         self.hp = hp
         self.attack_range = attack_range
         self.base_movement = base_movement
@@ -11,17 +11,14 @@ class Unit:
         self.ammo = ammo
         self.icon = icon
         self.rect = pygame.Rect(x, y, size  , size)
-       
+        self.selected = selected
 
-    def move(self, new_x, new_y):
-        # Implement the logic to move the unit to new coordinates (new_x, new_y)
-        # Check if the movement is valid based on the base_movement attribute
-        # print(new_x,new_y)
-        self.x = new_x
-        self.y = new_y
-        # self.rect  = pygame.Rect(self.x ,  self.y , self.size   , self.size  )
-         
-         
+    def move_in_game_field(self, new_x, new_y):
+        new_x_in_window = max(0, min(new_x, width - self.size))
+        new_y_in_window = max(0, min(new_y, height - self.size))
+        self.rect.topleft = (new_x_in_window, new_y_in_window)
+        self.x = new_x_in_window
+        self.y = new_y_in_window
 
     def attack(self, target_unit):
         pass
@@ -43,4 +40,7 @@ class Unit:
     def die(self):
         # Implement the logic for the unit to die
         # Remove the unit from the game or set its HP to 0
+        pass
+
+    def render(self):
         pass
