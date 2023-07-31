@@ -10,7 +10,7 @@ height = 500
 screen = pygame.display.set_mode((width, height))
 fonts = pygame.font.get_fonts()
 # colors
-GREEN, WHITE, BLSCK, RED, BLUE, YELLOW = colors_tuple
+GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
  
 
 # main_font = pygame.font.SysFont()
@@ -19,16 +19,17 @@ GREEN, WHITE, BLSCK, RED, BLUE, YELLOW = colors_tuple
 # system_text = system_font.render("Battelfield", True, black, None)
 # system_text_rect = system_text.get_rect()
 # system_text_rect.midtop = (width//2, 0)
-# my_font = pygame.font.Font("fonts/Kanit-Regular.ttf", 40)
-# my_font_text = my_font.render("Canon", False, black, red)
-# my_font_text_rect = system_text.get_rect()
-# my_font_text_rect.center = (width//2, height//2)
+my_font = pygame.font.Font("fonts/Kanit-Regular.ttf", 15)
+my_font_text = my_font.render("Canon", False, BLACK, None)
+my_font_text_rect = my_font_text.get_rect()
+my_font_text_rect.center = (width//2, height//2)
 
  
 screen.fill(GREEN)
  
 # Create a Unit object with the desired attributes
-unit1 = Unit(hp=100, attack_range=3, base_movement=5, x=0, y=0, size=100, ammo=50, icon="Warrior")
+selected_unit = None
+unit1 = Unit(hp=100, attack_range=3, base_movement=5, x=0, y=0, size=20, ammo=50, icon="Warrior")
  
 # Accessing the attributes of the unit
 print("HP:", unit1.hp)
@@ -83,8 +84,14 @@ while lets_continue:
     
     screen.fill(GREEN)
     screen.blit(canon_img, canon_img_rect)
+    screen.blit(my_font_text, my_font_text_rect)
     unit_rect = pygame.Rect(unit1.x, unit1.y, unit1.size, unit1.size)  # Square with width and height of 50 pixels
     pygame.draw.rect(screen, RED, unit_rect)
+
+    text_surface = my_font.render(unit1.icon, True, BLACK)
+    text_rect = text_surface.get_rect(center=(unit1.x + unit1.size // 2, unit1.y + unit1.size // 2))
+    screen.blit(text_surface, text_rect)
+
     clock.tick(fps)
 
 # Ukončení pygame
