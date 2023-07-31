@@ -1,12 +1,15 @@
 import pygame
 from globalVars import width, height
+import math
 class Unit:
     def __init__(self, hp, attack_range, base_movement,size, x, y, ammo, icon, selected ):
         self.hp = hp
         self.attack_range = attack_range
         self.base_movement = base_movement
+        self.remaining_momvement = base_movement
         self.x = x
         self.y = y
+        self.start_turn_position = (self.x, self.y)
         self.size = size
         self.ammo = ammo
         self.icon = icon
@@ -18,10 +21,20 @@ class Unit:
         top_left_y = click_pos[1] - self.size // 2
         new_top_left_x_in_window = max(0, min(top_left_x, width - self.size))
         new_top_left_y_in_window = max(0, min(top_left_y, height - self.size))
-        # self.rect.topleft = (new_top_left_x_in_window, new_top_left_y_in_window)
+
+        # Calculate the absolute difference between the new position and the starting position
+        delta_x = abs(new_top_left_x_in_window - self.start_turn_position[0])
+        delta_y = abs(new_top_left_y_in_window - self.start_turn_position[1])
+
+        # Check if the movement in either x or y direction exceeds the limit of 100 units
+        if delta_x > 100 or delta_y > 100:
+            # print("Unit can't move that far")
+            return "Unit can't move that far"
+
         self.x = new_top_left_x_in_window
         self.y = new_top_left_y_in_window
-        self.rect= pygame.Rect(self.x, self.y, self.x + self.size, self.y + self.size)
+
+        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
 
     def attack(self, target_unit):
         pass

@@ -54,7 +54,11 @@ while lets_continue:
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
             if selected_unit:  
-                unit1.move_in_game_field(event.pos)
+               movement_result = unit1.move_in_game_field(event.pos)
+               if(movement_result == "Unit can't move that far"):
+                  print("Unit can't move that far")
+                  selected_unit = None
+ 
 
     pygame.display.update()
 
