@@ -10,14 +10,18 @@ class Unit:
         self.size = size
         self.ammo = ammo
         self.icon = icon
-        self.rect = pygame.Rect(x, y, size, size)
+        self.rect = pygame.Rect(x, y, size  , size)
        
 
     def move(self, new_x, new_y):
         # Implement the logic to move the unit to new coordinates (new_x, new_y)
         # Check if the movement is valid based on the base_movement attribute
+        # print(new_x,new_y)
         self.x = new_x
         self.y = new_y
+        # self.rect  = pygame.Rect(self.x ,  self.y , self.size   , self.size  )
+         
+         
 
     def attack(self, target_unit):
         pass

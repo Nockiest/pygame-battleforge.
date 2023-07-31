@@ -14,3 +14,8 @@
 # system_text = system_font.render("Battelfield", True, black, None)
 # system_text_rect = system_text.get_rect()
 # system_text_rect.midtop = (width//2, 0)
+
+
+ # text_surface = my_font.render(unit1.icon, True, BLACK)
+    # text_rect = text_surface.get_rect(center=(unit1.x + unit1.size // 2, unit1.y + unit1.size // 2))
+    # screen.blit(text_surface, text_rect)
