@@ -1,5 +1,7 @@
+import pygame
+
 class Unit:
-    def __init__(self, hp, attack_range, base_movement,size, x, y, ammo, icon):
+    def __init__(self, hp, attack_range, base_movement,size, x, y, ammo, icon  ):
         self.hp = hp
         self.attack_range = attack_range
         self.base_movement = base_movement
@@ -8,6 +10,8 @@ class Unit:
         self.size = size
         self.ammo = ammo
         self.icon = icon
+        self.rect = pygame.Rect(x, y, size, size)
+       
 
     def move(self, new_x, new_y):
         # Implement the logic to move the unit to new coordinates (new_x, new_y)

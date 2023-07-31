@@ -1,7 +1,33 @@
 vytvořit bojovou jednotku
+    vycentrovat obrázek
+    přidat selekci jednotky
     přidat střelbu
     přidat zničení
     přidat koupení jednotky
     přidat tým jednotky
     přidat náboje
     přidat třídy
+    přidat movement soundfile
+    
+musika
+    najít 5 písniček
+    
+prostředí
+    vytvořit scrolling
+    přidat řeky
+    přidat města
+    přidat zdi
+    přidat cesty
+    přidat základny
+    přidat mosty
+    přidat náhodnou generaci
+
+ui
+    přidat ukliádání
+    přidat načítání
+    přidat počítání počtu jednotek
+
+game funcionality
+    přidat kontrolu vítěžství
+
+

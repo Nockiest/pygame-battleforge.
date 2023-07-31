@@ -22,7 +22,7 @@ my_font_text_rect.center = (width//2, height//2)
  
 # Create a Unit object with the desired attributes
 selected_unit = None
-unit1 = Unit(hp=100, attack_range=3, base_movement=5, x=0, y=0, size=20, ammo=50, icon="warrior_img")
+unit1 = Unit(hp=100, attack_range=3, base_movement=5, x=0, y=0, size=20, ammo=50, icon="warrior_img" )
 
 warrior_img = pygame.image.load("img/spear.png")
 warrior_img_rect = warrior_img.get_rect()
@@ -44,26 +44,39 @@ while lets_continue:
         if event.type == pygame.QUIT:
             print(event)
             lets_continue = False
+        
+        
+        
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
-            new_x = event.pos[0] - unit1.size // 2
-            new_y = event.pos[1] - unit1.size // 2
-            print(f"Pozice X: {event.pos[0]}")
-            print(f"Pozice Y: {event.pos[1]}")
-            unit1.x = max(0, min(new_x, width - unit1.size))
-            unit1.y = max(0, min(new_y, height - unit1.size))
+            if selected_unit:        
+                new_x = event.pos[0] - unit1.size // 2
+                new_y = event.pos[1] - unit1.size // 2
+                print(f"Pozice X: {event.pos[0]}")
+                print(f"Pozice Y: {event.pos[1]}")
+                unit1.x = max(0, min(new_x, width - unit1.size))
+                unit1.y = max(0, min(new_y, height - unit1.size))
+            else:
+                click_pos = event.pos
+                    # for unit in units_list:
+                print(unit1 , unit1.rect.collidepoint(click_pos) ) # , warrior_img_rect.rect.collidePoint(click_pos)  unit1.collidePoint(click_pos)
+                if unit1.rect.collidepoint(click_pos):
+                    selected_unit = unit1
+                   
+                    break  # If a unit is found, no need to check the rest
 
+    if selected_unit:
     # check for key presses
-    keys = pygame.key.get_pressed()
-    if (keys[pygame.K_UP] or keys[pygame.K_w]) and unit1.y > 0:
-       unit1.y -= distance
-    elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and unit1.y < height:
-       unit1.y += distance
-    elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and unit1.x > 0:
-       unit1.x -= distance
-    elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and unit1.x < width:
-       unit1.x += distance
+        keys = pygame.key.get_pressed()
+        if (keys[pygame.K_UP] or keys[pygame.K_w]) and unit1.y > 0:
+         unit1.y -= distance
+        elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and unit1.y < height:
+         unit1.y += distance
+        elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and unit1.x > 0:
+         unit1.x -= distance
+        elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and unit1.x < width:
+         unit1.x += distance
 
-    print(unit1.x, unit1.y)
+    # print(unit1.x, unit1.y)
 
     pygame.display.update()
     
