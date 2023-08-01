@@ -67,6 +67,8 @@ while lets_continue:
                 break
             if next_turn_button.is_clicked(event.pos):
                 next_turn_button.callback()  # Call the callback function when the button is clicked
+         
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             if render_units_attack_screen:
                 attack_result = unit1.attack(event.pos)
                 if (attack_result == "Attack not possible"):
