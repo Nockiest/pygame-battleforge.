@@ -3,10 +3,12 @@ from config import WIDTH, HEIGHT, colors_tuple
 import math
 GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
+
 class Unit:
-    def __init__(self, hp, attack_range, base_movement, size, x, y, ammo, icon, selected):
+    def __init__(self, hp, attack_range, remain_attacks, base_movement, size, x, y, ammo, icon, selected):
         self.hp = hp
         self.attack_range = attack_range
+        self.remain_attacks = remain_attacks
         self.base_movement = base_movement
 
         self.x = x
@@ -28,8 +30,10 @@ class Unit:
         # Calculate the distance between the new position and the starting position in both x and y directions
         centered_new_top_left_x_in_window = new_top_left_x_in_window + self.size // 2
         centered_new_top_left_y_in_window = new_top_left_y_in_window + self.size // 2
-        delta_x = centered_new_top_left_x_in_window - self.start_turn_position[0]
-        delta_y = centered_new_top_left_y_in_window - self.start_turn_position[1]
+        delta_x = centered_new_top_left_x_in_window - \
+            self.start_turn_position[0]
+        delta_y = centered_new_top_left_y_in_window - \
+            self.start_turn_position[1]
 
         # Calculate the distance from the starting position to the new position
         distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
@@ -43,13 +47,19 @@ class Unit:
         self.y = new_top_left_y_in_window
 
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-    
-    def draw_as_active(self,screen):
+
+    def draw_as_active(self, screen):
         print(self.x, self.y, self.start_turn_position)
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
         pygame.draw.rect(screen, BLACK, outline_rect)
-        pygame.draw.circle(screen, YELLOW, self.start_turn_position, self.base_movement, 1)
+        pygame.draw.circle(
+            screen, YELLOW, self.start_turn_position, self.base_movement, 1)
+
+    def render_attack_circle(self, screen):
+        pygame.draw.circle(screen, RED, (self.x + self.size //
+                           2, self.y + self.size//2), self.attack_range, 1)
+
     def attack(self, target_unit):
         pass
         # Implement the logic for the unit to attack the target_unit
@@ -76,6 +86,5 @@ class Unit:
         pass
 
     def reset_for_next_turn(self):
-         self.start_turn_position = (self.x + self.size//2, self.y + self.size//2)
-
-
+        self.start_turn_position = (
+            self.x + self.size//2, self.y + self.size//2)

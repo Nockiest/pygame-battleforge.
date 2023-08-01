@@ -19,7 +19,8 @@ my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
 
 # Create a Unit object with the desired attributes
 selected_unit = None
-unit1 = Unit(hp=100, attack_range=3, base_movement=100, x=100,
+render_attack_screen = False
+unit1 = Unit(hp=100, attack_range=50, remain_attacks=1, base_movement=100, x=100,
              y=100, size=20, ammo=50, icon="warrior_img", selected=False)
 
 warrior_img = pygame.image.load("img/spear.png")
@@ -58,7 +59,15 @@ while lets_continue:
                 break
             if next_turn_button.is_clicked(event.pos):
                 next_turn_button.callback()  # Call the callback function when the button is clicked
+      
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
+            if unit1.rect.collidepoint(event.pos):
+                selected_unit = unit1
+                render_attack_screen = True
 
+                print("Selected with right button")
+                break
+             
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             selected_unit = None
             break
@@ -76,8 +85,11 @@ while lets_continue:
     # RESET THE GAMEBOARD
     screen.fill(GREEN)
 
-    if selected_unit:
+    if selected_unit and not render_attack_screen:
         unit1.draw_as_active(screen)
+
+    if render_attack_screen:
+        unit1.render_attack_circle(screen)
 
     screen.blit(canon_img, canon_img_rect)
     warrior_img_rect.topleft = (unit1.x, unit1.y)
