@@ -19,7 +19,7 @@ my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
 
 # Create a Unit object with the desired attributes
 selected_unit = None
-render_attack_screen = False
+render_units_attack_screen = False
 unit1 = Unit(hp=100, attack_range=50, remain_attacks=1, base_movement=100, x=100,
              y=100, size=20, ammo=50, icon="warrior_img", selected=False)
 
@@ -43,6 +43,16 @@ def next_turn():
     unit1.reset_for_next_turn()
     print("Next Turn")
 
+def deselect_unit():
+    global render_units_attack_screen  # Add this line to access the global variable
+    print("deselected")
+    selected_unit = None
+    render_units_attack_screen = None  # Set render_units_attack_screen to False
+    unit1.selected = False
+    print(selected_unit, render_units_attack_screen)
+   
+ 
+
 # Create the next turn button
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
 
@@ -59,17 +69,28 @@ while lets_continue:
                 break
             if next_turn_button.is_clicked(event.pos):
                 next_turn_button.callback()  # Call the callback function when the button is clicked
-      
+            if render_units_attack_screen:
+                attack_result = unit1.attack(event.pos)
+                if(attack_result == "Attack not possible"):
+                   deselect_unit()
+                print(attack_result)
+               
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
-            if unit1.rect.collidepoint(event.pos):
+            
+            if render_units_attack_screen:
+               render_units_attack_screen = None
+            else:
+             if unit1.rect.collidepoint(event.pos):
                 selected_unit = unit1
-                render_attack_screen = True
+                render_units_attack_screen = unit1
 
                 print("Selected with right button")
                 break
+            
              
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            selected_unit = None
+            if not render_units_attack_screen:
+             selected_unit = None
             break
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
@@ -84,11 +105,12 @@ while lets_continue:
 
     # RESET THE GAMEBOARD
     screen.fill(GREEN)
-
-    if selected_unit and not render_attack_screen:
+    if  hasattr(unit1, 'attack_cross_position'):
+        unit1.render_attack_cross(screen)
+    if selected_unit:
         unit1.draw_as_active(screen)
 
-    if render_attack_screen:
+    if render_units_attack_screen:
         unit1.render_attack_circle(screen)
 
     screen.blit(canon_img, canon_img_rect)

@@ -3,7 +3,13 @@ from config import WIDTH, HEIGHT, colors_tuple
 import math
 GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
-
+def render_attack_cross(screen, x, y):
+    cross_color = (255, 165, 0)  # Orange color
+    cross_thickness = 2
+    cross_length = 20
+    print("function called")
+    pygame.draw.line(screen, cross_color, (x - cross_length, y), (x + cross_length, y), cross_thickness)
+    pygame.draw.line(screen, cross_color, (x, y - cross_length), (x, y + cross_length), cross_thickness)
 class Unit:
     def __init__(self, hp, attack_range, remain_attacks, base_movement, size, x, y, ammo, icon, selected):
         self.hp = hp
@@ -49,7 +55,7 @@ class Unit:
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
 
     def draw_as_active(self, screen):
-        print(self.x, self.y, self.start_turn_position)
+        # print(self.x, self.y, self.start_turn_position)
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
         pygame.draw.rect(screen, BLACK, outline_rect)
@@ -59,12 +65,31 @@ class Unit:
     def render_attack_circle(self, screen):
         pygame.draw.circle(screen, RED, (self.x + self.size //
                            2, self.y + self.size//2), self.attack_range, 1)
+    def attack_square(self, click_pos):
+        self.attack_cross_position = click_pos
+        self.attack_cross_time = pygame.time.get_ticks()
 
-    def attack(self, target_unit):
-        pass
-        # Implement the logic for the unit to attack the target_unit
-        # Check if the target_unit is within attack_range
-        # Reduce the target_unit's HP based on the unit's attack power
+    def render_attack_cross(self, screen):
+        if hasattr(self, 'attack_cross_position') and hasattr(self, 'attack_cross_time'):
+            time_elapsed = pygame.time.get_ticks() - self.attack_cross_time
+            if time_elapsed <= 1000:  # Render the cross for 1 second (1000 milliseconds)
+                render_attack_cross(screen, *self.attack_cross_position)
+            else:
+                del self.attack_cross_position
+                del self.attack_cross_time
+    def attack(self, click_pos):
+        # Check if the click position is within the attack range of the unit
+        dx = click_pos[0] - (self.x + self.size // 2)
+        dy = click_pos[1] - (self.y + self.size // 2)
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+
+        if distance <= self.attack_range:
+            # Check if the click position does not collide with the unit's rectangle
+            if not self.rect.collidepoint(click_pos):
+                self.attack_square(click_pos)
+                return "UNIT ATTACKS " + str(click_pos)
+
+        return "Attack not possible"
 
     def check_if_hit(self):
         pass
