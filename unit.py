@@ -1,7 +1,7 @@
 import pygame
-from globalVars import width, height
+from config import WIDTH, HEIGHT, colors_tuple
 import math
-
+GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
 class Unit:
     def __init__(self, hp, attack_range, base_movement, size, x, y, ammo, icon, selected):
@@ -22,8 +22,8 @@ class Unit:
     def move_in_game_field(self, click_pos):
         top_left_x = click_pos[0] - self.size // 2
         top_left_y = click_pos[1] - self.size // 2
-        new_top_left_x_in_window = max(0, min(top_left_x, width - self.size))
-        new_top_left_y_in_window = max(0, min(top_left_y, height - self.size))
+        new_top_left_x_in_window = max(0, min(top_left_x, WIDTH - self.size))
+        new_top_left_y_in_window = max(0, min(top_left_y, HEIGHT - self.size))
 
         # Calculate the distance between the new position and the starting position in both x and y directions
         centered_new_top_left_x_in_window = new_top_left_x_in_window + self.size // 2
@@ -43,7 +43,13 @@ class Unit:
         self.y = new_top_left_y_in_window
 
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-
+    
+    def draw_as_active(self,screen):
+        print(self.x, self.y, self.start_turn_position)
+        outline_rect = pygame.Rect(
+            self.x - 2, self.y - 2, self.size + 4, self.size + 4)
+        pygame.draw.rect(screen, BLACK, outline_rect)
+        pygame.draw.circle(screen, YELLOW, self.start_turn_position, self.base_movement, 1)
     def attack(self, target_unit):
         pass
         # Implement the logic for the unit to attack the target_unit
@@ -68,3 +74,8 @@ class Unit:
 
     def render(self):
         pass
+
+    def reset_for_next_turn(self):
+         self.start_turn_position = (self.x + self.size//2, self.y + self.size//2)
+
+

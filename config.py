@@ -1,3 +1,11 @@
+import pygame
+
+WIDTH = 1000
+HEIGHT = 500
+MAIN_FONT_URL = "fonts/Kanit-Regular.ttf"
+ 
+
+
 GREEN = (20, 200, 50)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
