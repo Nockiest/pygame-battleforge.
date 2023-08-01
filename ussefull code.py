@@ -43,3 +43,10 @@
     #     unit1.move_in_game_field(new_x, new_y)
 
     # print(unit1.x, unit1.y)
+
+
+# canon_img = pygame.image.load("img/white-canon.png")
+# canon_img_rect = canon_img.get_rect()
+# # set the pos relative to top left corner # the center centers the image around the point # midtop midbottom left x y bottom up ...
+# canon_img_rect.center = (300, 300)
+# screen.blit(canon_img, canon_img_rect)

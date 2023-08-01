@@ -3,20 +3,24 @@ from config import WIDTH, HEIGHT, colors_tuple
 import math
 GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
+
 def render_attack_cross(screen, x, y):
     cross_color = (255, 165, 0)  # Orange color
     cross_thickness = 2
     cross_length = 20
     print("function called")
-    pygame.draw.line(screen, cross_color, (x - cross_length, y), (x + cross_length, y), cross_thickness)
-    pygame.draw.line(screen, cross_color, (x, y - cross_length), (x, y + cross_length), cross_thickness)
+    pygame.draw.line(screen, cross_color, (x - cross_length, y),
+                     (x + cross_length, y), cross_thickness)
+    pygame.draw.line(screen, cross_color, (x, y - cross_length),
+                     (x, y + cross_length), cross_thickness)
+
+
 class Unit:
     def __init__(self, hp, attack_range, remain_attacks, base_movement, size, x, y, ammo, icon, selected):
         self.hp = hp
         self.attack_range = attack_range
         self.remain_attacks = remain_attacks
         self.base_movement = base_movement
-
         self.x = x
         self.y = y
         self.size = size
@@ -65,6 +69,7 @@ class Unit:
     def render_attack_circle(self, screen):
         pygame.draw.circle(screen, RED, (self.x + self.size //
                            2, self.y + self.size//2), self.attack_range, 1)
+
     def attack_square(self, click_pos):
         self.attack_cross_position = click_pos
         self.attack_cross_time = pygame.time.get_ticks()
@@ -72,11 +77,13 @@ class Unit:
     def render_attack_cross(self, screen):
         if hasattr(self, 'attack_cross_position') and hasattr(self, 'attack_cross_time'):
             time_elapsed = pygame.time.get_ticks() - self.attack_cross_time
-            if time_elapsed <= 1000:  # Render the cross for 1 second (1000 milliseconds)
+            # Render the cross for 1 second (1000 milliseconds)
+            if time_elapsed <= 1000:
                 render_attack_cross(screen, *self.attack_cross_position)
             else:
                 del self.attack_cross_position
                 del self.attack_cross_time
+
     def attack(self, click_pos):
         # Check if the click position is within the attack range of the unit
         dx = click_pos[0] - (self.x + self.size // 2)
@@ -113,3 +120,14 @@ class Unit:
     def reset_for_next_turn(self):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
+
+    def render_on_screen(self, screen):
+        warrior_img = pygame.image.load("img/spear.png")
+        warrior_img = pygame.transform.scale(warrior_img, (self.size, self.size))
+        warrior_img_rect = warrior_img.get_rect()
+        warrior_img_rect.topleft = (self.x, self.y)
+       
+        
+        # unit_rect = pygame.Rect(unit1.x, unit1.y, unit1.size, unit1.size)
+        pygame.draw.rect(screen, RED, self.rect)
+        screen.blit(warrior_img, warrior_img_rect)
