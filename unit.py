@@ -1,6 +1,7 @@
 import pygame
 from config import WIDTH, HEIGHT, colors_tuple
 import math
+import random
 GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
 
@@ -8,7 +9,7 @@ def render_attack_cross(screen, x, y):
     cross_color = (255, 165, 0)  # Orange color
     cross_thickness = 2
     cross_length = 20
-    print("function called")
+     
     pygame.draw.line(screen, cross_color, (x - cross_length, y),
                      (x + cross_length, y), cross_thickness)
     pygame.draw.line(screen, cross_color, (x, y - cross_length),
@@ -16,7 +17,7 @@ def render_attack_cross(screen, x, y):
 
 
 class Unit:
-    def __init__(self, hp, attack_range, remain_attacks, base_movement, size, x, y, ammo, icon, selected):
+    def __init__(self, hp, attack_range, remain_attacks, base_movement, size, x, y, ammo, icon, selected,color):
         self.hp = hp
         self.attack_range = attack_range
         self.remain_attacks = remain_attacks
@@ -30,6 +31,8 @@ class Unit:
         self.icon = icon
         self.rect = pygame.Rect(x, y, size, size)
         self.selected = selected
+        self.ableToMove = True
+        self.color = color
 
     def move_in_game_field(self, click_pos):
         # Calculate the distance between the new position and the starting position in both x and y directions
@@ -67,11 +70,10 @@ class Unit:
         pygame.draw.rect(screen, BLACK, outline_rect)
         pygame.draw.circle(
             screen, YELLOW, self.start_turn_position, self.base_movement, 1)
-
+  
     def render_attack_circle(self, screen):
         pygame.draw.circle(screen, RED, (self.x + self.size //
                            2, self.y + self.size//2), self.attack_range, 1)
-
     def attack_square(self, click_pos):
         self.attack_cross_position = click_pos
         self.attack_cross_time = pygame.time.get_ticks()
@@ -91,37 +93,65 @@ class Unit:
         dx = click_pos[0] - (self.x + self.size // 2)
         dy = click_pos[1] - (self.y + self.size // 2)
         distance = math.sqrt(dx ** 2 + dy ** 2)
-
+        
         if distance <= self.attack_range:
             # Check if the click position does not collide with the unit's rectangle
             if not self.rect.collidepoint(click_pos):
+                self.remain_attacks -= 1
+                self.ammo -= 1 
+                self.ableToMove = self.ammo > 0 and self.remain_attacks > 0
+                print(self.ableToMove)
                 self.attack_square(click_pos)
-                return "UNIT ATTACKS " + str(click_pos)
 
-        return "Attack not possible"
+                return ("UNIT ATTACKS" ,click_pos)
+            
+           
+        return ("Attack not possible",click_pos)
 
-    def check_if_hit(self):
-        pass
-        # Implement the logic to check if the unit is hit by the enemy
-        # You can use random numbers to simulate the chance of being hit
+    def check_if_hit(self, base_hit_chance):
+         
+        final_hit_probability= base_hit_chance #i will augment base_hit_chance by some variables
+        # Generate a random float between 0 and 1
+        hit_treshold_value = random.random()
 
+        # Calculate the actual hit chance considering the base_hit_chance and random factor
+    
+        print( final_hit_probability,  hit_treshold_value )
+        # Check if the unit is hit based on the actual hit chance
+        if   final_hit_probability >= hit_treshold_value:
+            return True  # Unit is hit
+        else:
+            return False  # Unit is not hi
+        
+    def take_damage(self):
+        self.hp -= 1
+        print(self.hp)
+        # if self.hp <= 0:
+        #     self.die()
+        
     def capture(self, target_building):
         pass
         # Implement the logic for the unit to capture the target_building
         # Check if the target_building is within the capture range of the unit
         # Reduce the capture progress of the building until it is captured
 
-    def die(self):
-        # Implement the logic for the unit to die
-        # Remove the unit from the game or set its HP to 0
-        pass
-
-    def render(self):
-        pass
+    def remove_from_game(self, units):
+         units.remove(self)
+         print("unit is dead")
+         print(units)
+         self.x = None
+         self.y = None
+         self.rect = None
+     
 
     def reset_for_next_turn(self):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
+         
+        self.remain_attacks = 1   
+        self.ammo += 2
+        self.ableToMove = True
+        print(self.ammo,self.remain_attacks)
 
     def render_on_screen(self, screen):
         warrior_img = pygame.image.load("img/spear.png")
@@ -131,5 +161,9 @@ class Unit:
        
         
         # unit_rect = pygame.Rect(unit1.x, unit1.y, unit1.size, unit1.size)
-        pygame.draw.rect(screen, RED, self.rect)
+        pygame.draw.rect(screen, self.color, self.rect)
         screen.blit(warrior_img, warrior_img_rect)
+
+
+
+    
