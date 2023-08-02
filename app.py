@@ -3,7 +3,7 @@ from config import colors_tuple, WIDTH, HEIGHT, MAIN_FONT_URL
 from unit import Unit
 from button import Button
 from unit_classes import *
- 
+
 pygame.init()
 
 # Vytvoření obrazovky
@@ -21,8 +21,8 @@ my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
 # Create a Unit object with the desired attributes
 selected_unit = None
 render_units_attack_screen = False
-unit1 = Unit(hp=2, attack_range=50, remain_attacks=1, base_movement=100, x=100,
-             y=100, size=20, ammo=50, icon="pike.png",   color=RED)
+unit1 = Unit(hp=2, attack_range=50, remain_attacks=1, base_movement=100, x=50,
+             y=50, size=20, ammo=50, icon="pike.png",   color=RED)
 unit2 = Unit(hp=2, attack_range=50, remain_attacks=0, base_movement=100, x=200,
              y=150, size=20, ammo=50, icon="pike.png",  color=BLUE)
 knight = Knight(x=100, y=100, color=(255, 0, 0))
@@ -44,12 +44,10 @@ living_units = [
     commander,
     pikeman,
     supply_cart,
-    unit1, 
+    unit1,
     unit2
 ]
-# warrior_img_rect = warrior_img.get_rect()
-# warrior_img_rect.topleft = (unit1.x, unit1.y)
-
+ 
 
 screen.fill(GREEN)
 lets_continue = True
@@ -61,17 +59,18 @@ clock = pygame.time.Clock()  # will tick eveery second
 
 def next_turn():
     # Your next turn logic here
-    unit1.reset_for_next_turn()
+    for unit in living_units:
+        unit.reset_for_next_turn()
     print("Next Turn")
-
 
 def deselect_unit():
     global render_units_attack_screen  # Add this line to access the global variable
     global selected_unit
     print("deselected")
+     
     selected_unit = None
     render_units_attack_screen = None  # Set render_units_attack_screen to False
-    unit1.selected = False
+     
     print(selected_unit, render_units_attack_screen)
 
 
@@ -86,51 +85,57 @@ while lets_continue:
             lets_continue = False
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if unit1.rect.collidepoint(event.pos):
-                selected_unit = unit1
-                break
+
             if next_turn_button.is_clicked(event.pos):
                 next_turn_button.callback()  # Call the callback function when the button is clicked
-         
+            # Check if any living unit has been clicked
+            for unit in living_units:
+                if unit.rect.collidepoint(event.pos):
+                    print(unit)
+                    selected_unit = unit
+                    break
+
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
 
             if render_units_attack_screen:
-                attack_result = unit1.attack(event.pos)
-                
+                attack_result = selected_unit.attack(event.pos)
+
                 if attack_result[0] == "UNIT ATTACKS":
-                
-                    attack_pos = attack_result[1]   # Convert the string representation to a tuple
-        
+
+                    # Convert the string representation to a tuple
+                    attack_pos = attack_result[1]
+
                 # Check if the click position is inside the rectangle of unit2
-                    print(attack_result,  unit2.rect.collidepoint(attack_result[1]), unit2.rect)
+                    print(attack_result,  unit2.rect.collidepoint(
+                        attack_result[1]), unit2.rect)
                     if unit2.rect.collidepoint(attack_result[1]):
-                        hit_result =unit2.check_if_hit(0.8) # 80% hit chance
+                        hit_result = unit2.check_if_hit(0.8)  # 80% hit chance
                         if hit_result:
                             unit2.take_damage()
                             if unit2.hp <= 0:
-                                unit2.remove_from_game(units)
+                                unit2.remove_from_game(living_units)
                         print("Unit 1 hit Unit 2?", hit_result)
                 print(attack_result)
                 deselect_unit()
 
             else:
-                if unit1.rect.collidepoint(event.pos):
-                    if unit1.ableToMove:
-                        selected_unit = unit1
-                    if unit1.remain_attacks > 0:        
-                     render_units_attack_screen = unit1
-                    else:
-                     print("no attacks, or ammo left")
-                     deselect_unit()
+                for unit in living_units:
+                    if unit.rect.collidepoint(event.pos):
+                        if unit.ableToMove:
+                            selected_unit = unit
+                        if unit.remain_attacks > 0:
+                            render_units_attack_screen = unit
+                        else:
+                            print("no attacks or ammo left for this unit")
+                            deselect_unit()
 
-                    print("Selected with right button")
-                    break
- 
+                        print(f"Selected {unit.__class__.__name__} with right button")
+                        break
+
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
             if selected_unit:
-                unit1.move_in_game_field(event.pos)
-                
+                selected_unit.move_in_game_field(event.pos)
 
     pygame.display.update()
 
@@ -138,17 +143,16 @@ while lets_continue:
     screen.fill(GREEN)
 
     # render elements
-    if hasattr(unit1, 'attack_cross_position'):
-        unit1.render_attack_cross(screen)
+    if hasattr(selected_unit, 'attack_cross_position'):
+        selected_unit.render_attack_cross(screen)
     if selected_unit:
-        unit1.draw_as_active(screen)
+        selected_unit.draw_as_active(screen)
     if render_units_attack_screen:
-        unit1.render_attack_circle(screen)
+        selected_unit.render_attack_circle(screen)
     for unit in living_units:
-     unit.render_on_screen(screen)
+        unit.render_on_screen(screen)
     # unit2.render_on_screen(screen)
     next_turn_button.draw(screen)
- 
 
     clock.tick(fps)
 

@@ -36,32 +36,31 @@ class Unit:
         self.color = color
 
     def move_in_game_field(self, click_pos):
-        # Calculate the distance between the new position and the starting position in both x and y directions
-        centered_click_pos = (click_pos[0] - self.size // 2, click_pos[1] - self.size // 2)
-        delta_x = centered_click_pos[0] - self.start_turn_position[0]
-        delta_y = centered_click_pos[1] - self.start_turn_position[1]
-
+    # Calculate the distance between the new position and the starting position in both x and y directions
+         
+        delta_x = click_pos[0] - self.start_turn_position[0]  
+        delta_y = click_pos[1] - self.start_turn_position[1]   
+        print(click_pos, self.start_turn_position,delta_x,delta_y)
         # Calculate the distance from the starting position to the new position
         distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
-
-        # Check if the distance exceeds the limit of base_movement
+        print(distance, self.base_movement + self.size // 2, self.base_movement, self.size // 2)
+        # Check if the distance exceeds the limit of base_movement + size/2
         if distance > self.base_movement:
             # Calculate the new position based on the line connecting the two points
-            scale_factor = self.base_movement / distance
-            new_x = int(self.start_turn_position[0] + delta_x * scale_factor)
-            new_y = int(self.start_turn_position[1] + delta_y * scale_factor)
-
-            # Update the position and the rectangle
-            self.x = new_x - self.size // 2
-            self.y = new_y - self.size // 2
+            scale_factor = (self.base_movement  ) / distance
+            new_x = int(self.start_turn_position[0] + delta_x * scale_factor  - self.size // 2 )
+            new_y = int(self.start_turn_position[1] + delta_y * scale_factor - self.size // 2)
+            print(new_x, "new x", new_y , "new_y")
         else:
             # The movement is within the allowed range, so set the position directly
-            self.x = centered_click_pos[0]
-            self.y = centered_click_pos[1]
+            new_x = click_pos[0]  - self.size // 2
+            new_y = click_pos[1]  - self.size // 2
+
+            print(new_x, "new x", new_y , "new_y as centered_click_pos")
 
         # Ensure that the unit stays within the game window boundaries
-        self.x = max(0, min(self.x, WIDTH - self.size))
-        self.y = max(0, min(self.y, HEIGHT - self.size))
+        self.x = max(0, min(new_x, WIDTH - self.size))
+        self.y = max(0, min(new_y, HEIGHT - self.size))
 
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
     def draw_as_active(self, screen):
@@ -129,8 +128,7 @@ class Unit:
     def take_damage(self):
         self.hp -= 1
         print(self.hp)
-        # if self.hp <= 0:
-        #     self.die()
+        
         
     def capture(self, target_building):
         pass
