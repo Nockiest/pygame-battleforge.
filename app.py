@@ -2,7 +2,8 @@ import pygame
 from config import colors_tuple, WIDTH, HEIGHT, MAIN_FONT_URL
 from unit import Unit
 from button import Button
-
+from unit_classes import *
+ 
 pygame.init()
 
 # Vytvoření obrazovky
@@ -15,19 +16,39 @@ my_font = pygame.font.Font(MAIN_FONT_URL, 15)
 my_font_text = my_font.render("Canon", False, BLACK, None)
 my_font_text_rect = my_font_text.get_rect()
 my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
-warrior_img = pygame.image.load("img/spear.png")
+# warrior_img = pygame.image.load("img/spear.png")
 
 # Create a Unit object with the desired attributes
 selected_unit = None
 render_units_attack_screen = False
 unit1 = Unit(hp=2, attack_range=50, remain_attacks=1, base_movement=100, x=100,
-             y=100, size=20, ammo=50, icon="warrior_img", selected=False, color=RED)
+             y=100, size=20, ammo=50, icon="pike.png",   color=RED)
 unit2 = Unit(hp=2, attack_range=50, remain_attacks=0, base_movement=100, x=200,
-             y=150, size=20, ammo=50, icon="warrior_img", selected=False, color=BLUE)
-units = [unit1, unit2]
- 
-warrior_img_rect = warrior_img.get_rect()
-warrior_img_rect.topleft = (unit1.x, unit1.y)
+             y=150, size=20, ammo=50, icon="pike.png",  color=BLUE)
+knight = Knight(x=100, y=100, color=(255, 0, 0))
+musketeer = Musketeer(x=200, y=200,   color=(0, 255, 0))
+cannon = Cannon(x=300, y=300,   color=(0, 0, 255))
+shield = Shield(x=400, y=400,  color=(255, 255, 0))
+medic = Medic(x=500, y=400,   color=(255, 0, 255))
+commander = Commander(x=600, y=100, color=(0, 255, 255))
+pikeman = Pikeman(x=700, y=100,   color=(128, 128, 128))
+supply_cart = SupplyCart(x=800, y=400,   color=(255, 0, 0))
+
+
+living_units = [
+    knight,
+    musketeer,
+    cannon,
+    shield,
+    medic,
+    commander,
+    pikeman,
+    supply_cart,
+    unit1, 
+    unit2
+]
+# warrior_img_rect = warrior_img.get_rect()
+# warrior_img_rect.topleft = (unit1.x, unit1.y)
 
 
 screen.fill(GREEN)
@@ -123,7 +144,7 @@ while lets_continue:
         unit1.draw_as_active(screen)
     if render_units_attack_screen:
         unit1.render_attack_circle(screen)
-    for unit in units:
+    for unit in living_units:
      unit.render_on_screen(screen)
     # unit2.render_on_screen(screen)
     next_turn_button.draw(screen)

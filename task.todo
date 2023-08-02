@@ -1,14 +1,8 @@
-vytvořit bojovou jednotku
-    vycentrovat obrázek
-    přidat selekci jednotky
-    přidat střelbu
-    přidat zničení
+vytvořit bojovou jednotku   
     přidat koupení jednotky
     přidat tým jednotky
-    přidat náboje
     přidat třídy
     přidat movement soundfile
-    propočítat veškerou move calkulaci v unit class
 musika
     najít 5 písniček
     

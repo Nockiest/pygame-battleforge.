@@ -1,5 +1,11 @@
 # test_my_math.py
 import unittest
+import sys
+import os
+
+# Add the parent directory to the Python path
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(parent_dir)
 from my_math import add_numbers
 
 class TestMyMathFunctions(unittest.TestCase):

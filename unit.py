@@ -2,6 +2,7 @@ import pygame
 from config import WIDTH, HEIGHT, colors_tuple
 import math
 import random
+ 
 GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
 
@@ -17,7 +18,7 @@ def render_attack_cross(screen, x, y):
 
 
 class Unit:
-    def __init__(self, hp, attack_range, remain_attacks, base_movement, size, x, y, ammo, icon, selected,color):
+    def __init__(self, hp, attack_range, remain_attacks, base_movement, size, x, y, ammo, icon, color):
         self.hp = hp
         self.attack_range = attack_range
         self.remain_attacks = remain_attacks
@@ -30,7 +31,7 @@ class Unit:
         self.ammo = ammo
         self.icon = icon
         self.rect = pygame.Rect(x, y, size, size)
-        self.selected = selected
+        self.selected = False
         self.ableToMove = True
         self.color = color
 
@@ -89,6 +90,7 @@ class Unit:
                 del self.attack_cross_time
 
     def attack(self, click_pos):
+        
         # Check if the click position is within the attack range of the unit
         dx = click_pos[0] - (self.x + self.size // 2)
         dy = click_pos[1] - (self.y + self.size // 2)
@@ -97,6 +99,7 @@ class Unit:
         if distance <= self.attack_range:
             # Check if the click position does not collide with the unit's rectangle
             if not self.rect.collidepoint(click_pos):
+               
                 self.remain_attacks -= 1
                 self.ammo -= 1 
                 self.ableToMove = self.ammo > 0 and self.remain_attacks > 0
@@ -154,13 +157,10 @@ class Unit:
         print(self.ammo,self.remain_attacks)
 
     def render_on_screen(self, screen):
-        warrior_img = pygame.image.load("img/spear.png")
+        warrior_img = pygame.image.load(f"img/{self.icon}")
         warrior_img = pygame.transform.scale(warrior_img, (self.size, self.size))
         warrior_img_rect = warrior_img.get_rect()
         warrior_img_rect.topleft = (self.x, self.y)
-       
-        
-        # unit_rect = pygame.Rect(unit1.x, unit1.y, unit1.size, unit1.size)
         pygame.draw.rect(screen, self.color, self.rect)
         screen.blit(warrior_img, warrior_img_rect)
 
