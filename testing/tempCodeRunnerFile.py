@@ -1,28 +1,4 @@
-import pygame
-import unittest
-import math
-import sys
-import os
-
-# Add the parent directory to the Python path
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append(parent_dir)
-from unit import Unit
-
-class TestUnitMethods(unittest.TestCase):
-
-    def setUp(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode((1000, 500))
-        self.unit = Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=100,
-                         y=100, size=20, ammo=50, icon="warrior_img",   color=(0, 255, 0))
-        self.fps = 60
-        self.clock = pygame.time.Clock()
-
-    def tearDown(self):
-        pygame.quit()
-
-    def test_move_in_game_field(self):
+ def test_move_in_game_field(self):
     # Simulate a mouse click at position (200, 200)
         pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'button': 1, 'pos': (200, 200)}))
 
@@ -86,47 +62,16 @@ class TestUnitMethods(unittest.TestCase):
 
     def test_reset_for_next_turn(self):
         # Set specific values for remain_attacks and ammo
-        self.unit.remain_actions = 0
+        self.unit.remain_attacks = 0
         self.unit.ammo = 5
 
         # Call reset_for_next_turn method
         self.unit.reset_for_next_turn()
 
         # Assert that the remain_attacks and ammo have been updated correctly
-        self.assertEqual(self.unit.remain_actions, 1, "remain_attacks not updated correctly")
+        self.assertEqual(self.unit.remain_attacks, 1, "remain_attacks not updated correctly")
         self.assertEqual(self.unit.ammo, 7, "ammo not updated correctly")
 
         # Assert that ableToMove is True after the reset
         self.assertTrue(self.unit.ableToMove, "ableToMove not set to True after reset")
         
-    def test_attack(self):
-    # Define a list of click positions
-        click_positions = [
-            (self.unit.x + self.unit.size // 2 + 50, self.unit.y + self.unit.size // 2 + 50),
-            (self.unit.x + self.unit.size // 2 + 30, self.unit.y + self.unit.size // 2 + 30)
-            # Add more click positions if needed
-        ]
-
-        # Loop through each click position and test the attack
-        for click_pos in click_positions:
-            result, attack_pos = self.unit.attack(click_pos)
-            print(result, attack_pos)
-            # Assert that the unit remains selected (not ableToMove = False) when attacking is possible
-            if result == "UNIT ATTACKS":
-                self.assertFalse(self.unit.ableToMove, "Unit should not have any left moves after attacking")
-                self.assertEqual(self.unit.remain_actions, 0, "remain_attacks should be decreased after attacking")
-                self.assertEqual(self.unit.ammo, 49, "ammo should be decreased after attacking")
-            else:
-                # Assert that the result of the attack is correct
-                self.assertEqual(result, "Attack not possible", "Attack result should be 'Attack not possible'")
-                self.assertEqual(attack_pos, click_pos, "Attack position should be equal to the click position")
-
-                # Assert that the attack-related functions were not called (attack_square is not set)
-                self.assertFalse(hasattr(self.unit, 'attack_cross_position'), "attack_square should not be set")
-
-
-
-
-    
-if __name__ == '__main__':
-    unittest.main()

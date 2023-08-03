@@ -1,16 +1,76 @@
 from unit import Unit
+import math
+from utils import get_two_units_center_distance
 
-class Knight(Unit):
+class Melee(Unit):
+    def __init__(self, hp, attack_range, base_actions, base_movement, size, x, y, icon, color):
+        super().__init__(hp, attack_range, base_actions,
+                         base_movement, size, x, y, None, icon, color)
+
+    def try_attack(self, click_pos, living_units):
+        dx = click_pos[0] - (self.x + self.size // 2)
+        dy = click_pos[1] - (self.y + self.size // 2)
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+
+        if distance <= self.attack_range:
+            if self.rect.collidepoint(click_pos):
+                return ("CANT ATTACK SELF", click_pos)
+             
+            for unit in living_units:
+                if unit.rect.collidepoint(click_pos):
+                    if unit.color == self.color:
+                        return ("YOU CANT DO FRIENDLY FIRE",click_pos)
+                        break
+                    self.remain_actions -= 1
+                     
+                     
+                    self.attack_square(click_pos)
+                    hit_result = unit.check_if_hit(0.8)  # 80% hit chance
+                    if hit_result:
+                        unit.take_damage(living_units)
+                        if unit.hp <= 0:
+                            unit.remove_from_game(living_units)
+                    print(f"{self} hit {unit}?", hit_result)
+                    return ("UNIT ATTACKS", click_pos)
+
+        return ("Attack not possible", click_pos)
+    
+class Support(Unit):
+    def __init__(self, hp, attack_range, base_actions, base_movement, size, x, y, icon, color):
+        # Call the constructor of the parent class (Unit) without specifying the 'ammo' parameter
+        super().__init__(hp, attack_range, base_actions,
+                         base_movement, size, x, y, None, icon, color)
+        
+    def try_attack(self, click_pos, living_units):
+        return ("this is a support unit and cant attack")
+
+class Knight(Melee):
     def __init__(self, x, y,   color):
-        super().__init__(hp=2, attack_range=50, remain_attacks=1, base_movement=200,
-                         size=30, x=x, y=y, ammo=0, icon="knight.png",   color=color)
+        super().__init__(hp=2, attack_range=40, base_actions=1, base_movement=200,
+                         size=30, x=x, y=y,   icon="knight.png",   color=color)
 
     # Additional methods or overrides for the Knight class
 
 
+class Shield(Support):
+    def __init__(self, x, y, color):
+        super().__init__(hp=5, attack_range=0,base_actions=1, base_movement=30,
+                         size=30, x=x, y=y,   icon="armor.png",  color=color)
+
+    # Additional methods or overrides for the Shield class
+
+
+class Pikeman(Melee):
+    def __init__(self, x, y,  color):
+        super().__init__(hp=3, attack_range=50, base_actions=1, base_movement=100,
+                         size=20, x=x, y=y,  icon="pike.png",   color=color)
+
+    # Additional methods or overrides for the Pikeman class
+
+
 class Musketeer(Unit):
     def __init__(self,   x, y,  color):
-        super().__init__(hp=2, attack_range=200, remain_attacks=1, base_movement=125,
+        super().__init__(hp=2, attack_range=200,base_actions=1, base_movement=125,
                          size=20, x=x, y=y, ammo=50, icon="musket.png",   color=color)
 
     # Additional methods or overrides for the Musketeer class
@@ -18,66 +78,79 @@ class Musketeer(Unit):
 
 class Cannon(Unit):
     def __init__(self,  x, y,  color):
-        super().__init__(hp=1, attack_range=300, remain_attacks=1, base_movement=50,
-                         size=50, x=x, y=y, ammo=10, icon="canon.png",  color=color)
+        super().__init__(hp=1, attack_range=300, base_actions=1, base_movement=50,
+                         size=40, x=x, y=y, ammo=10, icon="canon.png",  color=color)
 
     # Additional methods or overrides for the Cannon class
 
 
-class Shield(Unit):
+class Medic(Support):
     def __init__(self, x, y, color):
-        super().__init__(hp=5, attack_range=0, remain_attacks=0, base_movement=50,
-                         size=30, x=x, y=y, ammo=0, icon="armor.png",  color=color)
+        super().__init__(hp=1, attack_range=100,base_actions=1, base_movement=75,
+                         size=15, x=x, y=y,  icon="medic.png",   color=color)
 
-    # Additional methods or overrides for the Shield class
+   
+    def reset_for_next_turn(self, living_units):
+      
+        super().reset_for_next_turn()  # Call the reset_for_next_turn method of the parent class (Support)
+        self.heal(living_units)  # Call the heal method to heal nearby units
 
-
-class Medic(Unit):
-    def __init__(self, x, y, color):
-        super().__init__(hp = 1, attack_range=100, remain_attacks=3, base_movement=100,
-                         size=15, x=x, y=y, ammo=100, icon="medic.png",   color=color)
-
-    # Additional methods or overrides for the Medic class
-    def heal(self, target_unit):
-        target_unit.hp += 10  # Example: Heal the target unit by 10 HP
-
+    def heal(self, units):
+        for unit in units:
+            # Check if the target unit is not a Medic and is within the range of base movement
+            if not isinstance(unit, Medic):
+                distance = get_two_units_center_distance(self,unit)
+                if distance <= self.base_movement and unit.base_hp > unit.hp:
+                    unit.hp += 1  # Heal the target unit by 1 HP
 
 class Commander(Unit):
     def __init__(self, x, y, color):
-        super().__init__(hp=1, attack_range=0, remain_attacks=0, base_movement=175,
-                         size=20, x=x, y=y, ammo=0, icon="commander.png",   color=color)
+        super().__init__(hp=1, attack_range=40, base_actions=1, base_movement=150,
+                         size=20, x=x, y=y, ammo=1, icon="commander.png", color=color)
 
     # Additional methods or overrides for the Commander class
     def support(self):
         # Implement support method for other units (e.g., buff their abilities)
         pass
 
+    def take_damage(self, living_units):
+    # Call the parent class's take_damage method first
+        super().take_damage(living_units)
+        # Perform additional actions or logic specific to the Commander class
+        self.die()
+
     def die(self):
-        print("Player lost the game")  # Example: Print a message when the Commander dies
+        # Example: Print a message when the Commander dies
+        print("Player lost the game")
 
 
-class Pikeman(Unit):
-    def __init__(self, x, y,  color):
-        super().__init__(hp=3, attack_range=50, remain_attacks=1, base_movement=100,
-                         size=20, x=x, y=y, ammo=100, icon="pike.png",   color=color)
 
-    # Additional methods or overrides for the Pikeman class
-
-
-class SupplyCart(Unit):
+class SupplyCart(Support):
     def __init__(self,   x, y,  color):
-        super().__init__(hp=1, attack_range=0, remain_attacks=3, base_movement=150,
-                         size=30, x=x, y=y, ammo=200, icon="supply.png",   color=color)
+        super().__init__(hp=1, attack_range=0, base_actions=1, base_movement=150,
+                         size=30, x=x, y=y,   icon="supply.png",   color=color)
 
     # Additional methods or overrides for the Supply Cart class
-    def provide_ammo(self, target_unit):
-        target_unit.ammo += 10  # Example: Provide the target unit with 10 ammo
+    def reset_for_next_turn(self, living_units):
+      
+        super().reset_for_next_turn()  # Call the reset_for_next_turn method of the parent class (Support)
+        self.provide_ammo_to_units(living_units)  # Call the heal method to heal nearby units
+
+     
+
+    def provide_ammo_to_units(self, units):
+        for unit in units:
+            # Check if the target unit is not a Melee or Support unit
+            if not isinstance(unit, (Melee, Support)):
+                distance = get_two_units_center_distance(self,unit)
+                if distance <= self.base_movement:
+                    unit.ammo += 1  # Provide the target unit with 10 ammo
 
 
-class Observer(Unit):
-    def __init__(self,   x, y,  color):
-        super().__init__(hp=1, attack_range=0, remain_attacks=0, base_movement=50,
-                         icon="spyglass.png", size=15, x=x,)
+class Observer(Support):
+    def __init__(self, x, y,  color):
+        super().__init__(hp=1, attack_range=0, base_actions=1,  base_movement=50,
+                         icon="spyglass.png", size=15, x=x, y=y,  color=color)
 
 # Testing the classes:
 # You can create instances of these classes and test their methods and behaviors in your game.
