@@ -115,7 +115,8 @@ class Unit:
                         return ("YOU CANT DO FRIENDLY FIRE",click_pos)
                         break
                     self.remain_actions -= 1
-                    self.ammo -= 1
+                    if self.ammo != None:
+                     self.ammo -= 1
                    
                     self.attack_square(click_pos)
                     hit_result = unit.check_if_hit(0.8)  # 80% hit chance

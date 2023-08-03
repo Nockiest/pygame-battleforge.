@@ -7,34 +7,7 @@ class Melee(Unit):
         super().__init__(hp, attack_range, base_actions,
                          base_movement, size, x, y, None, icon, color)
 
-    def try_attack(self, click_pos, living_units):
-        dx = click_pos[0] - (self.x + self.size // 2)
-        dy = click_pos[1] - (self.y + self.size // 2)
-        distance = math.sqrt(dx ** 2 + dy ** 2)
-
-        if distance <= self.attack_range:
-            if self.rect.collidepoint(click_pos):
-                return ("CANT ATTACK SELF", click_pos)
-             
-            for unit in living_units:
-                if unit.rect.collidepoint(click_pos):
-                    if unit.color == self.color:
-                        return ("YOU CANT DO FRIENDLY FIRE",click_pos)
-                        break
-                    self.remain_actions -= 1
-                     
-                     
-                    self.attack_square(click_pos)
-                    hit_result = unit.check_if_hit(0.8)  # 80% hit chance
-                    if hit_result:
-                        unit.take_damage(living_units)
-                        if unit.hp <= 0:
-                            unit.remove_from_game(living_units)
-                    print(f"{self} hit {unit}?", hit_result)
-                    return ("UNIT ATTACKS", click_pos)
-
-        return ("Attack not possible", click_pos)
-    
+ 
 class Support(Unit):
     def __init__(self, hp, attack_range, base_actions, base_movement, size, x, y, icon, color):
         # Call the constructor of the parent class (Unit) without specifying the 'ammo' parameter
