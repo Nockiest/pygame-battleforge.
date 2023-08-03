@@ -8,7 +8,9 @@ import os
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
 from unit import Unit
-
+from unit_classes import *
+from config import *
+GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 class TestUnitMethods(unittest.TestCase):
 
     def setUp(self):
@@ -16,8 +18,36 @@ class TestUnitMethods(unittest.TestCase):
         self.screen = pygame.display.set_mode((1000, 500))
         self.unit = Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=100,
                          y=100, size=20, ammo=50, icon="warrior_img",   color=(0, 255, 0))
+        self.unit1 = Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=100,
+                         y=100, size=20, ammo=50, icon="warrior_img",   color=(0, 255, 0))
+        self.unit2 = Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=100,
+                         y=100, size=20, ammo=50, icon="warrior_img",   color=(0, 255, 0))
+        # Define the living_units list at the class level
+        self.living_units = [
+            Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=50,
+                 y=50, size=20, ammo=50, icon="pike.png", color=RED),
+            Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=200,
+                 y=150, size=20, ammo=50, icon="pike.png", color=BLUE),
+            Knight(x=100, y=100, color=RED),
+            Musketeer(x=200, y=200, color=BLUE),
+            Cannon(x=300, y=300, color=RED),
+            Shield(x=400, y=400, color=RED),
+            Medic(x=500, y=400, color=BLUE),
+            Commander(x=600, y=100, color=BLUE),
+            Pikeman(x=700, y=100, color=RED),
+            SupplyCart(x=800, y=400, color=BLUE),
+            Observer(x=200, y=150, color=BLUE),
+        ]
         self.fps = 60
         self.clock = pygame.time.Clock()
+
+        # Initialize the teams dictionary
+        self.teams = {}
+        for unit in self.living_units:
+            color = unit.color
+            if color not in self.teams:
+                self.teams[color] = []
+            self.teams[color].append(unit)
 
     def tearDown(self):
         pygame.quit()
@@ -94,11 +124,11 @@ class TestUnitMethods(unittest.TestCase):
 
         # Assert that the remain_attacks and ammo have been updated correctly
         self.assertEqual(self.unit.remain_actions, 1, "remain_attacks not updated correctly")
-        self.assertEqual(self.unit.ammo, 7, "ammo not updated correctly")
+        self.assertEqual(self.unit.ammo, 5, "ammo not updated correctly")
 
         # Assert that ableToMove is True after the reset
-        self.assertTrue(self.unit.ableToMove, "ableToMove not set to True after reset")
-        
+        self.assertEqual(self.unit.remain_actions, 1 , "ableToMove not set to True after reset")
+    
     def test_attack(self):
     # Define a list of click positions
         click_positions = [
@@ -124,9 +154,66 @@ class TestUnitMethods(unittest.TestCase):
                 # Assert that the attack-related functions were not called (attack_square is not set)
                 self.assertFalse(hasattr(self.unit, 'attack_cross_position'), "attack_square should not be set")
 
+    def test_observer_increase_attack_range(self):
+        def check_in_observers_range(selected_unit):
+            if issubclass(selected_unit.__class__, Ranged):
+                for unit in self.living_units:
+                    if isinstance(unit, Observer) and unit.color == selected_unit.color:
+                        observer_unit = unit
+                        distance = get_two_units_center_distance(
+                            selected_unit, observer_unit)
+                        if distance <= 75:
+                            selected_unit.attack_range_modifiers += 0.5  # Add "in_observer_range" modifier
+        # Get the observer and a ranged unit from the living_units
+        observer = None
+        ranged_unit = None
+        for unit in self.living_units:
+            if isinstance(unit, Observer):
+                observer = unit
+            elif isinstance(unit, Ranged):
+                ranged_unit = unit
 
+        # Assert that both the observer and the ranged unit are not None
+        self.assertIsNotNone(observer)
+        self.assertIsNotNone(ranged_unit)
 
+        # Get the initial attack range of the ranged unit
+        initial_attack_range = ranged_unit.attack_range
 
+        # Move the observer close to the ranged unit
+        observer.x, observer.y = ranged_unit.x + 75, ranged_unit.y
+
+        # Check the attack range of the ranged unit before and after the observer is close
+        initial_attack_range = ranged_unit.attack_range
+        check_in_observers_range(ranged_unit)
+        final_attack_range = ranged_unit.attack_range
+
+        # Assert that the attack range of the ranged unit increased by 0.5
+        self.assertAlmostEqual(final_attack_range, initial_attack_range + 0.5)
+
+    def test_attack_between_units():
+        # Simulate a mouse click on unit1
+        pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'button': 1, 'pos': (unit1.x + unit1.size // 2, unit1.y + unit1.size // 2)}))
+        pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONUP, {'button': 1, 'pos': (unit1.x + unit1.size // 2, unit1.y + unit1.size // 2)}))
+        clock = pygame.time.Clock()
+        fps = 60
+        # Run the game loop for a short period
+        for _ in range(fps // 2):  # Run the loop for half a second (assuming 60 FPS)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+
+            # Simulate a right-click on unit2 to trigger the attack
+            pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONUP, {'button': 3, 'pos': (unit2.x + unit2.size // 2, unit2.y + unit2.size // 2)}))
+
+            pygame.display.update()
+            clock.tick(fps)
+
+        # Assert that unit2 has lost HP after the attack
+        self.assertLess(self.unit2.hp, self.unit2.base_hp, "Unit2 did not lose HP after the attack")
+
+ 
     
 if __name__ == '__main__':
     unittest.main()

@@ -20,42 +20,50 @@ my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
  
 selected_unit = None
 render_units_attack_screen = False
-unit1 = Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=50,
-             y=50, size=20, ammo=50, icon="pike.png",   color=RED)
-unit2 = Unit(hp=2, attack_range=50, base_actions=1, base_movement=100, x=200,
-             y=150, size=20, ammo=50, icon="pike.png",  color=BLUE)
-knight = Knight(x=100, y=100, color=RED)
-musketeer = Musketeer(x=200, y=200,   color=BLUE)
-cannon = Cannon(x=300, y=300,   color=RED)
-shield = Shield(x=400, y=400,  color=RED)
-medic = Medic(x=500, y=400,   color=BLUE)
-commander = Commander(x=600, y=100, color=BLUE)
-pikeman = Pikeman(x=700, y=100,   color=RED)
-supply_cart = SupplyCart(x=800, y=400,   color=BLUE)
-observer = Observer(x=200, y=150,   color=BLUE)
+def assign_units_to_teams(living_units):
+    teams = {}
+    for unit in living_units:
+        color = unit.color
+        if color not in teams:
+            teams[color] = []  # Create an empty list for the color if it doesn't exist
+        teams[color].append(unit)
+    return teams
 
-living_units = [
-    knight,
-    musketeer,
-    cannon,
-    shield,
-    medic,
-    commander,
-    pikeman,
-    supply_cart,
-    unit1,
-    unit2,
-    observer
-]
 
+living_units = []
+ 
+musketeer = create_unit((Musketeer, 200, 200, BLUE), living_units)
+cannon = create_unit((Cannon, 300, 300, RED), living_units)
+shield = create_unit((Shield, 400, 400, RED), living_units)
+medic = create_unit((Medic, 500, 400, BLUE), living_units)
+commander = create_unit((Commander, 600, 100, BLUE), living_units)
+commander = create_unit((Commander, 500, 100, RED), living_units)
+pikeman = create_unit((Pikeman, 700, 100, RED), living_units)
+supply_cart = create_unit((SupplyCart, 800, 400, BLUE), living_units)
+observer = create_unit((Observer, 200, 150, BLUE), living_units)
+teams = assign_units_to_teams(living_units)
+red_team_units = teams[RED]
+blue_team_units = teams[BLUE]
+print(teams)
 screen.fill(GREEN)
 lets_continue = True
 fps = 60
 clock = pygame.time.Clock()  # will tick eveery second
 
+def check_game_ended(teams):
+    for team_units in teams.values():
+        print(team_units)
+        has_commander = any(isinstance(unit, Commander) for unit in team_units)
+        print(has_commander)
+        if not has_commander:
+            return True
+    return False
+
 def next_turn():
     global living_units
     # Your next turn logic here
+    is_win =  check_game_ended(teams)
+    print("game won?", is_win)
     for unit in living_units:
         if isinstance(unit, Medic):
             unit.reset_for_next_turn(living_units)

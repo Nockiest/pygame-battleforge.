@@ -10,3 +10,14 @@ def sum_values(obj):
     for value in obj.values():
         total_sum += value
     return total_sum
+
+def create_unit( unit_params,   living_units):
+    # Create the unit object
+    unit_class, x, y,   color, = unit_params
+    unit = unit_class(x=x, y=y,  color=color)
+ 
+    living_units.append(unit)
+    # Update the teams dictionary to store the unit in the corresponding color's list
+    
+
+    return unit

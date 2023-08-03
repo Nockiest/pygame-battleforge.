@@ -115,6 +115,7 @@ class Observer(Support):
     def __init__(self, x, y,  color):
         super().__init__(hp=1, attack_range=0, base_actions=1,  base_movement=50,
                          icon="spyglass.png", size=20, x=x, y=y,  color=color)
+        
 class Shield(Support):
     def __init__(self, x, y, color):
         super().__init__(hp=5, attack_range=0,base_actions=1, base_movement=30,
