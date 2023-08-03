@@ -1,7 +1,9 @@
 import pygame
 from config import WIDTH, HEIGHT, colors_tuple
+from utils import *
 import math
 import random
+
 
 GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
@@ -22,6 +24,7 @@ class Unit:
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range
+        self.attack_range_modifiers =  1
         self.remain_actions = base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
@@ -71,7 +74,7 @@ class Unit:
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
 
     def draw_as_active(self, screen):
-        # print(self.x, self.y, self.start_turn_position)
+       
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
         pygame.draw.rect(screen, BLACK, outline_rect)
@@ -79,13 +82,17 @@ class Unit:
             screen, YELLOW, self.start_turn_position, self.base_movement, 1)
 
     def render_attack_circle(self, screen):
-
+        
+         
         pygame.draw.circle(screen, RED, (self.x + self.size //
-                           2, self.y + self.size//2), self.attack_range, 1)
-
+                           2, self.y + self.size//2), self.attack_range*self.attack_range_modifiers, 1)
+   
     def attack_square(self, click_pos):
         self.attack_cross_position = click_pos
         self.attack_cross_time = pygame.time.get_ticks()
+        self.remain_actions -= 1
+        if self.ammo != None:
+            self.ammo -= 1
 
     def render_attack_cross(self, screen):
         if hasattr(self, 'attack_cross_position') and hasattr(self, 'attack_cross_time'):
@@ -112,20 +119,10 @@ class Unit:
             for unit in living_units:
                 if unit.rect.collidepoint(click_pos):
                     if unit.color == self.color:
-                        return ("YOU CANT DO FRIENDLY FIRE",click_pos)
+                        return ("YOU CANT DO FRIENDLY FIRE", click_pos)
                         break
-                    self.remain_actions -= 1
-                    if self.ammo != None:
-                     self.ammo -= 1
-                   
-                    self.attack_square(click_pos)
-                    hit_result = unit.check_if_hit(0.8)  # 80% hit chance
-                    if hit_result:
-                        unit.take_damage(living_units)
-                       
-                           
-                    print(f"{self} hit {unit}?", hit_result)
-                    return ("UNIT ATTACKS", click_pos)
+
+                    return ("UNIT ATTACKS", click_pos, unit)
 
         return ("Attack not possible", click_pos)
 
@@ -138,18 +135,16 @@ class Unit:
 
         # Calculate the actual hit chance considering the base_hit_chance and random factor
 
-        print(final_hit_probability,  hit_treshold_value)
+        print(final_hit_probability,  hit_treshold_value, "comparing")
         # Check if the unit is hit based on the actual hit chance
         if final_hit_probability >= hit_treshold_value:
             return True  # Unit is hit
         else:
             return False  # Unit is not hi
 
-    def take_damage(self, living_units):
+    def take_damage(self):
         self.hp -= 1
-         
-        if self.hp <= 0:
-            self.remove_from_game(living_units)
+        return self.hp
 
     def capture(self, target_building):
         pass
@@ -171,7 +166,7 @@ class Unit:
             self.x + self.size//2, self.y + self.size//2)
 
         self.remain_actions = 1
-        
+
         self.able_to_move = True
         self.remain_actions = self.base_actions
 

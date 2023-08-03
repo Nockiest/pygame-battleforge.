@@ -4,3 +4,9 @@ def  get_two_units_center_distance(unit1, unit2):
         dy = (unit1.y + unit1.size // 2) - (unit2.y + unit2.size // 2)
         distance = (dx ** 2 + dy ** 2) ** 0.5
         return distance
+
+def sum_values(obj):
+    total_sum = 0
+    for value in obj.values():
+        total_sum += value
+    return total_sum
