@@ -43,14 +43,11 @@ class Unit:
 
     def move_in_game_field(self, click_pos, living_units):
         # Calculate the distance between the new position and the starting position in both x and y directions
-        last_x = self.x
-        last_y = self.y
         delta_x = click_pos[0] - self.start_turn_position[0]
         delta_y = click_pos[1] - self.start_turn_position[1]
 
         # Calculate the distance from the starting position to the new position
         distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
-        
            
         if distance > self.base_movement:
             # Calculate the new position based on the line connecting the two points
@@ -99,9 +96,9 @@ class Unit:
         new_rect = pygame.Rect( new_x, new_y, self.size, self.size)
         for unit in living_units:
             # Skip units of the same color, units that cannot be moved, and the unit itself      
-            res =self.check_for_direct_overlap(  unit,living_units,new_rect)
-            if res != "doesnt_interfere":           
-                return "overlap"
+            # res =self.check_for_direct_overlap(  unit,living_units,new_rect)
+            # if res != "doesnt_interfere":           
+            #     return "overlap"
             
             if unit.color == self.color or unit is self:
                 continue
@@ -109,7 +106,7 @@ class Unit:
             point_x, point_y, line_points = check_square_line_interference(
                 unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
             # print( point_x, point_y)
-            print( point_x  , point_y   )
+            # print( point_x  , point_y, line_points   )
             if  point_x != None and point_y  != None:
                 # print( unit, self.start_turn_position[0], self.start_turn_position[1], self.x, self.y)
                  # Check if the distance exceeds the limit of base_movement + size/2

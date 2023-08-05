@@ -71,7 +71,7 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
     
     point_x = None
     point_y= None
-    line_points = None
+    
     return (point_x, point_y, line_points)
         
 def move_unit_along_line(line_points, interersecting_point, unit    ):

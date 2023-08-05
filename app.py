@@ -32,15 +32,15 @@ def assign_units_to_teams(living_units):
 
 living_units = []
  
-musketeer = create_unit((Musketeer, 200, 200, BLUE), living_units)
-cannon = create_unit((Cannon, 300, 300, RED), living_units)
-shield = create_unit((Shield, 400, 400, RED), living_units)
-medic = create_unit((Medic, 500, 400, BLUE), living_units)
+# musketeer = create_unit((Musketeer, 200, 200, BLUE), living_units)
+# cannon = create_unit((Cannon, 300, 300, RED), living_units)
+# shield = create_unit((Shield, 400, 400, RED), living_units)
+# medic = create_unit((Medic, 500, 400, BLUE), living_units)
 commander = create_unit((Commander, 600, 100, BLUE), living_units)
 commander = create_unit((Commander, 500, 100, RED), living_units)
-pikeman = create_unit((Pikeman, 700, 100, RED), living_units)
-supply_cart = create_unit((SupplyCart, 800, 400, BLUE), living_units)
-observer = create_unit((Observer, 200, 150, BLUE), living_units)
+# pikeman = create_unit((Pikeman, 700, 100, RED), living_units)
+# supply_cart = create_unit((SupplyCart, 800, 400, BLUE), living_units)
+# observer = create_unit((Observer, 200, 150, BLUE), living_units)
 teams = assign_units_to_teams(living_units)
 red_team_units = teams[RED]
 blue_team_units = teams[BLUE]
