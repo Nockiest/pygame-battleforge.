@@ -1,5 +1,5 @@
 import pygame
-from config import WIDTH, HEIGHT, colors_tuple
+from config import *
 from utils import *
 import math
 import random
@@ -73,7 +73,7 @@ class Unit:
             return
         else:
             self.x = max(0, min(new_x, WIDTH - self.size))
-            self.y = max(0, min(new_y, HEIGHT - self.size))     
+            self.y = max(0, min(new_y, HEIGHT - BUTTON_BAR_HEIGHT - self.size))     
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
   
     def check_for_direct_overlap(self, living_units,new_rect):

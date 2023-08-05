@@ -3,7 +3,7 @@ import pygame
 WIDTH = 1000
 HEIGHT = 500
 MAIN_FONT_URL = "fonts/Kanit-Regular.ttf"
- 
+BUTTON_BAR_HEIGHT = 50
 
 
 GREEN = (20, 200, 50)

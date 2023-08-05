@@ -1,10 +1,10 @@
 import pygame
-from config import colors_tuple, WIDTH, HEIGHT, MAIN_FONT_URL
+from config import *
 from unit import Unit
 from button import Button
 from unit_classes import *
 from utils import *
-
+from buy_bar import *
 pygame.init()
 
 # Vytvoření obrazovky
@@ -14,12 +14,12 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
 
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
-my_font_text = my_font.render("Canon", False, BLACK, None)
-my_font_text_rect = my_font_text.get_rect()
-my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
  
 selected_unit = None
 render_units_attack_screen = False
+unit_placement_mode = None
+
+
 def assign_units_to_teams(living_units):
     teams = {}
     for unit in living_units:
@@ -32,23 +32,27 @@ def assign_units_to_teams(living_units):
 
 living_units = []
  
-# musketeer = create_unit((Musketeer, 200, 200, BLUE), living_units)
-# cannon = create_unit((Cannon, 300, 300, RED), living_units)
-# shield = create_unit((Shield, 400, 400, RED), living_units)
-# medic = create_unit((Medic, 500, 400, BLUE), living_units)
+musketeer = create_unit((Musketeer, 200, 200, BLUE), living_units)
+cannon = create_unit((Canon, 300, 300, RED), living_units)
+shield = create_unit((Shield, 400, 300, RED), living_units)
+medic = create_unit((Medic, 500, 400, BLUE), living_units)
 commander = create_unit((Commander, 600, 100, BLUE), living_units)
 commander = create_unit((Commander, 500, 100, RED), living_units)
-# pikeman = create_unit((Pikeman, 700, 100, RED), living_units)
-# supply_cart = create_unit((SupplyCart, 800, 400, BLUE), living_units)
-# observer = create_unit((Observer, 200, 150, BLUE), living_units)
+pikeman = create_unit((Pikeman, 700, 100, RED), living_units)
+supply_cart = create_unit((SupplyCart, 800, 300, BLUE), living_units)
+observer = create_unit((Observer, 200, 150, BLUE), living_units)
 teams = assign_units_to_teams(living_units)
 red_team_units = teams[RED]
 blue_team_units = teams[BLUE]
-print(teams)
+buy_bar_x = 50
+buy_bar_y = HEIGHT - 100
+buy_button_spacing = 20
 screen.fill(GREEN)
 lets_continue = True
 fps = 60
 clock = pygame.time.Clock()  # will tick eveery second
+ 
+
 
 def check_game_ended(teams):
     for team_units in teams.values():
@@ -123,7 +127,7 @@ def process_attack(attacker, attacked_pos):
             remaining_hp = attacked_enemy.take_damage()
             if remaining_hp <= 0:
                 attacked_enemy.remove_from_game(living_units)
-                if isinstance(unit, Commander):
+                if isinstance(attacked_enemy, Commander):
                     attacked_enemy.lose_game()
 
         disable_unit_for_turn()
@@ -140,6 +144,7 @@ def check_in_observers_range():
                     selected_unit, observer_unit)
                 if distance <= 75:
                     selected_unit.attack_range_modifiers += 0.5  # Add "in_observer_range" modifier
+button_bar = ButtonBar(WIDTH, buy_buttons)
 
 while lets_continue:
     # check for events
@@ -148,8 +153,27 @@ while lets_continue:
             print(event)
             lets_continue = False
 
+     
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            select_unit()
+            # Check if any button in the button bar is clicked
+            clicked_button = button_bar.get_clicked_button(event.pos)
+            if clicked_button and not selected_unit:
+                # Handle the click event on the button
+                print(f"Clicked {clicked_button.unit_type} button.")
+                unit_placement_mode = clicked_button.unit_type
+                print(unit_placement_mode )
+            elif unit_placement_mode:
+                print("bought", unit_placement_mode)
+                unit_type_class = globals().get(unit_placement_mode)
+                if unit_type_class:
+                    # Call the create_unit function with the class name
+                    create_unit((unit_type_class, event.pos[0], event.pos[1], RED), living_units)
+                else:
+                    print(f"Error: Unit type {unit_placement_mode} not found.")
+                unit_placement_mode = None
+            
+            else: 
+                select_unit()
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
             if render_units_attack_screen:
@@ -196,6 +220,9 @@ while lets_continue:
         
         unit.render_on_screen(screen)
     next_turn_button.draw(screen)
+    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT)
+    
+
     clock.tick(fps)
 
 # Ukončení pygame

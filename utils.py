@@ -1,3 +1,7 @@
+import math
+
+ 
+
 def  get_two_units_center_distance(unit1, unit2):
         # Calculate the distance between the center points of the units, considering their sizes
         dx = (unit1.x + unit1.size // 2) - (unit2.x + unit2.size // 2)
@@ -21,8 +25,6 @@ def create_unit( unit_params,   living_units):
     
 
     return unit
-import math
-
  
 def bresenham_line(x0, y0, x1, y1, max_iterations=1000):
     points = []

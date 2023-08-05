@@ -50,3 +50,8 @@
 # # set the pos relative to top left corner # the center centers the image around the point # midtop midbottom left x y bottom up ...
 # canon_img_rect.center = (300, 300)
 # screen.blit(canon_img, canon_img_rect)
+
+# my_font_text = my_font.render("Canon", False, BLACK, None)
+# my_font_text_rect = my_font_text.get_rect()
+# my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
+ 
