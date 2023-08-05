@@ -62,9 +62,9 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
     # Generate all the points on the line segment using Bresenham's algorithm
     line_points = bresenham_line(line_start_x, line_start_y, line_end_x, line_end_y)
     # print(line_points)
-    for point_x, point_y in line_points:
-        distance_to_square_center = math.sqrt((point_x - square_center_x) ** 2 + (point_y - square_center_y) ** 2)
-        
+    for point_y, point_x in line_points:
+        # distance_to_square_center = math.sqrt((point_x - square_center_x) ** 2 + (point_y - square_center_y) ** 2)
+        # print(attacked_unit.rect, point_x,point_y, attacked_unit.rect.collidepoint((point_x, point_y)))
         if attacked_unit.rect.collidepoint((point_x, point_y)):
             # print(f"Interfering point: ({point_x}, {point_y})")
             return (point_x, point_y, line_points)
@@ -72,10 +72,10 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
     point_x = None
     point_y= None
     
-    return (point_x, point_y, line_points)
+    return (point_y, point_x, line_points)
         
 def move_unit_along_line(line_points, interersecting_point, unit    ):
-    print(line_points, interersecting_point, unit)
+    # print(line_points, interersecting_point, unit)
 
     # Find the index of the intersecting point in the line_points list
     intersecting_index = line_points.index(interersecting_point)
@@ -86,10 +86,10 @@ def move_unit_along_line(line_points, interersecting_point, unit    ):
     print(new_index)
     # Update the unit's x and y coordinates with the coordinates from the new index
     new_center_x, new_center_y = line_points[new_index]
-    unit.x = new_center_x - unit.size // 2
-    unit.y = new_center_y - unit.size // 2
+    new_x = new_center_x - unit.size // 2
+    new_y = new_center_y - unit.size // 2
     print( new_center_x, new_center_y )
-    return  new_center_x, new_center_y 
+    return  new_x, new_y 
 
 
 # # Example usage:

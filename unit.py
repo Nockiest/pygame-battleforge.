@@ -61,14 +61,24 @@ class Unit:
             # The movement is within the allowed range, so set the position directly
             new_x = click_pos[0] - self.size // 2
             new_y = click_pos[1] - self.size // 2
+
+        new_rect =  pygame.Rect(new_x, new_y, self.size, self.size)
+        res = self.check_for_direct_overlap(living_units,new_rect)
+        if res:
+            return print("unit overlaps")
+
+
         res = self.control_interference(living_units,new_x,new_y)
-        print(res)
-        if res == "overlap":
-            print("aborting")
-            return
-        elif isinstance(res, tuple):
-            self.x = res[0]
-            self.y = res[1]
+        # print(res)
+        # if res == "overlap":
+        #     print("aborting")
+        #     return
+        # if res == "augmented unit":
+        #     print("already augmented")
+        #     return
+        # elif isinstance(res, tuple):
+        #     self.x = res[0]
+        #     self.y = res[1]
         
         # Ensure that the unit stays within the game window boundaries
         self.x = max(0, min(new_x, WIDTH - self.size))
@@ -76,7 +86,7 @@ class Unit:
         
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
   
-    def check_for_direct_overlap(self, unit,living_units,new_rect):
+    def check_for_direct_overlap(self, living_units,new_rect):
         for unit in living_units:
         # Skip units of the same color, units that cannot be moved, and the unit itself      
             if unit is self:
@@ -87,31 +97,25 @@ class Unit:
                 return "collision_with_team_member"
             elif res and unit.color != self.color:
                 return "collision_with_enemy"
-        return "doesnt_interfere"
+        return False
 
 
     def control_interference(self, living_units,new_x,new_y):
+        
         center_x = new_y + self.size // 2
         center_y = new_x + self.size // 2
         new_rect = pygame.Rect( new_x, new_y, self.size, self.size)
-        for unit in living_units:
-            # Skip units of the same color, units that cannot be moved, and the unit itself      
-            # res =self.check_for_direct_overlap(  unit,living_units,new_rect)
-            # if res != "doesnt_interfere":           
-            #     return "overlap"
-            
+        for unit in living_units:           
             if unit.color == self.color or unit is self:
                 continue
-
             point_x, point_y, line_points = check_square_line_interference(
                 unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
-            # print( point_x, point_y)
+  
             # print( point_x  , point_y, line_points   )
             if  point_x != None and point_y  != None:
-                # print( unit, self.start_turn_position[0], self.start_turn_position[1], self.x, self.y)
-                 # Check if the distance exceeds the limit of base_movement + size/2
-                new_x, new_y =  move_unit_along_line(line_points, ( point_x, point_y), self)
-                return (new_x, new_y)
+                print(unit.rect, point_x, point_y, new_x,new_y, line_points)
+                x,y =move_unit_along_line(line_points, ( point_x, point_y), self)
+                return x,y
         return None
 
          
