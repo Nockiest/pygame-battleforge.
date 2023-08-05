@@ -24,7 +24,7 @@ class Unit:
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range
-        self.attack_range_modifiers =  1
+        self.attack_range_modifiers = 1
         self.remain_actions = base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
@@ -41,17 +41,17 @@ class Unit:
         self.able_to_move = self.remain_actions > 0
         self.color = color
 
-    def move_in_game_field(self, click_pos):
+    def move_in_game_field(self, click_pos, living_units):
         # Calculate the distance between the new position and the starting position in both x and y directions
 
         delta_x = click_pos[0] - self.start_turn_position[0]
         delta_y = click_pos[1] - self.start_turn_position[1]
-        print(click_pos, self.start_turn_position, delta_x, delta_y)
+
         # Calculate the distance from the starting position to the new position
         distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
-        print(distance, self.base_movement + self.size //
-              2, self.base_movement, self.size // 2)
-        # Check if the distance exceeds the limit of base_movement + size/2
+
+      
+           
         if distance > self.base_movement:
             # Calculate the new position based on the line connecting the two points
             scale_factor = (self.base_movement) / distance
@@ -59,34 +59,64 @@ class Unit:
                 self.start_turn_position[0] + delta_x * scale_factor - self.size // 2)
             new_y = int(
                 self.start_turn_position[1] + delta_y * scale_factor - self.size // 2)
-            print(new_x, "new x", new_y, "new_y")
+
         else:
             # The movement is within the allowed range, so set the position directly
             new_x = click_pos[0] - self.size // 2
             new_y = click_pos[1] - self.size // 2
-
-            print(new_x, "new x", new_y, "new_y as centered_click_pos")
-
+       
+       
+        
+    
+    
+            
         # Ensure that the unit stays within the game window boundaries
         self.x = max(0, min(new_x, WIDTH - self.size))
         self.y = max(0, min(new_y, HEIGHT - self.size))
-
+        self.control_interference(living_units)
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
 
+    def control_interference(self, living_units):
+        center_x = self.x + self.size // 2
+        center_y = self.y + self.size // 2
+
+        for unit in living_units:
+            # Skip units of the same color, units that cannot be moved, and the unit itself      
+            if unit.color == self.color or unit is self:
+                continue
+            # print(unit.x,unit.y)
+            point_x, point_y, line_points = check_square_line_interference(
+                unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
+            print( point_x, point_y)
+            if  point_x != None and point_y  != None:
+                # print( unit, self.start_turn_position[0], self.start_turn_position[1], self.x, self.y)
+                 # Check if the distance exceeds the limit of base_movement + size/2
+                new_x, new_y =  move_unit_along_line(line_points, ( point_x, point_y), self)
+
+            # Ensure that the unit stays within the game window boundaries
+            # self.x = max(0, min(self.x, WIDTH - self.size))
+            # self.y = max(0, min(self.y, HEIGHT - self.size))
+
+            # self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+            # break  # We only need to handle one interfering unit
     def draw_as_active(self, screen):
-       
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
         pygame.draw.rect(screen, BLACK, outline_rect)
         pygame.draw.circle(
             screen, YELLOW, self.start_turn_position, self.base_movement, 1)
 
+        # Draw a line from self.start_turn_position to the center of the unit in red
+        center_x = self.x + self.size // 2
+        center_y = self.y + self.size // 2
+        pygame.draw.line(screen, BLACK, self.start_turn_position,
+                         (center_x, center_y), 2)
+
     def render_attack_circle(self, screen):
-        
-         
+
         pygame.draw.circle(screen, RED, (self.x + self.size //
                            2, self.y + self.size//2), self.attack_range*self.attack_range_modifiers, 1)
-   
+
     def attack_square(self, click_pos):
         self.attack_cross_position = click_pos
         self.attack_cross_time = pygame.time.get_ticks()

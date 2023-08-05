@@ -169,7 +169,8 @@ while lets_continue:
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
             if selected_unit:
-                selected_unit.move_in_game_field(event.pos)
+                selected_unit.move_in_game_field(event.pos,living_units)
+          
 
     pygame.display.update()
 
@@ -191,7 +192,8 @@ while lets_continue:
         selected_unit.attack_range_modifiers = 1    
      
      
-    for unit in living_units:
+    for unit in living_units :
+        
         unit.render_on_screen(screen)
     next_turn_button.draw(screen)
     clock.tick(fps)
