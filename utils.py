@@ -74,13 +74,14 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
     line_points = None
     return (point_x, point_y, line_points)
         
-def move_unit_along_line(line_points, interersecting_point, unit):
+def move_unit_along_line(line_points, interersecting_point, unit    ):
     print(line_points, interersecting_point, unit)
 
     # Find the index of the intersecting point in the line_points list
     intersecting_index = line_points.index(interersecting_point)
     print(intersecting_index)
     # Calculate the new index after subtracting unit.size // 2
+  
     new_index = max(0, intersecting_index - unit.size // 2)
     print(new_index)
     # Update the unit's x and y coordinates with the coordinates from the new index

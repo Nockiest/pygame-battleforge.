@@ -43,14 +43,14 @@ class Unit:
 
     def move_in_game_field(self, click_pos, living_units):
         # Calculate the distance between the new position and the starting position in both x and y directions
-
+        last_x = self.x
+        last_y = self.y
         delta_x = click_pos[0] - self.start_turn_position[0]
         delta_y = click_pos[1] - self.start_turn_position[1]
 
         # Calculate the distance from the starting position to the new position
         distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
-
-      
+        
            
         if distance > self.base_movement:
             # Calculate the new position based on the line connecting the two points
@@ -64,41 +64,60 @@ class Unit:
             # The movement is within the allowed range, so set the position directly
             new_x = click_pos[0] - self.size // 2
             new_y = click_pos[1] - self.size // 2
-       
-       
+        res = self.control_interference(living_units,new_x,new_y)
+        print(res)
+        if res == "overlap":
+            print("aborting")
+            return
+        elif isinstance(res, tuple):
+            self.x = res[0]
+            self.y = res[1]
         
-    
-    
-            
         # Ensure that the unit stays within the game window boundaries
         self.x = max(0, min(new_x, WIDTH - self.size))
         self.y = max(0, min(new_y, HEIGHT - self.size))
-        self.control_interference(living_units)
+        
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+  
+    def check_for_direct_overlap(self, unit,living_units,new_rect):
+        for unit in living_units:
+        # Skip units of the same color, units that cannot be moved, and the unit itself      
+            if unit is self:
+                continue
+            
+            res = unit.rect.colliderect(new_rect)
+            if res and unit.color == self.color:
+                return "collision_with_team_member"
+            elif res and unit.color != self.color:
+                return "collision_with_enemy"
+        return "doesnt_interfere"
 
-    def control_interference(self, living_units):
-        center_x = self.x + self.size // 2
-        center_y = self.y + self.size // 2
 
+    def control_interference(self, living_units,new_x,new_y):
+        center_x = new_y + self.size // 2
+        center_y = new_x + self.size // 2
+        new_rect = pygame.Rect( new_x, new_y, self.size, self.size)
         for unit in living_units:
             # Skip units of the same color, units that cannot be moved, and the unit itself      
+            res =self.check_for_direct_overlap(  unit,living_units,new_rect)
+            if res != "doesnt_interfere":           
+                return "overlap"
+            
             if unit.color == self.color or unit is self:
                 continue
-            # print(unit.x,unit.y)
+
             point_x, point_y, line_points = check_square_line_interference(
                 unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
-            print( point_x, point_y)
+            # print( point_x, point_y)
+            print( point_x  , point_y   )
             if  point_x != None and point_y  != None:
                 # print( unit, self.start_turn_position[0], self.start_turn_position[1], self.x, self.y)
                  # Check if the distance exceeds the limit of base_movement + size/2
                 new_x, new_y =  move_unit_along_line(line_points, ( point_x, point_y), self)
+                return (new_x, new_y)
+        return None
 
-            # Ensure that the unit stays within the game window boundaries
-            # self.x = max(0, min(self.x, WIDTH - self.size))
-            # self.y = max(0, min(self.y, HEIGHT - self.size))
-
-            # self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-            # break  # We only need to handle one interfering unit
+         
     def draw_as_active(self, screen):
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
