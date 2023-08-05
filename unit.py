@@ -66,25 +66,15 @@ class Unit:
         res = self.check_for_direct_overlap(living_units,new_rect)
         if res:
             return print("unit overlaps")
-
-
         res = self.control_interference(living_units,new_x,new_y)
-        # print(res)
-        # if res == "overlap":
-        #     print("aborting")
-        #     return
-        # if res == "augmented unit":
-        #     print("already augmented")
-        #     return
-        # elif isinstance(res, tuple):
-        #     self.x = res[0]
-        #     self.y = res[1]
-        
-        # Ensure that the unit stays within the game window boundaries
-        self.x = max(0, min(new_x, WIDTH - self.size))
-        self.y = max(0, min(new_y, HEIGHT - self.size))
-        
-        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        if res == "corrected":
+            print("corrected")
+            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+            return
+        else:
+            self.x = max(0, min(new_x, WIDTH - self.size))
+            self.y = max(0, min(new_y, HEIGHT - self.size))     
+            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
   
     def check_for_direct_overlap(self, living_units,new_rect):
         for unit in living_units:
@@ -102,20 +92,21 @@ class Unit:
 
     def control_interference(self, living_units,new_x,new_y):
         
-        center_x = new_y + self.size // 2
-        center_y = new_x + self.size // 2
-        new_rect = pygame.Rect( new_x, new_y, self.size, self.size)
+        center_x = new_x + self.size // 2
+        center_y = new_y + self.size // 2
+        # print(center_x,center_y,new_x,new_y)
         for unit in living_units:           
             if unit.color == self.color or unit is self:
                 continue
+
             point_x, point_y, line_points = check_square_line_interference(
                 unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
   
             # print( point_x  , point_y, line_points   )
             if  point_x != None and point_y  != None:
-                print(unit.rect, point_x, point_y, new_x,new_y, line_points)
-                x,y =move_unit_along_line(line_points, ( point_x, point_y), self)
-                return x,y
+                
+                move_unit_along_line(line_points, (point_x, point_y), self)
+                return "corrected"
         return None
 
          
