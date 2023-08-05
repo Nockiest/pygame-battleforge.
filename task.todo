@@ -1,9 +1,12 @@
 vytvořit bojovou jednotku   
     přidat koupení jednotky
-        zjistit jaké tlačítko bylo kliknuto
-        přidat k němu popisek
+       
         přidat aby mi ke kurzoru přilepilo novou jednotku
-        nasadit jednotku do hry
+        měnit barvu lišty podle aktuálního hráče
+        přidat náklady
+        nepovolit povolnené jednotce se pohybovat
+        dát ikonám trochu padding
+        zprovoznit hover function
  
     přidat movement soundfile
  

@@ -18,7 +18,12 @@ my_font = pygame.font.Font(MAIN_FONT_URL, 15)
 selected_unit = None
 render_units_attack_screen = False
 unit_placement_mode = None
+cur_player = RED
 
+def switch_player():
+    global cur_player
+    cur_player = BLUE if cur_player == RED else RED
+    print(cur_player)
 
 def assign_units_to_teams(living_units):
     teams = {}
@@ -32,15 +37,15 @@ def assign_units_to_teams(living_units):
 
 living_units = []
  
-musketeer = create_unit((Musketeer, 200, 200, BLUE), living_units)
-cannon = create_unit((Canon, 300, 300, RED), living_units)
-shield = create_unit((Shield, 400, 300, RED), living_units)
-medic = create_unit((Medic, 500, 400, BLUE), living_units)
-commander = create_unit((Commander, 600, 100, BLUE), living_units)
-commander = create_unit((Commander, 500, 100, RED), living_units)
-pikeman = create_unit((Pikeman, 700, 100, RED), living_units)
-supply_cart = create_unit((SupplyCart, 800, 300, BLUE), living_units)
-observer = create_unit((Observer, 200, 150, BLUE), living_units)
+create_unit((Musketeer, 200, 200, BLUE), living_units)
+create_unit((Canon, 300, 300, RED), living_units)
+create_unit((Shield, 400, 300, RED), living_units)
+create_unit((Medic, 500, 400, BLUE), living_units)
+create_unit((Commander, 600, 100, BLUE), living_units)
+create_unit((Commander, 500, 100, RED), living_units)
+create_unit((Pikeman, 700, 100, RED), living_units)
+create_unit((SupplyCart, 800, 300, BLUE), living_units)
+create_unit((Observer, 200, 150, BLUE), living_units)
 teams = assign_units_to_teams(living_units)
 red_team_units = teams[RED]
 blue_team_units = teams[BLUE]
@@ -65,6 +70,9 @@ def check_game_ended(teams):
 
 def next_turn():
     global living_units
+    global teams
+    global red_team_units
+    global blue_team_units
     # Your next turn logic here
     is_win =  check_game_ended(teams)
     print("game won?", is_win)
@@ -76,8 +84,13 @@ def next_turn():
         else:
             unit.reset_for_next_turn()
     print("Next Turn")
+    switch_player()
+    teams = assign_units_to_teams(living_units)
+    red_team_units = teams[RED]
+    blue_team_units = teams[BLUE]
 
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
+ 
 
 def disable_unit_for_turn():
     global render_units_attack_screen  # Add this line to access the global variable
@@ -131,7 +144,7 @@ def process_attack(attacker, attacked_pos):
                     attacked_enemy.lose_game()
 
         disable_unit_for_turn()
-
+    print(attack_result)
     if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
         deselct_unit()
 
@@ -161,13 +174,14 @@ while lets_continue:
                 # Handle the click event on the button
                 print(f"Clicked {clicked_button.unit_type} button.")
                 unit_placement_mode = clicked_button.unit_type
-                print(unit_placement_mode )
+                
             elif unit_placement_mode:
                 print("bought", unit_placement_mode)
                 unit_type_class = globals().get(unit_placement_mode)
                 if unit_type_class:
                     # Call the create_unit function with the class name
-                    create_unit((unit_type_class, event.pos[0], event.pos[1], RED), living_units)
+                    create_unit((unit_type_class, event.pos[0], event.pos[1], cur_player), living_units)
+                    print(unit_placement_mode, living_units )
                 else:
                     print(f"Error: Unit type {unit_placement_mode} not found.")
                 unit_placement_mode = None

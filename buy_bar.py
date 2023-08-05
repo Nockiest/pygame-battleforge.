@@ -10,11 +10,16 @@ class BuyButton:
         self.icon = icon
         self.unit_type = unit_type
         self.description = description
-        self.button_width = icon.get_width() + 10
-        self.button_height = icon.get_height() + 10
+        self.button_width = 50
+        self.button_height = 50
         self.button_surface = pygame.Surface((self.button_width, self.button_height))
         self.button_surface.fill((255, 255, 255))  # Fill with white color
-        self.button_surface.blit(icon, (5, 5))  # Blit the icon on top of the white background
+
+        # Center the icon horizontally and vertically within the button
+        icon_x = (self.button_width - icon.get_width()) // 2
+        icon_y = (self.button_height - icon.get_height()) // 2
+        self.button_surface.blit(icon, (icon_x, icon_y))
+
         self.hovered = False  # Track whether the button is currently being hovered over
 
     def draw(self, screen, x, y):
@@ -26,7 +31,14 @@ class BuyButton:
             screen.blit(dark_surface, (x, y))
         screen.blit(self.button_surface, (x, y))
 
+        # Create a surface for the description text
+        font = pygame.font.Font(None, 20)  # You can adjust the font size as needed
+        text_surface = font.render(self.description, True, (0, 0, 0))  # Black color for the text
 
+        # Center the description text horizontally within the button
+        text_x = x + (self.button_width - text_surface.get_width()) // 2
+        text_y = y + self.button_height + 5  # Place the text below the button
+        screen.blit(text_surface, (text_x, text_y))
     def set_position(self, x, y):
         # Set the position of the button within the game window
         self.position = (x, y)
