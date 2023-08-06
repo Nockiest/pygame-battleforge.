@@ -6,7 +6,7 @@ def buy_unit(unit_type):
     print(f"Bought {unit_type}!")
 
 class BuyButton:
-    def __init__(self, icon, unit_type, description):
+    def __init__(self, icon, unit_type, description ):
          
         self.icon = icon
         self.unit_type = unit_type
@@ -26,11 +26,11 @@ class BuyButton:
         self.hovered = False  # Track whether the button is currently being hovered over
 
 
-    def draw(self, screen, x, y):
+    def draw(self, screen, x, y ):
         if self.hovered:
             # Darken the button when hovered
             dark_surface = pygame.Surface((self.button_width, self.button_height))
-            dark_surface.fill((100, 100, 100))  # Dark gray color
+            dark_surface.fill(0,0,50)  # Dark gray color
             dark_surface.set_alpha(100)  # Set transparency to achieve the hover effect
             screen.blit(dark_surface, (x, y))
         screen.blit(self.button_surface, (x, y))
@@ -62,10 +62,14 @@ class ButtonBar:
         self.button_spacing = (screen_width - sum(button.button_width for button in buttons)) // (len(buttons) + 1)
         self.background_color = (192, 192, 192)  # Gray color
 
-    def draw(self, screen, y):
+    def draw(self, screen, y, current_player_color):
         # Draw the background rectangle for the button bar
         button_bar_rect = pygame.Rect(0, y, self.screen_width, BUTTON_BAR_HEIGHT)
         pygame.draw.rect(screen, self.background_color, button_bar_rect)
+
+        # Draw the narrow strip with the current player's color at the bottom
+        current_player_strip_rect = pygame.Rect(0, y + BUTTON_BAR_HEIGHT - 10, self.screen_width, 10)
+        pygame.draw.rect(screen, current_player_color, current_player_strip_rect)
 
         x = self.button_spacing
         for button in self.buttons:
@@ -75,7 +79,6 @@ class ButtonBar:
 
     def get_clicked_button(self, mouse_pos):
         for button in self.buttons:
-            
             if button.is_clicked(mouse_pos):
                 return button
         return None

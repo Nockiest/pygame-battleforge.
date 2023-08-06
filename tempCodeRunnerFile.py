@@ -1,1 +1,1 @@
-config
+        print("XX")

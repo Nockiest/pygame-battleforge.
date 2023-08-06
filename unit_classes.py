@@ -69,7 +69,7 @@ class Commander(Ranged):
 class Medic(Support):
     def __init__(self, x, y, color):
         super().__init__(hp=1, attack_range=100,base_actions=1, base_movement=75,
-                         size=20, x=x, y=y,  icon="medic.png",   color=color, cost=500)
+                         size=20, x=x, y=y,  icon="medic.png",   color=color, cost=50)
 
    
     def reset_for_next_turn(self, living_units):
@@ -88,8 +88,8 @@ class Medic(Support):
  
 class SupplyCart(Support):
     def __init__(self,   x, y,  color):
-        super().__init__(hp=1, attack_range=0, base_actions=1, base_movement=150,
-                         size=30, x=x, y=y,   icon="supply.png",   color=color, cost=500)
+        super().__init__(hp=1, attack_range=50, base_actions=1, base_movement=150,
+                         size=30, x=x, y=y, icon="supply.png", color=color, cost=500)
         self.supply = 50
 
     # Additional methods or overrides for the Supply Cart class

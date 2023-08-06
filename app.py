@@ -111,16 +111,15 @@ def select_unit():
     global selected_unit
     global render_units_attack_screen
     global cur_player
-
-    if next_turn_button.is_clicked(event.pos):
-        next_turn_button.callback()  # Call the callback function when the button is clicked
+    global players
+   
         # Check if any living unit has been clicked
     for unit in living_units:
 
         if not unit.able_to_move:
             continue
-        print(unit.color, cur_player)
-        if unit.color != cur_player:
+        print(unit.color, players[cur_player].color,unit.rect.collidepoint(event.pos),unit.rect, event.pos )
+        if unit.color != players[cur_player].color:
             continue
         if unit.rect.collidepoint(event.pos):
 
@@ -224,7 +223,10 @@ while lets_continue:
                 buy_unit(event.pos)
 
             else:
-                select_unit()
+                if next_turn_button.is_clicked(event.pos):
+                    next_turn_button.callback()  # Call the callback function when the button is clicked
+                else:
+                    select_unit()
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
             if render_units_attack_screen:
@@ -233,6 +235,7 @@ while lets_continue:
             else:
                 for unit in living_units:
                     can_select = try_select_unit(event.pos, unit)
+                    print(can_select)
                     if can_select:
                         select_unit()
                     break
@@ -250,7 +253,7 @@ while lets_continue:
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
-    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT)
+    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
 
     if selected_unit:
         selected_unit.draw_as_active(screen)
