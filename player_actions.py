@@ -68,3 +68,4 @@ class Player:
             print("Player has been defeated.")
         else:
             print("Player is still in the game.")
+     

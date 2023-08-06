@@ -194,13 +194,13 @@ class Unit:
         # Check if the target_building is within the capture range of the unit
         # Reduce the capture progress of the building until it is captured
 
-    def remove_from_game(self, units, cur_player):
+    def remove_from_game(self, living_units, player):
         # Remove the unit from the 'units' list of the player
         # self.player.units.remove(self)
-        print(cur_player)
+        print(player.color, self.color, player.units, self)
         # Remove the unit from the 'cur_players' array
-        cur_player.units.remove(self)
-        units.remove(self)
+        player.units.remove(self)
+        living_units.remove(self)
         # Set the unit's x, y, and rect attributes to None to remove it from the game field
         self.x = None
         self.y = None
@@ -218,18 +218,24 @@ class Unit:
         self.remain_actions = self.base_actions
 
     def render_on_screen(self, screen):
+        padding = 2  # Adjust the padding size as needed
+
         warrior_img = pygame.image.load(f"img/{self.icon}")
-        warrior_img = pygame.transform.scale(
-            warrior_img, (self.size, self.size))
+        # Scale down the image to fit within the allocated space with padding
+        max_image_size = self.size - padding * 2
+        warrior_img = pygame.transform.scale(warrior_img, (max_image_size, max_image_size))
+
         warrior_img_rect = warrior_img.get_rect()
-        warrior_img_rect.topleft = (self.x, self.y)
+        # Center the image within the allocated space with padding
+        warrior_img_rect.center = (self.x + self.size // 2, self.y + self.size // 2)
+
         pygame.draw.rect(screen, self.color, self.rect)
         screen.blit(warrior_img, warrior_img_rect)
 
         # Render remaining attacks and ammo below the unit
         font = pygame.font.Font(None, 20)
         text_color = (255, 255, 255)  # White color
-        text_pos = (self.x, self.y + self.size + 5)
+        text_pos = (self.x, self.y + self.size + padding)  # Adjust the text position with padding
         text_surface = font.render(
             f"Attacks: {self.remain_actions}   Ammo: {self.ammo} Hp: {self.hp}", True, text_color)
         screen.blit(text_surface, text_pos)

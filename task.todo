@@ -3,9 +3,7 @@ vytvořit bojovou jednotku
        
         přidat aby mi ke kurzoru přilepilo novou jednotku
         měnit barvu lišty podle aktuálního hráče
-        přidat náklady
-        nepovolit povolnené jednotce se pohybovat
-        dát ikonám trochu padding
+        nepovolit povolnené jednotce se pohybova
         zprovoznit hover function
  
     přidat movement soundfile

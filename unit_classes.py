@@ -19,7 +19,7 @@ class Support(Unit):
                          base_movement, size, x, y, None, icon, color, cost)
         
     def try_attack(self, click_pos, living_units):
-        return ("this is a support unit and cant attack")
+        return  ("SUPPORTS DONT ATTACK") 
 
 class Knight(Melee):
     def __init__(self, x, y,   color):
