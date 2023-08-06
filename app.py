@@ -11,25 +11,23 @@ pygame.init()
 # Vytvoření obrazovky
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
- 
+
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
 
 selected_unit = None
 render_units_attack_screen = False
 unit_placement_mode = None
-cur_player = RED
 
 
-def switch_player():
-    global cur_player
-    cur_player = BLUE if cur_player == RED else RED
-    print(cur_player)
+ 
 
 living_units = []
 
 red_player = Player(RED, 0, 0)
 blue_player = Player(BLUE, WIDTH - 40, 0)
 players = [red_player, blue_player]
+cur_player = 0  # RED
+
 blue_player.create_starting_unit((Musketeer, 200, 200, BLUE), living_units)
 red_player.create_starting_unit((Canon, 300, 300, RED), living_units)
 red_player.create_starting_unit((Shield, 400, 300, RED), living_units)
@@ -44,6 +42,11 @@ screen.fill(GREEN)
 lets_continue = True
 fps = 60
 clock = pygame.time.Clock()  # will tick eveery second
+
+def switch_player():
+    global cur_player
+    cur_player = (cur_player + 1) % len(players)
+
 
 def find_players_with_same_color(players, cur_player):
     same_color_player = None
@@ -84,6 +87,7 @@ def next_turn():
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
     print("Next Turn")
     switch_player()
+
 
 def disable_unit_for_turn():
     global render_units_attack_screen  # Add this line to access the global variable
@@ -141,10 +145,9 @@ def process_attack(attacker, attacked_pos):
             remaining_hp = attacked_enemy.take_damage()
             if remaining_hp <= 0:
                 global cur_player
-                attacked_player = find_players_with_same_color(
-                    players, attacked_enemy.color)
-               
-                attacked_enemy.remove_from_game(living_units, attacked_player)
+
+                players[cur_player].remove_from_game(
+                    living_units,  players[cur_player].color)
                 if isinstance(attacked_enemy, Commander):
                     attacked_enemy.lose_game()
         disable_unit_for_turn()
@@ -165,8 +168,10 @@ def check_in_observers_range():
                 if distance <= 75:
                     selected_unit.attack_range_modifiers += 0.5  # Add "in_observer_range" modifier
 
+
 def check_in_range(itself, other_object):
     pass
+
 
 def buy_unit(click_pos):
     global unit_placement_mode
@@ -174,28 +179,29 @@ def buy_unit(click_pos):
     unit_type_class = globals().get(unit_placement_mode)
     if unit_type_class:
         # Call the create_unit function with the class name
-        player_to_append = find_players_with_same_color(
-            players, cur_player)
-        print(player_to_append)
-        player_to_append.create_unit(
+
+        print(players[cur_player])
+        players[cur_player].create_unit(
             (unit_type_class, click_pos[0], click_pos[1], cur_player), living_units)
         print(unit_placement_mode, living_units)
     else:
         print(f"Error: Unit type {unit_placement_mode} not found.")
     unit_placement_mode = None
 
+
 def try_select_unit(click_pos, unit):
     if unit.rect.collidepoint(click_pos):
         return ("unit wasnt clicked on", click_pos)
 
     if unit.able_to_move:
-        return 
-        select_unit()
+
+        return True
+
     else:
         print("no attacks or ammo left for this unit")
     print(
         f"Selected {unit.__class__.__name__} with right button")
-    
+
 
 button_bar = ButtonBar(WIDTH, buy_buttons)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
@@ -228,9 +234,8 @@ while lets_continue:
                 for unit in living_units:
                     can_select = try_select_unit(event.pos, unit)
                     if can_select:
-                        select_unit():
+                        select_unit()
                     break
-                     
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
             if selected_unit:
