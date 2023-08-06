@@ -64,10 +64,7 @@ class Commander(Ranged):
         # Implement support method for other units (e.g., buff their abilities)
         pass
 
-    def lose_game(self):
-        print(self.color, " lost the game" )
-
-
+ 
 
 class Medic(Support):
     def __init__(self, x, y, color):

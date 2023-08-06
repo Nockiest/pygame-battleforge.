@@ -4,9 +4,7 @@ from utils import *
 import math
 import random
 
-
-GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
-
+ 
 
 def render_attack_cross(screen, x, y):
     cross_color = (255, 165, 0)  # Orange color

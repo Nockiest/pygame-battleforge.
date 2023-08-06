@@ -1,6 +1,5 @@
 import pygame
 from config import *
-from unit_classes import
 # Define the buy_unit function
 def buy_unit(unit_type):
     # Add your logic here to handle the purchase of the unit_type
@@ -93,10 +92,10 @@ musket_buy_bt = pygame.image.load("img/musket.png")
  
 # Create instances of BuyButton for each unit type
 buy_buttons = [
-    BuyButton(knight_buy_bt, Knight, "Buy Knight"),  # Add descriptions for each button
-    BuyButton(shield_buy_bt, Shield, "Buy Shield"),
-    BuyButton(canon_buy_bt, Canon, "Buy Canon"),
-    BuyButton(medic_buy_bt, Medic, "Buy Medic"),
-    BuyButton(pike_buy_bt, Pikeman, "Buy Pike"),
-    BuyButton(musket_buy_bt, Musketeer, "Buy Musket"),
+    BuyButton(knight_buy_bt, "Knight", "Buy Knight"),  # Add descriptions for each button
+    BuyButton(shield_buy_bt, "Shield", "Buy Shield"),
+    BuyButton(canon_buy_bt, "Canon", "Buy Canon"),
+    BuyButton(medic_buy_bt, "Medic", "Buy Medic"),
+    BuyButton(pike_buy_bt, "Pikeman", "Buy Pike"),
+    BuyButton(musket_buy_bt, "Musketeer", "Buy Musket"),
 ]

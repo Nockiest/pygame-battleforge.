@@ -11,9 +11,7 @@ pygame.init()
 # Vytvoření obrazovky
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-# colors
-GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
-
+ 
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
 
 selected_unit = None
@@ -27,10 +25,7 @@ def switch_player():
     cur_player = BLUE if cur_player == RED else RED
     print(cur_player)
 
-
 living_units = []
-red_team_supply_ammo = 50
-blue_team_supply_ammo = 50
 
 red_player = Player(RED, 0, 0)
 blue_player = Player(BLUE, WIDTH - 40, 0)
@@ -45,14 +40,10 @@ red_player.create_starting_unit((Pikeman, 700, 100, RED), living_units)
 blue_player.create_starting_unit((SupplyCart, 800, 300, BLUE), living_units)
 blue_player.create_starting_unit((Observer, 200, 150, BLUE), living_units)
 
-buy_bar_x = 50
-buy_bar_y = HEIGHT - 100
-buy_button_spacing = 20
 screen.fill(GREEN)
 lets_continue = True
 fps = 60
 clock = pygame.time.Clock()  # will tick eveery second
-
 
 def find_players_with_same_color(players, cur_player):
     same_color_player = None
@@ -93,10 +84,6 @@ def next_turn():
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
     print("Next Turn")
     switch_player()
-
-
-next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
-
 
 def disable_unit_for_turn():
     global render_units_attack_screen  # Add this line to access the global variable
@@ -178,8 +165,40 @@ def check_in_observers_range():
                 if distance <= 75:
                     selected_unit.attack_range_modifiers += 0.5  # Add "in_observer_range" modifier
 
+def check_in_range(itself, other_object):
+    pass
+
+def buy_unit(click_pos):
+    global unit_placement_mode
+    print("bought", unit_placement_mode)
+    unit_type_class = globals().get(unit_placement_mode)
+    if unit_type_class:
+        # Call the create_unit function with the class name
+        player_to_append = find_players_with_same_color(
+            players, cur_player)
+        print(player_to_append)
+        player_to_append.create_unit(
+            (unit_type_class, click_pos[0], click_pos[1], cur_player), living_units)
+        print(unit_placement_mode, living_units)
+    else:
+        print(f"Error: Unit type {unit_placement_mode} not found.")
+    unit_placement_mode = None
+
+def try_select_unit(click_pos, unit):
+    if unit.rect.collidepoint(click_pos):
+        return ("unit wasnt clicked on", click_pos)
+
+    if unit.able_to_move:
+        return 
+        select_unit()
+    else:
+        print("no attacks or ammo left for this unit")
+    print(
+        f"Selected {unit.__class__.__name__} with right button")
+    
 
 button_bar = ButtonBar(WIDTH, buy_buttons)
+next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
 
 while lets_continue:
     # check for events
@@ -192,24 +211,11 @@ while lets_continue:
             # Check if any button in the button bar is clicked
             clicked_button = button_bar.get_clicked_button(event.pos)
             if clicked_button and not selected_unit:
-                # Handle the click event on the button
                 print(f"Clicked {clicked_button.unit_type} button.")
                 unit_placement_mode = clicked_button.unit_type
 
             elif unit_placement_mode:
-                print("bought", unit_placement_mode)
-                unit_type_class = globals().get(unit_placement_mode)
-                if unit_type_class:
-                    # Call the create_unit function with the class name
-                    player_to_append = find_players_with_same_color(
-                        players, cur_player)
-                    print(player_to_append)
-                    player_to_append.create_unit(
-                        (unit_type_class, event.pos[0], event.pos[1], cur_player), living_units)
-                    print(unit_placement_mode, living_units)
-                else:
-                    print(f"Error: Unit type {unit_placement_mode} not found.")
-                unit_placement_mode = None
+                buy_unit(event.pos)
 
             else:
                 select_unit()
@@ -220,15 +226,11 @@ while lets_continue:
 
             else:
                 for unit in living_units:
-                    if unit.rect.collidepoint(event.pos):
-
-                        if unit.able_to_move:
-                            select_unit()
-                        else:
-                            print("no attacks or ammo left for this unit")
-                        print(
-                            f"Selected {unit.__class__.__name__} with right button")
-                        break
+                    can_select = try_select_unit(event.pos, unit)
+                    if can_select:
+                        select_unit():
+                    break
+                     
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
             if selected_unit:

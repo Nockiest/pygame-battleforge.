@@ -1,7 +1,6 @@
 import pygame
-from config import MAIN_FONT_URL, colors_tuple
-# colors
-GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
+from config import * 
+ 
 
 class Button:
     def __init__(self, text, x, y, width, height, callback):

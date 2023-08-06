@@ -64,8 +64,7 @@ class Player:
         pass
 
     def announce_defeat(self):
-        if not self.units:
-            print("Player has been defeated.")
-        else:
-            print("Player is still in the game.")
+        print("Player ", self.color, " has been defeated")
+         
+          
      
