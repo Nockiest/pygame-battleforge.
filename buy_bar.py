@@ -7,20 +7,24 @@ def buy_unit(unit_type):
 
 class BuyButton:
     def __init__(self, icon, unit_type, description):
+         
         self.icon = icon
         self.unit_type = unit_type
         self.description = description
-        self.button_width = 50
-        self.button_height = 50
+        self.button_width = 60  # Increased button width to add padding
+        self.button_height = 60  # Increased button height to add padding
         self.button_surface = pygame.Surface((self.button_width, self.button_height))
         self.button_surface.fill((255, 255, 255))  # Fill with white color
 
-        # Center the icon horizontally and vertically within the button
-        icon_x = (self.button_width - icon.get_width()) // 2
-        icon_y = (self.button_height - icon.get_height()) // 2
-        self.button_surface.blit(icon, (icon_x, icon_y))
+        # Calculate padding for the icon
+        icon_padding_x = (self.button_width - icon.get_width()) // 2
+        icon_padding_y = (self.button_height - icon.get_height()) // 2
+
+        # Blit the icon with padding onto the button surface
+        self.button_surface.blit(icon, (icon_padding_x, icon_padding_y))
 
         self.hovered = False  # Track whether the button is currently being hovered over
+
 
     def draw(self, screen, x, y):
         if self.hovered:

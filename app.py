@@ -5,6 +5,7 @@ from button import Button
 from unit_classes import *
 from utils import *
 from buy_bar import *
+from player_actions import Player
 pygame.init()
 
 # Vytvoření obrazovky
@@ -25,30 +26,27 @@ def switch_player():
     cur_player = BLUE if cur_player == RED else RED
     print(cur_player)
 
-def assign_units_to_teams(living_units):
-    teams = {}
-    for unit in living_units:
-        color = unit.color
-        if color not in teams:
-            teams[color] = []  # Create an empty list for the color if it doesn't exist
-        teams[color].append(unit)
-    return teams
-
-
 living_units = []
+red_team_supply_ammo = 50
+blue_team_supply_ammo = 50
  
-create_unit((Musketeer, 200, 200, BLUE), living_units)
-create_unit((Canon, 300, 300, RED), living_units)
-create_unit((Shield, 400, 300, RED), living_units)
-create_unit((Medic, 500, 400, BLUE), living_units)
-create_unit((Commander, 600, 100, BLUE), living_units)
-create_unit((Commander, 500, 100, RED), living_units)
-create_unit((Pikeman, 700, 100, RED), living_units)
-create_unit((SupplyCart, 800, 300, BLUE), living_units)
-create_unit((Observer, 200, 150, BLUE), living_units)
-teams = assign_units_to_teams(living_units)
-red_team_units = teams[RED]
-blue_team_units = teams[BLUE]
+red_player = Player(RED, 0, 0)
+blue_player = Player(BLUE, WIDTH - 40, 0)
+players = [red_player, blue_player]
+blue_player.create_starting_unit((Musketeer, 200, 200, BLUE), living_units)
+red_player.create_starting_unit((Canon, 300, 300, RED), living_units)
+red_player.create_starting_unit((Shield, 400, 300, RED), living_units)
+blue_player.create_starting_unit((Medic, 500, 400, BLUE), living_units)
+blue_player.create_starting_unit((Commander, 600, 100, BLUE), living_units)
+red_player.create_starting_unit((Commander, 500, 100, RED), living_units)
+red_player.create_starting_unit((Pikeman, 700, 100, RED), living_units)
+blue_player.create_starting_unit((SupplyCart, 800, 300, BLUE), living_units)
+blue_player.create_starting_unit((Observer, 200, 150, BLUE), living_units)
+ 
+ 
+ 
+print(red_player, blue_player)
+ 
 buy_bar_x = 50
 buy_bar_y = HEIGHT - 100
 buy_button_spacing = 20
@@ -57,37 +55,46 @@ lets_continue = True
 fps = 60
 clock = pygame.time.Clock()  # will tick eveery second
  
+def find_players_with_same_color(players, cur_player):
+    same_color_player = None
+    for player in players:
+        if player.color == cur_player:
+            same_color_player = player
+            break  # No need to continue searching once a match is found
 
+    if same_color_player is None:
+        raise ValueError(f"No player found with color {cur_player}")
 
-def check_game_ended(teams):
-    for team_units in teams.values():
-        print(team_units)
-        has_commander = any(isinstance(unit, Commander) for unit in team_units)
-        print(has_commander)
-        if not has_commander:
-            return True
-    return False
+    return same_color_player
+
+# def check_game_ended(teams):
+#     for team_units in teams.values():
+#         print(team_units)
+#         has_commander = any(isinstance(unit, Commander) for unit in team_units)
+#         print(has_commander)
+#         if not has_commander:
+#             return True
+#     return False
 
 def next_turn():
     global living_units
     global teams
-    global red_team_units
-    global blue_team_units
+ 
     # Your next turn logic here
-    is_win =  check_game_ended(teams)
-    print("game won?", is_win)
+    # is_win =  check_game_ended(teams)
+    # print("game won?", is_win)
     for unit in living_units:
         if isinstance(unit, Medic):
             unit.reset_for_next_turn(living_units)
         elif isinstance(unit, SupplyCart):
             unit.reset_for_next_turn(living_units)
         else:
-            unit.reset_for_next_turn()
+            unit.reset_for_next_turn() 
+        # tohle musím přepsart abych nemusel používat tenhle divnžý elif
     print("Next Turn")
     switch_player()
-    teams = assign_units_to_teams(living_units)
-    red_team_units = teams[RED]
-    blue_team_units = teams[BLUE]
+    
+ 
 
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
  
@@ -139,7 +146,10 @@ def process_attack(attacker, attacked_pos):
         if hit_result:
             remaining_hp = attacked_enemy.take_damage()
             if remaining_hp <= 0:
-                attacked_enemy.remove_from_game(living_units)
+                global cur_player
+                attacked_player = find_players_with_same_color(players, cur_player)
+                print("xyz", attacked_player)
+                attacked_enemy.remove_from_game(living_units, attacked_player)
                 if isinstance(attacked_enemy, Commander):
                     attacked_enemy.lose_game()
 
@@ -180,7 +190,9 @@ while lets_continue:
                 unit_type_class = globals().get(unit_placement_mode)
                 if unit_type_class:
                     # Call the create_unit function with the class name
-                    create_unit((unit_type_class, event.pos[0], event.pos[1], cur_player), living_units)
+                    player_to_append = find_players_with_same_color(players, cur_player)
+                    print(player_to_append)
+                    player_to_append.create_unit((unit_type_class, event.pos[0], event.pos[1], cur_player), living_units)
                     print(unit_placement_mode, living_units )
                 else:
                     print(f"Error: Unit type {unit_placement_mode} not found.")
@@ -216,6 +228,19 @@ while lets_continue:
     screen.fill(GREEN)
 
     # RENDER ELEMENTS
+    red_player.render_tender(screen)
+    blue_player.render_tender(screen)
+    next_turn_button.draw(screen)
+    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT)
+    
+
+    if selected_unit:
+ 
+        selected_unit.draw_as_active(screen)  
+        selected_unit.attack_range_modifiers = 1    
+    for unit in living_units :
+        
+        unit.render_on_screen(screen)
     if hasattr(selected_unit, 'attack_cross_position'):
         selected_unit.render_attack_cross(screen)
     
@@ -224,18 +249,12 @@ while lets_continue:
         if selected_unit.remain_actions > 0:
             check_in_observers_range()
             selected_unit.render_attack_circle(screen)
-    if selected_unit:
- 
-        selected_unit.draw_as_active(screen)  
-        selected_unit.attack_range_modifiers = 1    
+  
      
      
-    for unit in living_units :
-        
-        unit.render_on_screen(screen)
-    next_turn_button.draw(screen)
-    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT)
     
+   
+     
 
     clock.tick(fps)
 

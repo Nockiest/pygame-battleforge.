@@ -20,12 +20,12 @@ def render_attack_cross(screen, x, y):
 
 
 class Unit:
-    def __init__(self, hp, attack_range, base_actions, base_movement, size, x, y, ammo, icon, color):
+    def __init__(self, hp, attack_range, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range
         self.attack_range_modifiers = 1
-        self.remain_actions = base_actions
+        self.remain_actions = 0 #base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
         self.x = x
@@ -35,6 +35,7 @@ class Unit:
             self.x + self.size//2, self.y + self.size//2)
 
         self.ammo = ammo
+        self.cost = cost
         self.icon = icon
         self.rect = pygame.Rect(x, y, size, size)
         self.selected = False
@@ -193,15 +194,20 @@ class Unit:
         # Check if the target_building is within the capture range of the unit
         # Reduce the capture progress of the building until it is captured
 
-    def remove_from_game(self, units):
-        print(self)
+    def remove_from_game(self, units, cur_player):
+        # Remove the unit from the 'units' list of the player
+        # self.player.units.remove(self)
+        print(cur_player)
+        # Remove the unit from the 'cur_players' array
+        cur_player.units.remove(self)
         units.remove(self)
-        print("unit is dead")
-        print(units)
+        # Set the unit's x, y, and rect attributes to None to remove it from the game field
         self.x = None
         self.y = None
         self.rect = None
 
+        print("Unit is dead")
+         
     def reset_for_next_turn(self):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
