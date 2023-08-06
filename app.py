@@ -90,13 +90,10 @@ def next_turn():
 
 
 def disable_unit_for_turn():
-    global render_units_attack_screen  # Add this line to access the global variable
     global selected_unit
     print("disabled")
     selected_unit.able_to_move = False
-    selected_unit = None
-    render_units_attack_screen = None  # Set render_units_attack_screen to False
-    print(selected_unit, render_units_attack_screen)
+  
 
 
 def deselct_unit():
@@ -146,17 +143,49 @@ def process_attack(attacker, attacked_pos):
                 global cur_player
 
                 players[cur_player].remove_from_game(
-                    living_units,  players[cur_player].color)
+                    living_units, attacked_enemy )
                 if isinstance(attacked_enemy, Commander):
                     attacked_enemy.lose_game()
         disable_unit_for_turn()
+        deselct_unit()
     elif attack_result == "SUPPORTS DONT ATTACK":
         print("XX")
         deselct_unit()
     if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
         deselct_unit()
 
+def apply_modifier(selected_unit, living_units, modifier_type):
+    for unit in living_units:
+        if modifier_type == "in_observer_range":
+            if issubclass(selected_unit.__class__, Ranged) and isinstance(unit, Observer) and unit.color == selected_unit.color:
+                distance = get_two_units_center_distance(selected_unit, unit)
+                if distance <= 75:
+                    selected_unit.attack_range_modifiers += 0.5
+        elif modifier_type == "in_cart_range":
+            if issubclass(selected_unit.__class__, Ranged) and unit.color != players[cur_player].color:
+                continue
+            if isinstance(unit, SupplyCart) and unit.color == selected_unit.color:
+                distance = get_two_units_center_distance(selected_unit, unit)
+                if distance <= unit.attack_range:
+                    selected_unit.ammo += 0.5
+        elif modifier_type == "in_medic_range":
+            if unit.color != players[cur_player].color:
+                continue
+            if isinstance(unit, Observer) and unit.color == selected_unit.color:
+                distance = get_two_units_center_distance(selected_unit, unit)
+                if distance <= 75:
+                    selected_unit.hp += 1
+        # Add more conditions for other modifier types here, if needed
 
+# Example usage:
+# To apply the "in_observer_range" modifier:
+# apply_modifier(selected_unit, living_units, "in_observer_range")
+
+# # To apply the "in_cart_range" modifier:
+# apply_modifier(selected_unit, living_units, "in_cart_range")
+
+# # To apply the "in_medic_range" modifier:
+# apply_modifier(selected_unit, living_units, "in_medic_range")
 def check_in_observers_range():
     if issubclass(selected_unit.__class__, Ranged):
         for unit in living_units:
@@ -191,11 +220,8 @@ def buy_unit(click_pos):
 def try_select_unit(click_pos, unit):
     if unit.rect.collidepoint(click_pos):
         return ("unit wasnt clicked on", click_pos)
-
     if unit.able_to_move:
-
         return True
-
     else:
         print("no attacks or ammo left for this unit")
     print(
@@ -226,8 +252,12 @@ while lets_continue:
                 if next_turn_button.is_clicked(event.pos):
                     next_turn_button.callback()  # Call the callback function when the button is clicked
                 else:
-                    select_unit()
-
+                   for unit in living_units:
+                    can_select = try_select_unit(event.pos, unit)
+                    print(can_select)
+                    if can_select:
+                        select_unit()
+                    break
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
             if render_units_attack_screen:
                 process_attack(selected_unit, event.pos)
@@ -264,7 +294,7 @@ while lets_continue:
         selected_unit.render_attack_cross(screen)
     if render_units_attack_screen:
         if selected_unit.remain_actions > 0:
-            check_in_observers_range()
+            apply_modifier(selected_unit, living_units, "in_observer_range")
             selected_unit.render_attack_circle(screen)
     if unit_placement_mode:
         print("unit placement mode")

@@ -65,6 +65,19 @@ class Player:
 
     def announce_defeat(self):
         print("Player ", self.color, " has been defeated")
-         
-          
+
+    def remove_from_game(self, living_units, unit):
+    # Find the unit in the living_units list and remove it
+        if unit in living_units:
+            living_units.remove(unit)
+
+        # Find the unit in the player's units list and remove it
+        if unit in self.units:
+            self.units.remove(unit)
+
+        # Reset the unit's position and rect to None to indicate it's no longer in the game
+        unit.x = None
+        unit.y = None
+        unit.rect = None
+            
      
