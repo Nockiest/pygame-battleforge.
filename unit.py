@@ -18,7 +18,7 @@ def render_attack_cross(screen, x, y):
 
 
 class Unit:
-    def __init__(self, hp, attack_range, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
+    def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range
@@ -26,6 +26,7 @@ class Unit:
         self.remain_actions = 0 #base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
+        self.atttack_resistance = attack_resistance
         self.x = x
         self.y = y
         self.size = size
@@ -169,7 +170,8 @@ class Unit:
     def check_if_hit(self, base_hit_chance):
 
         # i will augment base_hit_chance by some variables
-        final_hit_probability = base_hit_chance
+        final_hit_probability = base_hit_chance - self.atttack_resistance
+        print(final_hit_probability, "final hit probability")
         # Generate a random float between 0 and 1
         hit_treshold_value = random.random()
 

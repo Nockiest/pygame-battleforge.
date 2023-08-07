@@ -18,9 +18,6 @@ selected_unit = None
 render_units_attack_screen = False
 unit_placement_mode = None
 
-
- 
-
 living_units = []
 
 red_player = Player(RED, 0, 0)
@@ -78,15 +75,16 @@ def next_turn():
     # is_win =  check_game_ended(teams)
     # print("game won?", is_win)
     for unit in living_units:
-        if isinstance(unit, Medic):
-            unit.reset_for_next_turn(living_units)
-        elif isinstance(unit, SupplyCart):
-            unit.reset_for_next_turn(living_units)
-        else:
-            unit.reset_for_next_turn()
+        # if isinstance(unit, Medic):
+        #     unit.reset_for_next_turn(living_units)
+        # else:
+        unit.reset_for_next_turn()
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
     print("Next Turn")
+    apply_modifier(selected_unit, living_units, "in_cart_range")
+    apply_modifier(selected_unit, living_units, "in_medic_range")
     switch_player()
+    deselct_unit()
 
 
 def disable_unit_for_turn():
@@ -154,38 +152,31 @@ def process_attack(attacker, attacked_pos):
     if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
         deselct_unit()
 
-def apply_modifier(selected_unit, living_units, modifier_type):
-    for unit in living_units:
-        if modifier_type == "in_observer_range":
+def apply_modifier(selected_unit, living_units, modifier_type):   
+    if modifier_type == "in_observer_range":
+      for unit in living_units:    
             if issubclass(selected_unit.__class__, Ranged) and isinstance(unit, Observer) and unit.color == selected_unit.color:
                 distance = get_two_units_center_distance(selected_unit, unit)
                 if distance <= 75:
                     selected_unit.attack_range_modifiers += 0.5
-        elif modifier_type == "in_cart_range":
-            if issubclass(selected_unit.__class__, Ranged) and unit.color != players[cur_player].color:
-                continue
-            if isinstance(unit, SupplyCart) and unit.color == selected_unit.color:
-                distance = get_two_units_center_distance(selected_unit, unit)
-                if distance <= unit.attack_range:
-                    selected_unit.ammo += 0.5
-        elif modifier_type == "in_medic_range":
-            if unit.color != players[cur_player].color:
-                continue
-            if isinstance(unit, Observer) and unit.color == selected_unit.color:
-                distance = get_two_units_center_distance(selected_unit, unit)
-                if distance <= 75:
-                    selected_unit.hp += 1
-        # Add more conditions for other modifier types here, if needed
+    elif modifier_type == "in_cart_range":
+        for unit in living_units:
+            if isinstance(unit, Ranged) and unit.color == players[cur_player].color:
+                for supply_cart in living_units:
+                    if isinstance(supply_cart, SupplyCart) and supply_cart.color == players[cur_player].color:
+                        distance = get_two_units_center_distance(unit, supply_cart)
+                        if distance <= supply_cart.attack_range:
+                            supply_cart.provide_ammo([unit])
+    elif modifier_type == "in_medic_range":
+         for unit in living_units:
+            if unit.color == players[cur_player].color:
+                for medic in living_units:
+                    if isinstance(medic, Medic) and medic.color == players[cur_player].color:
+                        medic.heal(unit)
+                        # distance = get_two_units_center_distance(unit, medic)
+                        # if distance <= supply_cart.attack_range:
+                            
 
-# Example usage:
-# To apply the "in_observer_range" modifier:
-# apply_modifier(selected_unit, living_units, "in_observer_range")
-
-# # To apply the "in_cart_range" modifier:
-# apply_modifier(selected_unit, living_units, "in_cart_range")
-
-# # To apply the "in_medic_range" modifier:
-# apply_modifier(selected_unit, living_units, "in_medic_range")
 def check_in_observers_range():
     if issubclass(selected_unit.__class__, Ranged):
         for unit in living_units:
