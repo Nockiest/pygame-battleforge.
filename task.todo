@@ -1,8 +1,8 @@
 vytvořit bojovou jednotku   
     přidat koupení jednotky   
         přidat aby mi ke kurzoru přilepilo novou jednotku
-        měnit barvu lišty podle aktuálního hráče
-        nepovolit povolnené jednotce se pohybova
+        
+        
         zprovoznit hover function
  
     přidat movement soundfile
