@@ -1,6 +1,9 @@
 import random
 import pygame
+import math
 from config import *
+square_size = 5  # Adjust the size range as needed
+
 def do_lines_intersect(p1, p2, p3, p4):
     def orientation(p, q, r):
         val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
@@ -34,7 +37,7 @@ class BattleGround:
         self.supply_depots = []
         
         # Define quantities of each element to generate
-        self.num_forests = 10
+        self.num_forests = 50
         self.num_rivers = 3
         self.num_towns = 4
         self.num_roads = 9
@@ -42,26 +45,45 @@ class BattleGround:
 
     def place_forrests(self):
           for _ in range(self.num_forests):
-            x = random.randint(0, self.width)
-            y = random.randint(0, self.height - BUTTON_BAR_HEIGHT)
-            size = random.uniform(100, 1000)  # Adjust the size range as needed
-            
-            forest_shape = self.create_irregular_polygon(x, y, size)
+            x =  round(random.randint(0, self.width))
+            y =  round(random.randint(0, self.height - BUTTON_BAR_HEIGHT))
+
+         
+            forest_size = 1500 # round(random.randint(20, 50))
+            forest_shape = self.create_forest_squares(x, y, square_size, 0.2, forest_size)
             self.forests.append(forest_shape)
     
-    def create_irregular_polygon(self, x, y, size):
-        num_points = random.randint(50, 100)  # Number of points for the polygon
-        angle_increment = random.uniform(360 / num_points, 15)  # Limit angle increment
-        points = []
+    def create_forest_squares(self, x, y, size, regularity, forest_size):
+        points = [(x, y)]  # Start with the initial square's center
+        num_squares = 1
+        last_points = points[-4:]  # Get the last 4 points
 
-        for i in range(num_points):
-            angle = i * angle_increment
-            distance = random.uniform(size * 0.9, size)  # Adjust the size variation
-            x_point = x + distance * (0.5 + random.uniform(-0.3, 0.3))
-            y_point = y + distance * (0.5 + random.uniform(-0.3, 0.3))
-            points.append((x_point, y_point))
+        while num_squares < forest_size:
+            new_points = []
+
+            # Generate new points with a probability based on regularity
+            for px, py in last_points:
+                if random.random() < regularity:
+                    new_points.append((px + size, py))  # Right
+                    new_points.append((px - size, py))  # Left
+                    new_points.append((px, py + size))  # Down
+                    new_points.append((px, py - size))  # Up
+                else:
+                    new_points.append((px, py))
+
+            # Filter out points that are duplicates or outside the bounds
+            new_points = [
+                (new_x, new_y)
+                for new_x, new_y in new_points
+                if (0 <= new_x < self.width) and (0 <= new_y < self.height)
+            ]
+            new_points = list(set(new_points))  # Remove duplicates
+            last_points = new_points  # Update last_points with new points
+            points.extend(new_points)
+            num_squares = len(points)
 
         return points
+       
     def place_rivers(self):
         for _ in range(self.num_rivers):
             start_x = random.choice([0, self.width])
@@ -167,16 +189,14 @@ class BattleGround:
     def draw(self, screen):
         dot_radius = 10
 
-        # Draw forrests
-        print("x")
+        # Draw forrests 
         for forest in self.forests:
-            pygame.draw.polygon(screen, (0, 255, 0), forest)  # Draw an irregular polygon for each forest
-            # pygame.draw.circle(screen, (34, 139, 34), (x, y), dot_radius)  # Dark Green
-        print("y")
-        # Draw rivers
+            for point in forest:
+                x, y = point
+                rect = pygame.Rect(x, y, square_size +1, square_size +1) # to avoid gaps
+                pygame.draw.rect(screen, (0, 255, 0), rect)  # Fill the square with green color
+                
         for points in self.rivers:
-            # pygame.draw.circle(screen, (128, 128, 128), points[0], dot_radius)
-            # pygame.draw.circle(screen, (128, 128, 128), points[-1], dot_radius)
             pygame.draw.lines(screen, (128, 128, 128), False, points, 2)
         # Draw towns
         for x, y in self.towns:
