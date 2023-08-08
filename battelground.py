@@ -46,7 +46,7 @@ class BattleGround:
             self.forrests.append((x, y))
 
     def place_rivers(self):
-      for _ in range(self.num_rivers):
+        for _ in range(self.num_rivers):
             start_x = random.choice([0, self.width])
             start_y = random.randint(0, self.height)
             end_x = self.width - start_x
@@ -59,26 +59,33 @@ class BattleGround:
 
             points = []
             num_segments = 10
+            intersection_point = None  # Initialize the intersection point as None
+
             for i in range(num_segments + 1):
                 t = i / num_segments
                 point = self.calculate_bezier_curve(t, (start_x, start_y), (control_x1, control_y1), (control_x2, control_y2), (end_x, end_y))
                 rounded_point = (round(point[0]), round(point[1]))
                 intersects = False  # Initialize the intersection flag as False
                 points.append(rounded_point)
-                
+
                 for existing in self.rivers:
                     for j in range(len(existing) - 1):
-                        if do_lines_intersect(points[len(points) - 2], rounded_point, existing[j], existing[j+1]):
+                        intersection = do_lines_intersect(points[len(points) - 2], rounded_point, existing[j], existing[j+1])
+                        if intersection:
                             intersects = True  # Set the intersection flag to True
+                            intersection_point = existing[j+1]  # Store the intersection point
                             break  # Break the inner loop once an intersection is found
 
                     if intersects:  # If an intersection is found, break the outer loop
                         break
-                        
+
                 if intersects:  # If an intersection is found, break the loop and do not add the river
                     break
 
-             # Only add the river if there were no intersections
+            if intersection_point:
+                points[-1] = intersection_point  # Replace the last point with the intersection point
+
+            # Only add the river if there were no intersections
             self.rivers.append(points)
 
 
@@ -164,8 +171,8 @@ class BattleGround:
 
         # Draw rivers
         for points in self.rivers:
-            pygame.draw.circle(screen, (128, 128, 128), points[0], dot_radius)
-            pygame.draw.circle(screen, (128, 128, 128), points[-1], dot_radius)
+            # pygame.draw.circle(screen, (128, 128, 128), points[0], dot_radius)
+            # pygame.draw.circle(screen, (128, 128, 128), points[-1], dot_radius)
             pygame.draw.lines(screen, (128, 128, 128), False, points, 2)
         # Draw towns
         for x, y in self.towns:
