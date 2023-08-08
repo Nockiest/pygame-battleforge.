@@ -48,7 +48,7 @@ def buy_unit(click_pos):
 
 def try_select_unit(click_pos, unit):
     pass
-
+ 
 button_bar = ButtonBar(WIDTH, buy_buttons)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
 lets_continue = True

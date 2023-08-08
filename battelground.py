@@ -2,7 +2,7 @@ import random
 import pygame
 import math
 from config import *
-square_size = 5  # Adjust the size range as needed
+square_size = 10  # Adjust the size range as needed
 
 def do_lines_intersect(p1, p2, p3, p4):
     def orientation(p, q, r):
@@ -37,7 +37,7 @@ class BattleGround:
         self.supply_depots = []
         
         # Define quantities of each element to generate
-        self.num_forests = 50
+        self.num_forests = 6
         self.num_rivers = 3
         self.num_towns = 4
         self.num_roads = 9
@@ -45,19 +45,21 @@ class BattleGround:
 
     def place_forrests(self):
           for _ in range(self.num_forests):
-            x =  round(random.randint(0, self.width))
-            y =  round(random.randint(0, self.height - BUTTON_BAR_HEIGHT))
+            x = round(random.randint(0, self.width))
+            y = round(random.randint(0, self.height - BUTTON_BAR_HEIGHT))
 
          
-            forest_size = 1500 # round(random.randint(20, 50))
-            forest_shape = self.create_forest_squares(x, y, square_size, 0.2, forest_size)
-            self.forests.append(forest_shape)
+            forest_size = 4500 # round(random.randint(20, 50))
+            forest_from_squares = self.create_forest_squares(x, y, square_size, 0.2, forest_size)
+            forest_shape = self.find_edge_points(forest_from_squares)
+            if len(forest_shape) >= 3:
+             self.forests.append(forest_shape)
     
     def create_forest_squares(self, x, y, size, regularity, forest_size):
         points = [(x, y)]  # Start with the initial square's center
         num_squares = 1
         last_points = points[-4:]  # Get the last 4 points
-
+        new_points = []
         while num_squares < forest_size:
             new_points = []
 
@@ -81,9 +83,33 @@ class BattleGround:
             last_points = new_points  # Update last_points with new points
             points.extend(new_points)
             num_squares = len(points)
-
+            print(new_points, "new points")
         return points
-       
+    
+    def find_edge_points(self,points):
+        leftmost_point = min(points, key=lambda p: p[0])
+        rightmost_point = max(points, key=lambda p: p[0])
+        edge_points = [leftmost_point, rightmost_point]
+        leftmost_x, rightmost_x = edge_points[0][0], edge_points[1][0]
+        result = []
+
+        for x_axis in range(leftmost_x, rightmost_x + 1, square_size):
+            same_x_points = [(x, y) for x, y in points if x == x_axis]
+            if same_x_points:
+                print(f"Points with x-coordinate {x_axis}: {same_x_points}")
+
+                # Find points with lowest and highest y-values in the same_x_points array
+                lowest_y_point = min(same_x_points, key=lambda p: p[1])
+                highest_y_point = max(same_x_points, key=lambda p: p[1])
+                print(f"Lowest y-value: {lowest_y_point}, Highest y-value: {highest_y_point}")
+
+                # Add lowest and highest points to the result array
+                result.insert(0,lowest_y_point)
+                result.append(highest_y_point)
+
+    
+
+        return result
     def place_rivers(self):
         for _ in range(self.num_rivers):
             start_x = random.choice([0, self.width])
@@ -191,10 +217,14 @@ class BattleGround:
 
         # Draw forrests 
         for forest in self.forests:
-            for point in forest:
-                x, y = point
-                rect = pygame.Rect(x, y, square_size +1, square_size +1) # to avoid gaps
-                pygame.draw.rect(screen, (0, 255, 0), rect)  # Fill the square with green color
+           
+            pygame.draw.polygon(screen, (0, 255, 0), forest)
+            # create a polygon out of the edge pointa
+
+            # for point in forest:
+            #     x, y = point
+            #     rect = pygame.Rect(x, y, square_size +1, square_size +1) # to avoid gaps
+            #     pygame.draw.rect(screen, (0, 255, 0), rect)  # Fill the square with green color
                 
         for points in self.rivers:
             pygame.draw.lines(screen, (128, 128, 128), False, points, 2)
@@ -243,35 +273,15 @@ def find_river_segments_for_crossing(rivers):
     return river_segments
 
  
-
-# def check_intersection(point, river):
-#     for i in range(len(river) - 1):
-#         line_start = river[i]    
-#         line_end = river[i + 1]
-#         print(intersect(point, (point[0] + 1, point[1]), line_start, line_end),point ,(point[0] + 1, point[1]), line_start, line_end)
-#         if intersect(point, (point[0] + 1, point[1]), line_start, line_end):
-#             return True
-#     return False
-
-# def intersect( p1, p2, p3, p4):
-#     def orientation(p, q, r):
-       
-#         val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
-#         if val == 0:
-#             return 0
-#         return 1 if val > 0 else 2
-
-    # o1 = orientation(p1, p2, p3)
-   
-    # o2 = orientation(p1, p2, p4)
-    
-    # o3 = orientation(p3, p4, p1)
-    
-    # o4 = orientation(p3, p4, p2)
-   
-    # if o1 != o2 and o3 != o4:
-    #     if min(p1[0], p2[0]) <= max(p3[0], p4[0]) and min(p3[0], p4[0]) <= max(p1[0], p2[0]) and \
-    #     min(p1[1], p2[1]) <= max(p3[1], p4[1]) and min(p3[1], p4[1]) <= max(p1[1], p2[1]):
-    #         return True
-
-    # return False
+# # Example usage:
+# points = [(1, 3), (4, 2), (2, 6), (7, 1), (5, 5)]
+# sample_points=[(70, 110), (95, 75), (80, 120), (135, 120), (75, 115), (130, 115), (110, 75), (105, 125), (115, 105), (105, 70), (90, 115), (120, 95), (80, 95), (100, 110), (75, 90), (130, 90), (50, 100), (105, 100), (115, 80), (90, 90), (65, 100), (125, 
+# 130), (70, 75), (125, 75), (100, 85), (85, 130), (110, 95), (120, 115), (95, 125), (95, 70), (80, 115), (135, 115), (130, 110), (110, 125), (110, 70), (105, 120), (105, 65), (90, 110), (120, 90), (65, 120), (95, 100), (80, 90), (100, 105), 
+# (75, 85), (55, 100), (50, 95), (115, 130), (105, 95), (115, 75), (60, 105), (90, 85), (70, 125), (70, 70), (125, 125), (125, 70), (100, 80), (60, 80), (120, 110), (95, 120), (70, 100), (95, 65), (110, 120), (110, 65), (85, 100), (105, 115), (90, 105), (120, 85), (95, 95), (80, 85), (135, 85), (55, 95), (75, 80), (130, 80), (50, 90), (115, 125), (105, 90), (115, 70), (90, 135), (65, 90), (125, 120), (100, 130), (75, 110), (100, 75), (85, 120), (115, 100), (95, 115), (70, 95), 
+# (125, 95), (80, 105), (110, 115), (85, 95), (65, 110), (120, 80), (80, 80), (55, 90), (130, 130), (110, 90), (50, 85), (105, 85), (115, 65), (90, 130), (90, 75), (65, 85), (70, 115), (125, 115), (100, 125), (75, 105), (85, 115), (95, 110), 
+# (70, 90), (125, 90), (100, 100), (55, 110), (110, 110), (105, 105), (65, 105), (120, 75), (95, 85), (80, 75), (55, 85), (75, 70), (110, 85), (130, 125), (115, 115), (90, 125), (125, 110), (100, 65), (85, 110), (115, 90), (95, 105), (70, 85), (125, 85), (45, 95), (100, 95), (55, 105), (110, 105), (85, 85), (60, 95), (120, 125), (120, 70), (95, 135), (95, 80), (80, 125), (135, 125), (75, 120), (130, 120), (110, 80), (115, 110), (105, 75), (90, 120), (120, 100), (65, 75), (125, 
+# 105), (80, 100), (100, 115), (75, 95), (100, 60), (85, 105), (60, 115), (115, 85), (90, 95), (70, 80), (125, 80), (45, 90), (100, 90), (110, 100), (85, 80), (60, 90), (120, 120), (120, 65), (95, 130)] 
+ 
+# edge_points = find_edge_points(sample_points)
+# print(edge_points)
+# # print(edge_points)  # Output: [(1, 3), (7, 1)]
