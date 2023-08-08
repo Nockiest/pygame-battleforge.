@@ -1,6 +1,6 @@
 import random
 import pygame
- 
+from config import *
 def do_lines_intersect(p1, p2, p3, p4):
     def orientation(p, q, r):
         val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
@@ -26,25 +26,42 @@ class BattleGround:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.forrests = []
+        self.forests = []
         self.rivers = []# [(0, 0), (400, 300)]#[(0,0),(100, 200),(300,300), (350, 200)]
+        self.river_intersection_points = []
         self.towns = []
         self.roads = []
         self.supply_depots = []
         
         # Define quantities of each element to generate
-        self.num_forrests = 10
+        self.num_forests = 10
         self.num_rivers = 3
         self.num_towns = 4
         self.num_roads = 9
         self.num_supply_depots = 2
 
     def place_forrests(self):
-        for _ in range(self.num_forrests):
+          for _ in range(self.num_forests):
             x = random.randint(0, self.width)
-            y = random.randint(0, self.height)
-            self.forrests.append((x, y))
+            y = random.randint(0, self.height - BUTTON_BAR_HEIGHT)
+            size = random.uniform(100, 1000)  # Adjust the size range as needed
+            
+            forest_shape = self.create_irregular_polygon(x, y, size)
+            self.forests.append(forest_shape)
+    
+    def create_irregular_polygon(self, x, y, size):
+        num_points = random.randint(50, 100)  # Number of points for the polygon
+        angle_increment = random.uniform(360 / num_points, 15)  # Limit angle increment
+        points = []
 
+        for i in range(num_points):
+            angle = i * angle_increment
+            distance = random.uniform(size * 0.9, size)  # Adjust the size variation
+            x_point = x + distance * (0.5 + random.uniform(-0.3, 0.3))
+            y_point = y + distance * (0.5 + random.uniform(-0.3, 0.3))
+            points.append((x_point, y_point))
+
+        return points
     def place_rivers(self):
         for _ in range(self.num_rivers):
             start_x = random.choice([0, self.width])
@@ -59,7 +76,7 @@ class BattleGround:
 
             points = []
             num_segments = 10
-            intersection_point = None  # Initialize the intersection point as None
+            convergence_point = None  # Initialize the intersection point as None
 
             for i in range(num_segments + 1):
                 t = i / num_segments
@@ -73,7 +90,8 @@ class BattleGround:
                         intersection = do_lines_intersect(points[len(points) - 2], rounded_point, existing[j], existing[j+1])
                         if intersection:
                             intersects = True  # Set the intersection flag to True
-                            intersection_point = existing[j+1]  # Store the intersection point
+                            convergence_point = existing[j+1]  # Store the intersection point
+                            self.river_intersection_points.append(intersection)
                             break  # Break the inner loop once an intersection is found
 
                     if intersects:  # If an intersection is found, break the outer loop
@@ -82,29 +100,13 @@ class BattleGround:
                 if intersects:  # If an intersection is found, break the loop and do not add the river
                     break
 
-            if intersection_point:
-                points[-1] = intersection_point  # Replace the last point with the intersection point
+            if convergence_point:
+                points[-1] = convergence_point  # Replace the last point with the intersection point
 
             # Only add the river if there were no intersections
             self.rivers.append(points)
-
-
-                    # if intersects:  # If an intersection is found, stop generating the river
-                    #     break
-
-                    #         # print(points, self.rivers)
-                    #         self.rivers.append(points)  # Add the river if there was no intersection
-                    #         break
-                    #  print(rounded_point,river,"y" )
-                 # Check for intersections with other rivers
-                
-                 # if any(check_intersection(rounded_point, existing_river) for existing_river in self.rivers):
-                 #     break
-
-             
-    
-
-    
+            # print(self.river_intersection_points)
+                 
     def calculate_bezier_curve(self, t, p0, p1, p2, p3):
         u = 1 - t
         uu = u * u
@@ -166,9 +168,11 @@ class BattleGround:
         dot_radius = 10
 
         # Draw forrests
-        for x, y in self.forrests:
-            pygame.draw.circle(screen, (34, 139, 34), (x, y), dot_radius)  # Dark Green
-
+        print("x")
+        for forest in self.forests:
+            pygame.draw.polygon(screen, (0, 255, 0), forest)  # Draw an irregular polygon for each forest
+            # pygame.draw.circle(screen, (34, 139, 34), (x, y), dot_radius)  # Dark Green
+        print("y")
         # Draw rivers
         for points in self.rivers:
             # pygame.draw.circle(screen, (128, 128, 128), points[0], dot_radius)
@@ -188,6 +192,37 @@ class BattleGround:
         for x, y in self.supply_depots:
             pygame.draw.circle(screen, (255, 255, 0), (x, y), dot_radius)  # Yellow
 
+def find_river_segments_for_crossing(rivers):
+    river_segments = []
+
+    for river in rivers:
+        if not river:
+            continue
+
+        river_segment_start = river[0]  # Start the river segment from the first point
+        river_segment_end = None
+
+        for point in river:
+            point_in_other_river = False
+            for other_river in rivers:
+                if other_river != river and point in other_river:
+                    point_in_other_river = True
+                    river_segment_end = point
+                    break
+
+            if point_in_other_river:
+                if river_segment_start != river_segment_end:  # Check if it's a line segment and not a dot
+                    river_segments.append((river_segment_start, river_segment_end))
+                river_segment_start = river_segment_end
+                river_segment_end = None
+
+        # Add the last river segment if needed
+        if river_segment_end is None and river_segment_start != river[-1]:
+            river_segments.append((river_segment_start, river[-1]))
+
+    return river_segments
+
+ 
 
 # def check_intersection(point, river):
 #     for i in range(len(river) - 1):

@@ -31,7 +31,8 @@ battle_ground.place_rivers()
 battle_ground.place_towns()
 battle_ground.place_roads()
 battle_ground.place_supply_depots()
-print(battle_ground.supply_depots)
+intersections =  find_river_segments_for_crossing(battle_ground.rivers)
+print(intersections)
  
 
 def next_turn():
@@ -52,7 +53,18 @@ button_bar = ButtonBar(WIDTH, buy_buttons)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
 lets_continue = True
 
+screen.fill(GREEN)
 
+# Render elements
+next_turn_button.draw(screen)
+button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, RED)
+battle_ground.draw(screen)
+
+# Draw your other game elements here (rivers, towns, roads, etc.)
+
+# draw_forests(screen, battle_ground.forests)  # Draw the irregular polygons for forests
+
+pygame.display.update()
  
 while lets_continue:
     # check for events
@@ -61,16 +73,16 @@ while lets_continue:
             print(event)
             lets_continue = False
 
-    pygame.display.update()
+    # pygame.display.update()
 
-    # RESET THE GAMEBOARD
-    screen.fill(GREEN)
+    # # RESET THE GAMEBOARD
+    # screen.fill(GREEN)
 
-    # RENDER ELEMENTS
+    # # RENDER ELEMENTS
     
-    next_turn_button.draw(screen)
-    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, RED)
-    battle_ground.draw(screen)
+    # next_turn_button.draw(screen)
+    # button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, RED)
+    # battle_ground.draw(screen)
 
      
     # clock.tick(fps)
