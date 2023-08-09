@@ -15,7 +15,7 @@ def sum_values(obj):
         total_sum += value
     return total_sum
 
-
+ 
 def create_unit( unit_params, living_units,     ):
     # Create the unit object
     unit_class, x, y,   color, = unit_params
@@ -92,4 +92,15 @@ def move_unit_along_line(line_points, interersecting_point, unit    ):
     # print( new_center_x, new_center_y )
     return  
 
- 
+def calculate_bezier_curve(t, p0, p1, p2, p3):
+        u = 1 - t
+        uu = u * u
+        uuu = uu * u
+        tt = t * t
+        ttt = tt * t
+
+        p = (
+            u * uuu * p0[0] + 3 * uu * t * p1[0] + 3 * u * tt * p2[0] + ttt * p3[0],
+            u * uuu * p0[1] + 3 * uu * t * p1[1] + 3 * u * tt * p2[1] + ttt * p3[1]
+        )
+        return p

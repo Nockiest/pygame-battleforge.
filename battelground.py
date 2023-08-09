@@ -2,6 +2,7 @@ import random
 import pygame
 import math
 from config import *
+from utils import *
 square_size = 10  # Adjust the size range as needed
 
 def do_lines_intersect(p1, p2, p3, p4):
@@ -25,6 +26,7 @@ def do_lines_intersect(p1, p2, p3, p4):
             return intersect_x, intersect_y
 
     return False
+
 class BattleGround:
     def __init__(self, width, height):
         self.width = width
@@ -75,15 +77,13 @@ class BattleGround:
 
             # Filter out points that are duplicates or outside the bounds
             new_points = [
-                (new_x, new_y)
-                for new_x, new_y in new_points
-                if (0 <= new_x < self.width) and (0 <= new_y < self.height)
-            ]
+                (x, min(max(y, 0), self.height)) for x, y in new_points
+            ]  
             new_points = list(set(new_points))  # Remove duplicates
             last_points = new_points  # Update last_points with new points
             points.extend(new_points)
             num_squares = len(points)
-            print(new_points, "new points")
+            
         return points
     
     def find_edge_points(self,points):
@@ -96,12 +96,12 @@ class BattleGround:
         for x_axis in range(leftmost_x, rightmost_x + 1, square_size):
             same_x_points = [(x, y) for x, y in points if x == x_axis]
             if same_x_points:
-                print(f"Points with x-coordinate {x_axis}: {same_x_points}")
+                # print(f"Points with x-coordinate {x_axis}: {same_x_points}")
 
                 # Find points with lowest and highest y-values in the same_x_points array
                 lowest_y_point = min(same_x_points, key=lambda p: p[1])
                 highest_y_point = max(same_x_points, key=lambda p: p[1])
-                print(f"Lowest y-value: {lowest_y_point}, Highest y-value: {highest_y_point}")
+                # print(f"Lowest y-value: {lowest_y_point}, Highest y-value: {highest_y_point}")
 
                 # Add lowest and highest points to the result array
                 result.insert(0,lowest_y_point)
@@ -110,6 +110,7 @@ class BattleGround:
     
 
         return result
+    
     def place_rivers(self):
         for _ in range(self.num_rivers):
             start_x = random.choice([0, self.width])
@@ -128,7 +129,7 @@ class BattleGround:
 
             for i in range(num_segments + 1):
                 t = i / num_segments
-                point = self.calculate_bezier_curve(t, (start_x, start_y), (control_x1, control_y1), (control_x2, control_y2), (end_x, end_y))
+                point = calculate_bezier_curve(t, (start_x, start_y), (control_x1, control_y1), (control_x2, control_y2), (end_x, end_y))
                 rounded_point = (round(point[0]), round(point[1]))
                 intersects = False  # Initialize the intersection flag as False
                 points.append(rounded_point)
@@ -155,24 +156,19 @@ class BattleGround:
             self.rivers.append(points)
             # print(self.river_intersection_points)
                  
-    def calculate_bezier_curve(self, t, p0, p1, p2, p3):
-        u = 1 - t
-        uu = u * u
-        uuu = uu * u
-        tt = t * t
-        ttt = tt * t
-
-        p = (
-            u * uuu * p0[0] + 3 * uu * t * p1[0] + 3 * u * tt * p2[0] + ttt * p3[0],
-            u * uuu * p0[1] + 3 * uu * t * p1[1] + 3 * u * tt * p2[1] + ttt * p3[1]
-        )
-        return p
+    
 
     def place_towns(self):
-        for _ in range(self.num_towns):
-            x = random.randint(0, self.width)
-            y = random.randint(0, self.height)
-            self.towns.append((x, y))
+        #  choose a random point on the map, that it at least 300px from other starting town points
+
+        # create a rectangle with a height and width AROUND 60x30 px
+
+
+
+        # for _ in range(self.num_towns):
+        #     x = random.randint(0, self.width)
+        #     y = random.randint(0, self.height)
+        #     self.towns.append((x, y))
 
     def place_roads(self):
         for _ in range(self.num_roads):
@@ -220,11 +216,6 @@ class BattleGround:
            
             pygame.draw.polygon(screen, (0, 255, 0), forest)
             # create a polygon out of the edge pointa
-
-            # for point in forest:
-            #     x, y = point
-            #     rect = pygame.Rect(x, y, square_size +1, square_size +1) # to avoid gaps
-            #     pygame.draw.rect(screen, (0, 255, 0), rect)  # Fill the square with green color
                 
         for points in self.rivers:
             pygame.draw.lines(screen, (128, 128, 128), False, points, 2)
