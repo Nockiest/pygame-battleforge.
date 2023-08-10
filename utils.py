@@ -1,5 +1,6 @@
 import math
-
+  
+from config import *
  
 
 def  get_two_units_center_distance(unit1, unit2):
@@ -93,3 +94,49 @@ def move_unit_along_line(line_points, interersecting_point, unit    ):
     return  
 
  
+ 
+def distance( p1, p2):
+        return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+def find_edge_points(points):
+    leftmost_point = min(points, key=lambda p: p[0])
+    rightmost_point = max(points, key=lambda p: p[0])
+    edge_points = [leftmost_point, rightmost_point]
+    leftmost_x, rightmost_x = edge_points[0][0], edge_points[1][0]
+    result = []
+
+
+    for x_axis in range(leftmost_x, rightmost_x + 1, square_size):
+        same_x_points = [(x, y) for x, y in points if x == x_axis]
+        if same_x_points:
+            # print(f"Points with x-coordinate {x_axis}: {same_x_points}")
+
+
+            # Find points with lowest and highest y-values in the same_x_points array
+            lowest_y_point = min(same_x_points, key=lambda p: p[1])
+            highest_y_point = max(same_x_points, key=lambda p: p[1])
+            # print(f"Lowest y-value: {lowest_y_point}, Highest y-value: {highest_y_point}")
+
+
+            # Add lowest and highest points to the result array
+            result.insert(0,lowest_y_point)
+            result.append(highest_y_point)
+
+
+
+
+
+
+    return result
+def calculate_bezier_curve(t, p0, p1, p2, p3):
+        u = 1 - t
+        uu = u * u
+        uuu = uu * u
+        tt = t * t
+        ttt = tt * t
+
+
+        p = (
+            u * uuu * p0[0] + 3 * uu * t * p1[0] + 3 * u * tt * p2[0] + ttt * p3[0],
+            u * uuu * p0[1] + 3 * uu * t * p1[1] + 3 * u * tt * p2[1] + ttt * p3[1]
+        )
+        return p

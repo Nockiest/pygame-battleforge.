@@ -6,11 +6,29 @@ from unit_classes import *
 from utils import *
 from buy_bar import *
 from player_actions import Player
+from generation.battelground import *
+
 pygame.init()
 
 # Vytvoření obrazovky
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
+battle_ground.place_forrests()
+battle_ground.place_rivers()
+battle_ground.place_towns(screen)
+battle_ground.place_roads( )
+battle_ground.place_bridges()
+battle_ground.place_supply_depots()
+intersections =  find_river_segments_for_crossing(battle_ground.rivers)
+print(intersections)
+ 
 
+
+
+
+
+
+ 
 
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
 
@@ -269,8 +287,9 @@ while lets_continue:
 
     # RESET THE GAMEBOARD
     screen.fill(GREEN)
-
+    
     # RENDER ELEMENTS
+    battle_ground.draw(screen)
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
