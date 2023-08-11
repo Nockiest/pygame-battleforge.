@@ -16,23 +16,26 @@ def render_attack_cross(screen, x, y):
                      (x, y + cross_length), cross_thickness)
 
 def calculate_movement_cost(color_list):
-    movement_cost = 0
+    movement_costs = []
+    total_cost = 0
     
-    for color in color_list:
+    for i, color in enumerate(color_list):
         if color == FORREST_GREEN:
-            movement_cost += 2
+            total_cost += 2
         elif color == ROAD_GRAY:
-            movement_cost += 0.5
+            total_cost += 0.5
         elif color == RIVER_BLUE:
-            return "Unit can't go there"  # River blocks movement
+            total_cost += 1000000 # to prevent the unit from going over the river 
         elif color == BRIDGE_COLOR:
-            movement_cost += 1
+            total_cost += 1
         elif color == TOWN_RED or color == HOUSE_PURPLE:
-            movement_cost += 1
+            total_cost += 1
         else:
-            movement_cost += 1  # Default movement cost
+            total_cost += 1  # Default movement cost
+        
+        movement_costs.append((total_cost, i, color))
     
-    return movement_cost
+    return movement_costs
 class Unit:
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
         self.hp = hp
@@ -58,44 +61,87 @@ class Unit:
         self.color = color
 
     def move_in_game_field(self, click_pos, living_units):
-        # Calculate the distance between the new position and the starting position in both x and y directions
-        delta_x = click_pos[0] - self.start_turn_position[0]
-        delta_y = click_pos[1] - self.start_turn_position[1]
-
-        # Calculate the distance from the starting position to the new position
-        distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
-
-        if distance > self.base_movement:
-            # Calculate the new position based on the line connecting the two points
-            scale_factor = (self.base_movement) / distance
-            new_x = int(
-                self.start_turn_position[0] + delta_x * scale_factor - self.size // 2)
-            new_y = int(
-                self.start_turn_position[1] + delta_y * scale_factor - self.size // 2)
-
-        else:
-            # The movement is within the allowed range, so set the position directly
-            new_x = click_pos[0] - self.size // 2
-            new_y = click_pos[1] - self.size // 2
-        movement_line = bresenham_line(
-            self.start_turn_position[0], self.start_turn_position[1],  click_pos[0], click_pos[1])
-        line_point_colors = get_pixel_colors(movement_line, background_screen)
+        # Calculate the endpoint of the Bresenham line
+        dx = click_pos[0] - self.start_turn_position[0]
+        dy = click_pos[1] - self.start_turn_position[1]
         
-        movement_cost = calculate_movement_cost(line_point_colors)
-        print(movement_cost)
-        new_rect = pygame.Rect(new_x, new_y, self.size, self.size)
-        res = self.check_for_direct_overlap(living_units, new_rect)
-        if res:
-            return print("unit overlaps")
-        res = self.control_interference(living_units, new_x, new_y)
-        if res == "corrected":
-            print("corrected")
+        # Calculate the endpoint of the Bresenham line
+        end_x = self.x + self.size // 2 + dx
+        end_y = self.y + self.size // 2 + dy
+        
+        movement_line = bresenham_line(self.start_turn_position[0], self.start_turn_position[1], end_x, end_y)
+        # count the movement cost of every pixel based on its color
+        line_point_colors = get_pixel_colors(movement_line, background_screen)
+        movement_costs = calculate_movement_cost(line_point_colors)
+        print(movement_costs[-1])
+          
+      
+         # If still cheaper at the end of costs, adjust self.x and self.y
+        if movement_costs[-1][0] <= self.base_movement:
+            dx = movement_line[-1][0] - self.x
+            dy = movement_line[-1][1] - self.y
+            print( movement_line[-1])
+            self.x =    movement_line[-1][0]
+            self.y =    movement_line[-1][1]
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-            return
-        else:
-            self.x = max(0, min(new_x, WIDTH - self.size))
-            self.y = max(0, min(new_y, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
-            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        # if it the movement cost is bigger than base_movement*modifiers or it hit a river set it to the
+        # last point before one of these conditions was applied
+        for cost, index, color in movement_costs:
+            if cost > self.base_movement:
+                # Set the unit's position to the last point before the condition was applied
+                new_x, new_y = movement_line[index - 1]
+                print(new_y, new_x,dx,dy)
+                self.x = new_x #- dx
+                self.y = new_y #- dy
+                self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+                break
+
+        
+        # check wheter the unit interferes with another of enemy units
+
+        # if yes set the position to be just before the enemy unit
+
+        # if there is a friendly unit where you want to place the unit set the moved unit before or arfter 
+        # that unit
+
+
+
+
+
+    
+        # # Calculate the distance between the new position and the starting position in both x and y directions
+        # delta_x = click_pos[0] - self.start_turn_position[0]
+        # delta_y = click_pos[1] - self.start_turn_position[1]
+
+        # # Calculate the distance from the starting position to the new position
+        # distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
+
+        # if distance > self.base_movement:
+        #     # Calculate the new position based on the line connecting the two points
+        #     scale_factor = (self.base_movement) / distance
+        #     new_x = int(
+        #         self.start_turn_position[0] + delta_x * scale_factor - self.size // 2)
+        #     new_y = int(
+        #         self.start_turn_position[1] + delta_y * scale_factor - self.size // 2)
+
+        # else:
+        #     # The movement is within the allowed range, so set the position directly
+        #     new_x = click_pos[0] - self.size // 2
+        #     new_y = click_pos[1] - self.size // 2
+     
+        # new_rect = pygame.Rect(new_x, new_y, self.size, self.size)
+        # res = self.check_for_direct_overlap(living_units, new_rect)
+        # if res:
+        #     return print("unit overlaps")
+        # res = self.control_interference(living_units, new_x, new_y)
+        # if res == "corrected":
+        #     print("corrected")
+        #     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        #     return
+        # else:
+        #     self.x = max(0, min(new_x, WIDTH - self.size))
+        #     self.y = max(0, min(new_y, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
+        #     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
 
     def check_for_direct_overlap(self, living_units, new_rect):
         for unit in living_units:

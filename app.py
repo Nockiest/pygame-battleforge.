@@ -264,6 +264,7 @@ while lets_continue:
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
+    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
     if selected_unit:
             selected_unit.draw_as_active(screen)
             selected_unit.attack_range_modifiers = 1
