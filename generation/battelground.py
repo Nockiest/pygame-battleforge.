@@ -347,32 +347,8 @@ class BattleGround:
            
             # Save the road path to self.roads
             self.roads.append((town_center, selected_point, selected_point))
-               
- 
 
 
-               
-        # Print the calculated road paths
-        # for road in self.roads:
-        #     print("Road path:", road)
-       # connect the dges to the road network
-        # Iterate through the roads
-        for road in self.roads:
-            start_point, mid_point, end_point = road
-           
-            # Check if start point is outside the game boundary
-            if start_point[0] < 0 or start_point[0] > self.width or start_point[1] < 0 or start_point[1] > self.height:
-                print("Start point is outside the boundary:", start_point)
-           
-            # Check if mid point is outside the game boundary
-            if mid_point[0] < 0 or mid_point[0] > self.width or mid_point[1] < 0 or mid_point[1] > self.height:
-                print("Mid point is outside the boundary:", mid_point)
-           
-            # Check if end point is outside the game boundary
-            if end_point[0] < 0 or end_point[0] > self.width or end_point[1] < 0 or end_point[1] > self.height:
-                print("End point is outside the boundary:", end_point)
-            # ... Check other boundaries similarly
-            # find the remaining unconnected patches of land cut of by river and connect them to the road network
 
 
 
@@ -403,9 +379,11 @@ class BattleGround:
         for part in all_river_parts:
             river_part_intersects = False
             print(part, "river part")
-            for i in range(len(part) - 1):
-                point1 = part[i]
-                point2 = part[i + 1]
+            if len(part) < 3:
+                continue
+            for i in range(len(part) - 2):
+                point1 = part[i +1 ]
+                point2 = part[i +2]
                 line_segment = (point1, point2)
                
                 print(point1, point2, "points")
@@ -420,10 +398,7 @@ class BattleGround:
                     elif do_lines_intersect(point1, point2, mid_point, end_point):
                         # print(f"River segment {line_segment} intersects with road segment ({mid_point}, {end_point})")
                         river_part_intersects = True
-                    else:
-                        pass
-                        # print(f"River segment {line_segment} doesnt intersect with any segment")
-                # print(river_part_intersects)
+                     
            
             if not river_part_intersects:
                 # Choose a random index from the river part
