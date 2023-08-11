@@ -10,9 +10,6 @@ from generation.battelground import *
 
 pygame.init()
 
-# Vytvoření obrazovky
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
-
 battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
 battle_ground.place_forrests()
 battle_ground.place_rivers()
@@ -22,21 +19,13 @@ battle_ground.place_bridges()
 battle_ground.place_supply_depots()
 intersections =  find_river_segments_for_crossing(battle_ground.rivers)
 print(intersections)
- 
-
-
-
-
-
-
- 
 
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
 
 selected_unit = None
 render_units_attack_screen = False
 unit_placement_mode = None
-
+game_won = False
 living_units = []
 
 red_player = Player(RED, 0, 0)
@@ -76,16 +65,6 @@ def find_players_with_same_color(players, cur_player):
 
     return same_color_player
 
-# def check_game_ended(teams):
-#     for team_units in teams.values():
-#         print(team_units)
-#         has_commander = any(isinstance(unit, Commander) for unit in team_units)
-#         print(has_commander)
-#         if not has_commander:
-#             return True
-#     return False
- 
-
 def next_turn():
     global living_units
 
@@ -93,9 +72,6 @@ def next_turn():
     # is_win =  check_game_ended(teams)
     # print("game won?", is_win)
     for unit in living_units:
-        # if isinstance(unit, Medic):
-        #     unit.reset_for_next_turn(living_units)
-        # else:
         unit.reset_for_next_turn()
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
     print("Next Turn")
@@ -144,6 +120,7 @@ def select_unit():
 
 def process_attack(attacker, attacked_pos):
     global living_units
+    global game_won
     attack_result = attacker.try_attack(
         event.pos, living_units)
     print(attack_result)
@@ -162,6 +139,8 @@ def process_attack(attacker, attacked_pos):
                     living_units, attacked_enemy )
                 if isinstance(attacked_enemy, Commander):
                     players[cur_player].announce_defeat()
+                    
+                    game_won = players[cur_player].end_game(game_won)
         disable_unit_for_turn()
         deselct_unit()
     elif attack_result == "SUPPORTS DONT ATTACK":
@@ -228,7 +207,8 @@ def try_select_unit(click_pos, unit):
 
 button_bar = ButtonBar(WIDTH, buy_buttons)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
-
+ 
+button_bar.draw(background_screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
 while lets_continue:
     # check for events
     for event in pygame.event.get():
@@ -272,21 +252,17 @@ while lets_continue:
             if selected_unit:
                 selected_unit.move_in_game_field(event.pos, living_units)
 
-    pygame.display.update()
-
-    # RESET THE GAMEBOARD
     screen.fill(GREEN)
-    
-    # RENDER ELEMENTS
+
+    # RENDER ELEMENTS ON THE MAIN SCREEN
     battle_ground.draw(screen)
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
-    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
-
+    # ... (rest of the rendering code)
     if selected_unit:
-        selected_unit.draw_as_active(screen)
-        selected_unit.attack_range_modifiers = 1
+            selected_unit.draw_as_active(screen)
+            selected_unit.attack_range_modifiers = 1
     for unit in living_units:
         unit.render_on_screen(screen)
     if hasattr(selected_unit, 'attack_cross_position'):
@@ -295,8 +271,22 @@ while lets_continue:
         if selected_unit.remain_actions > 0:
             apply_modifier(selected_unit, living_units, "in_observer_range")
             selected_unit.render_attack_circle(screen)
-    # if unit_placement_mode:
-    #     print("unit placement mode")
+    # Render the game state information
+       
+    text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))
+    text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+    screen.blit(text, text_rect)
+    
+    # Render everything on the display
+    pygame.display.update()
+
+    # RENDER ELEMENTS ON THE BACKGROUND SCREEN
+    background_screen.fill(GREEN)
+    battle_ground.draw(background_screen)
+    red_player.render_tender(background_screen)
+    blue_player.render_tender(background_screen)
+    next_turn_button.draw(background_screen)
+  
     clock.tick(fps)
 
 # Ukončení pygame

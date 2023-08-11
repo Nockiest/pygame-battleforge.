@@ -1,1 +1,5 @@
-e
+ckground_screen.fill(GREEN)
+    # battle_ground.draw(background_screen)
+    # red_player.render_tender(background_screen)
+    # blue_player.render_tender(background_screen)
+    # next_turn_button.draw(background_screen)

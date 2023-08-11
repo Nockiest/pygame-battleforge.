@@ -389,11 +389,11 @@ class BattleGround:
 
         # Draw forrests
         for forest in self.forests:
-            pygame.draw.polygon(screen, (128, 255, 128), forest)
+            pygame.draw.polygon(screen, FORREST_GREEN, forest)
 
         # Draw rivers
         for points in self.rivers:
-            pygame.draw.lines(screen, (173, 216, 230), False, points, 10)
+            pygame.draw.lines(screen, RIVER_BLUE  , False, points, 10)
 
 
         # Draw roads
@@ -402,7 +402,7 @@ class BattleGround:
             # pygame.draw.circle(screen,  (128, 128, 128), points[0], dot_radius)  # Saddle Brown
             # pygame.draw.circle(screen, (128, 128, 128), points[-1], dot_radius)  # Saddle Brown
             for i in range(len(points) - 1):
-                pygame.draw.line(screen,  (128, 128, 128), points[i], points[i + 1], 15)  # Saddle Brown
+                pygame.draw.line(screen, ROAD_GRAY  , points[i], points[i + 1], 15)  # Saddle Brown
                
                 # Calculate the coordinates for the corners of the square
                 x, y = points[i + 1]
@@ -415,17 +415,17 @@ class BattleGround:
                 ]
                
                 # Draw the square
-                pygame.draw.polygon(screen, (128, 128, 128), square_corners)
+                pygame.draw.polygon(screen, ROAD_GRAY, square_corners)
 
         # Draw towns
         for town_rect in self.towns:
-            pygame.draw.rect(screen, (255, 0, 0, 100), town_rect[0])  # Red rectangle for town center with reduced opacity
+            pygame.draw.rect(screen, TOWN_RED  , town_rect[0])  # Red rectangle for town center with reduced opacity
             for house_rect in town_rect[1]:
-                pygame.draw.rect(screen, (255, 0, 255), house_rect, 2)  # Magenta rectangle for each house
+                pygame.draw.rect(screen, HOUSE_PURPLE , house_rect, 2)  # Magenta rectangle for each house
 
 
         # Draw bridges
-        bridge_color = (139, 69, 19)  # Saddle Brown
+         
         bridge_width = 25
         bridge_height = 50
 
@@ -437,7 +437,7 @@ class BattleGround:
            
             # Create a rotated surface for the rectangle
             bridge_surface = pygame.Surface((bridge_width, bridge_height), pygame.SRCALPHA)
-            pygame.draw.rect(bridge_surface, bridge_color, (0, 0, bridge_width, bridge_height))
+            pygame.draw.rect(bridge_surface, BRIDGE_COLOR, (0, 0, bridge_width, bridge_height))
             rotated_surface = pygame.transform.rotate(bridge_surface, math.degrees(angle   ))
            
             # Calculate the position to blit the rotated rectangle

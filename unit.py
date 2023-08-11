@@ -4,7 +4,6 @@ from utils import *
 import math
 import random
 
- 
 
 def render_attack_cross(screen, x, y):
     cross_color = (255, 165, 0)  # Orange color
@@ -23,7 +22,7 @@ class Unit:
         self.base_hp = hp
         self.attack_range = attack_range
         self.attack_range_modifiers = 1
-        self.remain_actions = 0 #base_actions
+        self.remain_actions = 0  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
         self.atttack_resistance = attack_resistance
@@ -48,7 +47,7 @@ class Unit:
 
         # Calculate the distance from the starting position to the new position
         distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
-           
+
         if distance > self.base_movement:
             # Calculate the new position based on the line connecting the two points
             scale_factor = (self.base_movement) / distance
@@ -61,27 +60,30 @@ class Unit:
             # The movement is within the allowed range, so set the position directly
             new_x = click_pos[0] - self.size // 2
             new_y = click_pos[1] - self.size // 2
-
-        new_rect =  pygame.Rect(new_x, new_y, self.size, self.size)
-        res = self.check_for_direct_overlap(living_units,new_rect)
+        movement_line = bresenham_line(
+            self.start_turn_position[0], self.start_turn_position[1],  click_pos[0], click_pos[1])
+        line_point_colors = get_pixel_colors(movement_line, background_screen)
+        print(line_point_colors)
+        new_rect = pygame.Rect(new_x, new_y, self.size, self.size)
+        res = self.check_for_direct_overlap(living_units, new_rect)
         if res:
             return print("unit overlaps")
-        res = self.control_interference(living_units,new_x,new_y)
+        res = self.control_interference(living_units, new_x, new_y)
         if res == "corrected":
             print("corrected")
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
             return
         else:
             self.x = max(0, min(new_x, WIDTH - self.size))
-            self.y = max(0, min(new_y, HEIGHT - BUTTON_BAR_HEIGHT - self.size))     
+            self.y = max(0, min(new_y, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-  
-    def check_for_direct_overlap(self, living_units,new_rect):
+
+    def check_for_direct_overlap(self, living_units, new_rect):
         for unit in living_units:
-        # Skip units of the same color, units that cannot be moved, and the unit itself      
+            # Skip units of the same color, units that cannot be moved, and the unit itself
             if unit is self:
                 continue
-            
+
             res = unit.rect.colliderect(new_rect)
             if res and unit.color == self.color:
                 return "collision_with_team_member"
@@ -89,28 +91,25 @@ class Unit:
                 return "collision_with_enemy"
         return False
 
-
-    def control_interference(self, living_units,new_x,new_y):
-        
+    def control_interference(self, living_units, new_x, new_y):
         center_x = new_x + self.size // 2
         center_y = new_y + self.size // 2
         # print(center_x,center_y,new_x,new_y)
-        for unit in living_units:           
+        for unit in living_units:
             if unit.color == self.color or unit is self:
                 continue
 
             point_x, point_y, line_points = check_square_line_interference(
                 unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
-  
+
             # print( point_x  , point_y, line_points   )
-            if  point_x != None and point_y  != None:
-                
-                move_unit_along_line(line_points, (point_x, point_y), self)
+            if point_x != None and point_y != None:
+
+                move_unit_along_line(
+                    line_points, (point_x, point_y), self, screen)
                 return "corrected"
         return None
 
-         
-   
     def render_attack_circle(self, screen):
 
         pygame.draw.circle(screen, RED, (self.x + self.size //
@@ -195,7 +194,7 @@ class Unit:
         self.rect = None
 
         print("Unit is dead")
-         
+
     def reset_for_next_turn(self):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
@@ -211,27 +210,30 @@ class Unit:
         warrior_img = pygame.image.load(f"img/{self.icon}")
         # Scale down the image to fit within the allocated space with padding
         max_image_size = self.size - padding * 2
-        warrior_img = pygame.transform.scale(warrior_img, (max_image_size, max_image_size))
+        warrior_img = pygame.transform.scale(
+            warrior_img, (max_image_size, max_image_size))
 
         warrior_img_rect = warrior_img.get_rect()
         # Center the image within the allocated space with padding
-        warrior_img_rect.center = (self.x + self.size // 2, self.y + self.size // 2)
+        warrior_img_rect.center = (
+            self.x + self.size // 2, self.y + self.size // 2)
 
         # Draw the outline rectangle
         outline_rect = pygame.Rect(self.x, self.y, self.size, self.size)
         outline_color = (0, 0, 0)  # Black color for the outline
-        
 
         # Draw the filled rectangle for the unit
         pygame.draw.rect(screen, self.color, self.rect)
-        pygame.draw.rect(screen, outline_color, outline_rect, 1)  # 2 is the width of the outline
+        pygame.draw.rect(screen, outline_color, outline_rect,
+                         1)  # 2 is the width of the outline
         # Draw the unit image
         screen.blit(warrior_img, warrior_img_rect)
 
         # Render remaining attacks and ammo below the unit
         font = pygame.font.Font(None, 20)
         text_color = (255, 255, 255)  # White color
-        text_pos = (self.x, self.y + self.size + padding)  # Adjust the text position with padding
+        # Adjust the text position with padding
+        text_pos = (self.x, self.y + self.size + padding)
         text_surface = font.render(
             f"Attacks: {self.remain_actions}   Ammo: {self.ammo} Hp: {self.hp}", True, text_color)
         screen.blit(text_surface, text_pos)
@@ -248,4 +250,3 @@ class Unit:
         center_y = self.y + self.size // 2
         pygame.draw.line(screen, BLACK, self.start_turn_position,
                          (center_x, center_y), 2)
-
