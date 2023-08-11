@@ -14,8 +14,9 @@ class Player:
 
     def create_unit( self, unit_params, living_units ):
         # Create the unit object
-        unit_class, x, y,   color, = unit_params
-        unit = unit_class(x=x, y=y,  color=color )
+        unit_class, x, y = unit_params
+        unit = unit_class(x=x, y=y,  color=self.color )
+        print(unit.color)
         if self.supplies >= unit.cost:
             
             living_units.append(unit)
@@ -31,8 +32,8 @@ class Player:
         return unit
 
     def create_starting_unit(self, unit_params, living_units):
-        unit_class, x, y,   color, = unit_params
-        unit = unit_class(x=x, y=y,  color=color )
+        unit_class, x, y,   = unit_params
+        unit = unit_class(x=x, y=y,  color=self.color )
         living_units.append(unit)
         self.units.append(unit)
         print("created starting unit")

@@ -11,12 +11,13 @@ from generation.battelground import *
 pygame.init()
 
 # Vytvoření obrazovky
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
+
 battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
 battle_ground.place_forrests()
 battle_ground.place_rivers()
 battle_ground.place_towns(screen)
-# battle_ground.place_roads( )
+battle_ground.place_roads( )
 battle_ground.place_bridges()
 battle_ground.place_supply_depots()
 intersections =  find_river_segments_for_crossing(battle_ground.rivers)
@@ -43,15 +44,15 @@ blue_player = Player(BLUE, WIDTH - 40, 0)
 players = [red_player, blue_player]
 cur_player = 0  # RED
 
-blue_player.create_starting_unit((Musketeer, 200, 200, BLUE), living_units)
-red_player.create_starting_unit((Canon, 300, 300, RED), living_units)
-red_player.create_starting_unit((Shield, 400, 300, RED), living_units)
-blue_player.create_starting_unit((Medic, 500, 400, BLUE), living_units)
-blue_player.create_starting_unit((Commander, 600, 100, BLUE), living_units)
-red_player.create_starting_unit((Commander, 500, 100, RED), living_units)
-red_player.create_starting_unit((Pikeman, 700, 100, RED), living_units)
-blue_player.create_starting_unit((SupplyCart, 800, 300, BLUE), living_units)
-blue_player.create_starting_unit((Observer, 200, 150, BLUE), living_units)
+blue_player.create_starting_unit((Musketeer, 200, 200), living_units)
+red_player.create_starting_unit((Canon, 300, 300), living_units)
+red_player.create_starting_unit((Shield, 400, 300), living_units)
+blue_player.create_starting_unit((Medic, 500, 400), living_units)
+blue_player.create_starting_unit((Commander, 600, 100), living_units)
+red_player.create_starting_unit((Commander, 500, 100), living_units)
+red_player.create_starting_unit((Pikeman, 700, 100), living_units)
+blue_player.create_starting_unit((SupplyCart, 800, 300), living_units)
+blue_player.create_starting_unit((Observer, 200, 150), living_units)
 
 screen.fill(GREEN)
 lets_continue = True
@@ -83,11 +84,10 @@ def find_players_with_same_color(players, cur_player):
 #         if not has_commander:
 #             return True
 #     return False
-
+ 
 
 def next_turn():
     global living_units
-    global teams
 
     # Your next turn logic here
     # is_win =  check_game_ended(teams)
@@ -161,7 +161,7 @@ def process_attack(attacker, attacked_pos):
                 players[cur_player].remove_from_game(
                     living_units, attacked_enemy )
                 if isinstance(attacked_enemy, Commander):
-                    attacked_enemy.lose_game()
+                    players[cur_player].announce_defeat()
         disable_unit_for_turn()
         deselct_unit()
     elif attack_result == "SUPPORTS DONT ATTACK":
@@ -193,18 +193,6 @@ def apply_modifier(selected_unit, living_units, modifier_type):
                         medic.heal(unit)
                         # distance = get_two_units_center_distance(unit, medic)
                         # if distance <= supply_cart.attack_range:
-                            
-
-def check_in_observers_range():
-    if issubclass(selected_unit.__class__, Ranged):
-        for unit in living_units:
-            if isinstance(unit, Observer) and unit.color == selected_unit.color:
-                observer_unit = unit
-                distance = get_two_units_center_distance(
-                    selected_unit, observer_unit)
-                if distance <= 75:
-                    selected_unit.attack_range_modifiers += 0.5  # Add "in_observer_range" modifier
-
 
 def check_in_range(itself, other_object):
     pass
@@ -217,24 +205,25 @@ def buy_unit(click_pos):
     if unit_type_class:
         # Call the create_unit function with the class name
 
-        print(players[cur_player])
+        print(players[cur_player].color)
         players[cur_player].create_unit(
-            (unit_type_class, click_pos[0], click_pos[1], cur_player), living_units)
-        print(unit_placement_mode, living_units)
+            (unit_type_class, click_pos[0], click_pos[1]), living_units)
+        # print(unit_placement_mode, living_units)
     else:
         print(f"Error: Unit type {unit_placement_mode} not found.")
     unit_placement_mode = None
 
 
 def try_select_unit(click_pos, unit):
+    print(unit,living_units)
     if unit.rect.collidepoint(click_pos):
         return ("unit wasnt clicked on", click_pos)
     if unit.able_to_move:
         return True
     else:
-        print("no attacks or ammo left for this unit")
-    print(
-        f"Selected {unit.__class__.__name__} with right button")
+        print("no attacks or ammo left for this unit", unit.__class__.__name__)
+    # print(
+    #     f"Selected {unit.__class__.__name__} with right button")
 
 
 button_bar = ButtonBar(WIDTH, buy_buttons)
@@ -263,7 +252,7 @@ while lets_continue:
                 else:
                    for unit in living_units:
                     can_select = try_select_unit(event.pos, unit)
-                    print(can_select)
+                    # print(can_select)
                     if can_select:
                         select_unit()
                     break
@@ -274,7 +263,7 @@ while lets_continue:
             else:
                 for unit in living_units:
                     can_select = try_select_unit(event.pos, unit)
-                    print(can_select)
+                    # print(can_select)
                     if can_select:
                         select_unit()
                     break
@@ -306,8 +295,8 @@ while lets_continue:
         if selected_unit.remain_actions > 0:
             apply_modifier(selected_unit, living_units, "in_observer_range")
             selected_unit.render_attack_circle(screen)
-    if unit_placement_mode:
-        print("unit placement mode")
+    # if unit_placement_mode:
+    #     print("unit placement mode")
     clock.tick(fps)
 
 # Ukončení pygame

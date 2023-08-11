@@ -110,19 +110,7 @@ class Unit:
         return None
 
          
-    def draw_as_active(self, screen):
-        outline_rect = pygame.Rect(
-            self.x - 2, self.y - 2, self.size + 4, self.size + 4)
-        pygame.draw.rect(screen, BLACK, outline_rect)
-        pygame.draw.circle(
-            screen, YELLOW, self.start_turn_position, self.base_movement, 1)
-
-        # Draw a line from self.start_turn_position to the center of the unit in red
-        center_x = self.x + self.size // 2
-        center_y = self.y + self.size // 2
-        pygame.draw.line(screen, BLACK, self.start_turn_position,
-                         (center_x, center_y), 2)
-
+   
     def render_attack_circle(self, screen):
 
         pygame.draw.circle(screen, RED, (self.x + self.size //
@@ -229,7 +217,15 @@ class Unit:
         # Center the image within the allocated space with padding
         warrior_img_rect.center = (self.x + self.size // 2, self.y + self.size // 2)
 
+        # Draw the outline rectangle
+        outline_rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        outline_color = (0, 0, 0)  # Black color for the outline
+        
+
+        # Draw the filled rectangle for the unit
         pygame.draw.rect(screen, self.color, self.rect)
+        pygame.draw.rect(screen, outline_color, outline_rect, 1)  # 2 is the width of the outline
+        # Draw the unit image
         screen.blit(warrior_img, warrior_img_rect)
 
         # Render remaining attacks and ammo below the unit
@@ -239,3 +235,17 @@ class Unit:
         text_surface = font.render(
             f"Attacks: {self.remain_actions}   Ammo: {self.ammo} Hp: {self.hp}", True, text_color)
         screen.blit(text_surface, text_pos)
+
+    def draw_as_active(self, screen):
+        outline_rect = pygame.Rect(
+            self.x - 2, self.y - 2, self.size + 4, self.size + 4)
+        pygame.draw.rect(screen, BLACK, outline_rect)
+        pygame.draw.circle(
+            screen, YELLOW, self.start_turn_position, self.base_movement, 1)
+
+        # Draw a line from self.start_turn_position to the center of the unit in red
+        center_x = self.x + self.size // 2
+        center_y = self.y + self.size // 2
+        pygame.draw.line(screen, BLACK, self.start_turn_position,
+                         (center_x, center_y), 2)
+

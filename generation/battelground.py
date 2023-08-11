@@ -4,7 +4,7 @@ import math
 from config import *
 from utils import *
 from generation.town_generation import *
- 
+from generation.road_generation import *
  
 def do_lines_intersect(p1, p2, p3, p4):
  
@@ -163,10 +163,10 @@ class BattleGround:
                 for existing in self.rivers:
                     for j in range(len(existing) - 1):
                         intersection = do_lines_intersect(points[len(points) - 2], rounded_point, existing[j], existing[j+1])
-                        print(intersection, existing[j], existing[j+1] )
+                        # print(intersection, existing[j], existing[j+1] )
                         if intersection:
                             intersects = True  # Set the intersection flag to True
-                            print(intersection)
+                            # print(intersection)
                             convergence_point = existing[j+1]  # Store the intersection point
                             self.convergence_points.append(convergence_point)
                             break  # Break the inner loop once an intersection is found
@@ -187,8 +187,6 @@ class BattleGround:
             # Only add the river if there were no intersections
            
             self.rivers.append(points)
-           
-
 
     def place_towns(self, screen):
         min_distance = 200
@@ -245,23 +243,12 @@ class BattleGround:
             town_center = town_rect.center
            
             # List to store distances and corresponding town indices
-            distances = []
-           
-            # Compare the center of the current town with the centers of other towns
-            for i, other_town_tuple in enumerate(self.towns):
-                if i == index:
-                    continue  # Skip comparing with itself
-                   
-                other_town_center = other_town_tuple[0].center
-                distance = math.dist(town_center, other_town_center)
-                distances.append((distance, i))
-               
+            distances = get_town_distances(self.towns, town_center, town_rect, index)
+                      
             # Sort distances in ascending order
-            distances.sort()
-           
+            distances.sort()         
             # Get the indices of the two closest towns
             closest_indices = [i for _, i in distances[:2]]
-           
             # Get the rectangles of the two closest towns
             closest_town_rects = [self.towns[i][0] for i in closest_indices]
            
@@ -275,13 +262,8 @@ class BattleGround:
                 connected_towns.add((i, index))
                
                 # Calculate the point along the x or y axis to move first
-                if abs(town_center[1] - rect.center[1]) <= 150:
-                    mid_point = (town_center[0], town_center[1])
-                if town_center[1] < rect.center[1]:
-                    mid_point = (town_center[0], town_center[1] + town_rect.height // 2 + 150)
-                else:
-                    mid_point = (rect.x + town_rect.width // 2, town_center[1] + town_rect.height // 2 - 150)
-               
+                mid_point = calculate_mid_point_pos(rect,town_center)
+                      
                 # Calculate the direction of the road (angle towards the other town)
                 angle = math.atan2(rect.center[1] - mid_point[1], rect.center[0] - mid_point[0])
                
@@ -294,25 +276,27 @@ class BattleGround:
                
                 # Check for road intersections
                 for road in self.roads:
-                    _, road_start_point, road_end_point = road
-                   
-                    # Define the equation of the line using two-point form: y - y1 = m * (x - x1)
-                    if road_end_point[0] - road_start_point[0] == 0:
-                        m = float('inf')  # Handle division by zero
-                    else:
-                        m = (road_end_point[1] - road_start_point[1]) / (road_end_point[0] - road_start_point[0])
-                    b = road_start_point[1] - m * road_start_point[0]
-                   
-                    # Calculate the y-coordinate of the intersection point
-                    intersection_y = m * mid_point[0] + b
-                   
-                    # Check if the calculated intersection y-coordinate is close enough to the mid_point's y-coordinate
-                    if abs(mid_point[1] - intersection_y) < 10:  # Adjust threshold as needed
-                        endpoint = mid_point
-                        break
+                    _, road_start_point, road_end_point = road                
+                    mid_point, road_end_point = augment_mid_point(road_end_point, road_start_point, mid_point)
+
+                    # Check if the road intersects with any existing road segments
+            intersects_existing = False
+            for existing_road in self.roads:
+                _, existing_mid_point, _ = existing_road
+                if do_lines_intersect(mid_point, endpoint, existing_road[0], existing_mid_point):
+                    intersects_existing = True
+                    endpoint = existing_mid_point
+                    break
+                
+            # If the road doesn't intersect with any existing road, add it to the roads list
+            if not intersects_existing:
+                connected_towns.add((index, i))
+                connected_towns.add((i, index))
+                self.roads.append((town_center, mid_point, endpoint))
+
                
                 # Save the road path to self.roads
-                self.roads.append((town_center, mid_point, endpoint))
+                # self.roads.append((town_center, mid_point, endpoint))
         # Iterate through each side of the screen
         screen_sides = [
             ((0, random.randint(100, self.height - 100)), (self.width, random.randint(100, self.height - 100))),  # Top side
@@ -348,14 +332,9 @@ class BattleGround:
             # Save the road path to self.roads
             self.roads.append((town_center, selected_point, selected_point))
 
-
-
-
-
-
     def place_bridges(self):
-        print(self.convergence_points, "segments")
-        print(self.rivers, "rivers")
+        # print(self.convergence_points, "segments")
+        # print(self.rivers, "rivers")
         all_river_parts = []
         for river in self.rivers:
             river_parts = []  # Initialize the list to hold current river segment
@@ -378,15 +357,16 @@ class BattleGround:
                
         for part in all_river_parts:
             river_part_intersects = False
-            print(part, "river part")
-            if len(part) < 3:
+            # print(part, "river part")
+            # print(len(part))
+            if len(part) <= 3:
                 continue
             for i in range(len(part) - 2):
                 point1 = part[i +1 ]
                 point2 = part[i +2]
                 line_segment = (point1, point2)
                
-                print(point1, point2, "points")
+                # print(point1, point2, "points")
                 for road in self.roads:
                     start_point, mid_point, end_point = road
                    
@@ -424,7 +404,6 @@ class BattleGround:
                 print(f"River segment doesn't intersect with any road. Bridge declared at {bridge_point}, angle: {angle}")
                 self.bridges.append((bridge_point, angle))
 
-
     def place_supply_depots(self):
     # Place supply depots on the left side
         for _ in range(self.num_supply_depots // 2):
@@ -438,7 +417,6 @@ class BattleGround:
             x_right = random.randint(self.width // 2 + 50, self.width - 50)  # Ensure at least 50 pixels from the right edge
             y = random.randint(50, self.height - 50)  # Ensure at least 50 pixels from top and bottom edges
             self.supply_depots.append((x_right, y))
-
 
     def draw_bezier_curve(self, screen, points):
             num_segments = 100
@@ -457,19 +435,13 @@ class BattleGround:
            
             pygame.draw.lines(screen, (128, 128, 128), False, curve_points, 2)
 
-
     def draw(self, screen):
         dot_radius = 10
 
 
         # Draw forrests
         for forest in self.forests:
-            pygame.draw.polygon(screen, (0, 255, 0), forest)
-
-
-        # Draw towns
-       
-
+            pygame.draw.polygon(screen, (128, 255, 128), forest)
 
         # Draw rivers
         for points in self.rivers:
@@ -497,7 +469,7 @@ class BattleGround:
                 # Draw the square
                 pygame.draw.polygon(screen, (128, 128, 128), square_corners)
 
-
+        # Draw towns
         for town_rect in self.towns:
             pygame.draw.rect(screen, (255, 0, 0, 100), town_rect[0])  # Red rectangle for town center with reduced opacity
             for house_rect in town_rect[1]:
