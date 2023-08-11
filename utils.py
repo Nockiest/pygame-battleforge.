@@ -110,11 +110,6 @@ def find_edge_points(points):
             result.insert(0,lowest_y_point)
             result.append(highest_y_point)
 
-
-
-
-
-
     return result
 def calculate_bezier_curve(t, p0, p1, p2, p3):
         u = 1 - t
@@ -129,3 +124,29 @@ def calculate_bezier_curve(t, p0, p1, p2, p3):
             u * uuu * p0[1] + 3 * uu * t * p1[1] + 3 * u * tt * p2[1] + ttt * p3[1]
         )
         return p
+
+def do_lines_intersect(p1, p2, p3, p4):
+ 
+    def orientation(p, q, r):
+        val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
+        if val == 0:
+            return 0
+        return 1 if val > 0 else 2
+
+
+    o1 = orientation(p1, p2, p3)
+    o2 = orientation(p1, p2, p4)
+    o3 = orientation(p3, p4, p1)
+    o4 = orientation(p3, p4, p2)
+
+
+    if o1 != o2 and o3 != o4:
+        if min(p1[0], p2[0]) <= max(p3[0], p4[0]) and min(p3[0], p4[0]) <= max(p1[0], p2[0]) and \
+           min(p1[1], p2[1]) <= max(p3[1], p4[1]) and min(p3[1], p4[1]) <= max(p1[1], p2[1]):
+            # Calculate the point of intersection
+            intersect_x = (o1 * p3[0] - o2 * p4[0]) / (o1 - o2)
+            intersect_y = (o1 * p3[1] - o2 * p4[1]) / (o1 - o2)
+            return intersect_x, intersect_y
+
+
+    return False

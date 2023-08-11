@@ -6,31 +6,7 @@ from utils import *
 from generation.town_generation import *
 from generation.road_generation import *
  
-def do_lines_intersect(p1, p2, p3, p4):
  
-    def orientation(p, q, r):
-        val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
-        if val == 0:
-            return 0
-        return 1 if val > 0 else 2
-
-
-    o1 = orientation(p1, p2, p3)
-    o2 = orientation(p1, p2, p4)
-    o3 = orientation(p3, p4, p1)
-    o4 = orientation(p3, p4, p2)
-
-
-    if o1 != o2 and o3 != o4:
-        if min(p1[0], p2[0]) <= max(p3[0], p4[0]) and min(p3[0], p4[0]) <= max(p1[0], p2[0]) and \
-           min(p1[1], p2[1]) <= max(p3[1], p4[1]) and min(p3[1], p4[1]) <= max(p1[1], p2[1]):
-            # Calculate the point of intersection
-            intersect_x = (o1 * p3[0] - o2 * p4[0]) / (o1 - o2)
-            intersect_y = (o1 * p3[1] - o2 * p4[1]) / (o1 - o2)
-            return intersect_x, intersect_y
-
-
-    return False
 
 
 def find_river_segments_for_crossing(rivers):
@@ -269,7 +245,7 @@ class BattleGround:
                
                 # Calculate the endpoint of the road
                 road_length = math.dist(mid_point, rect.center)
-                endpoint = (
+                end_point = (
                     int(mid_point[0] + road_length * math.cos(angle)),
                     int(mid_point[1] + road_length * math.sin(angle))
                 )
@@ -280,19 +256,14 @@ class BattleGround:
                     mid_point, road_end_point = augment_mid_point(road_end_point, road_start_point, mid_point)
 
                     # Check if the road intersects with any existing road segments
-            intersects_existing = False
-            for existing_road in self.roads:
-                _, existing_mid_point, _ = existing_road
-                if do_lines_intersect(mid_point, endpoint, existing_road[0], existing_mid_point):
-                    intersects_existing = True
-                    endpoint = existing_mid_point
-                    break
+            intersects_existing = check_for_roads_intersection(self.roads, town_rect.center, mid_point, end_point)
+           
                 
             # If the road doesn't intersect with any existing road, add it to the roads list
             if not intersects_existing:
                 connected_towns.add((index, i))
                 connected_towns.add((i, index))
-                self.roads.append((town_center, mid_point, endpoint))
+                self.roads.append((town_center, mid_point, end_point))
 
                
                 # Save the road path to self.roads
@@ -305,36 +276,13 @@ class BattleGround:
             ((random.randint(100, self.width - 100), self.height), (random.randint(100, self.width - 100), 0))   # Right side
         ]
        
-        for index, town_tuple in enumerate(self.towns):
-            town_rect = town_tuple[0]  # Get the rectangle representing the town
-            town_center = town_rect.center
-           
-            # Iterate through each screen side and find the closest town
-            closest_town_index = None
-            min_distance = float('inf')
-            for i, (side_start, side_end) in enumerate(screen_sides):
-                distance = math.dist(town_center, side_start)
-                if distance < min_distance:
-                    min_distance = distance
-                    closest_town_index = i
-           
-            # Get the point on the selected screen side
-            selected_point = screen_sides[closest_town_index][0]
-           
-            # Calculate the direction of the road (angle towards the selected point)
-            angle = math.atan2(selected_point[1] - town_center[1], selected_point[0] - town_center[0])
-           
-            # Calculate the endpoint of the road
-            road_length = math.dist(town_center, selected_point)
-            endpoint = (int(town_center[0] + road_length * math.cos(angle)),
-                        int(town_center[1] + road_length * math.sin(angle)))
-           
+        edge_roads = generate_from_edge_roads( screen_sides, self.towns )
+        print(edge_roads)
+        for road in edge_roads:
             # Save the road path to self.roads
-            self.roads.append((town_center, selected_point, selected_point))
+            self.roads.append(road)
 
     def place_bridges(self):
-        # print(self.convergence_points, "segments")
-        # print(self.rivers, "rivers")
         all_river_parts = []
         for river in self.rivers:
             river_parts = []  # Initialize the list to hold current river segment
