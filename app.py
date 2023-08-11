@@ -204,11 +204,16 @@ def try_select_unit(click_pos, unit):
     # print(
     #     f"Selected {unit.__class__.__name__} with right button")
 
-
+def draw_screen(screen):
+    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
+    battle_ground.draw(screen)
+    red_player.render_tender(screen)
+    blue_player.render_tender(screen)
+    next_turn_button.draw(screen)
 button_bar = ButtonBar(WIDTH, buy_buttons)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
  
-button_bar.draw(background_screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
+ 
 while lets_continue:
     # check for events
     for event in pygame.event.get():
@@ -259,7 +264,6 @@ while lets_continue:
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
-    # ... (rest of the rendering code)
     if selected_unit:
             selected_unit.draw_as_active(screen)
             selected_unit.attack_range_modifiers = 1
@@ -286,7 +290,7 @@ while lets_continue:
     red_player.render_tender(background_screen)
     blue_player.render_tender(background_screen)
     next_turn_button.draw(background_screen)
-  
+    button_bar.draw(background_screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
     clock.tick(fps)
 
 # Ukončení pygame

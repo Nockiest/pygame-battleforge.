@@ -15,7 +15,24 @@ def render_attack_cross(screen, x, y):
     pygame.draw.line(screen, cross_color, (x, y - cross_length),
                      (x, y + cross_length), cross_thickness)
 
-
+def calculate_movement_cost(color_list):
+    movement_cost = 0
+    
+    for color in color_list:
+        if color == FORREST_GREEN:
+            movement_cost += 2
+        elif color == ROAD_GRAY:
+            movement_cost += 0.5
+        elif color == RIVER_BLUE:
+            return "Unit can't go there"  # River blocks movement
+        elif color == BRIDGE_COLOR:
+            movement_cost += 1
+        elif color == TOWN_RED or color == HOUSE_PURPLE:
+            movement_cost += 1
+        else:
+            movement_cost += 1  # Default movement cost
+    
+    return movement_cost
 class Unit:
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
         self.hp = hp
@@ -63,7 +80,9 @@ class Unit:
         movement_line = bresenham_line(
             self.start_turn_position[0], self.start_turn_position[1],  click_pos[0], click_pos[1])
         line_point_colors = get_pixel_colors(movement_line, background_screen)
-        print(line_point_colors)
+        
+        movement_cost = calculate_movement_cost(line_point_colors)
+        print(movement_cost)
         new_rect = pygame.Rect(new_x, new_y, self.size, self.size)
         res = self.check_for_direct_overlap(living_units, new_rect)
         if res:
