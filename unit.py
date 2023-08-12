@@ -68,51 +68,35 @@ class Unit:
         # Calculate the endpoint of the Bresenham line
         movement_line = bresenham_line(self.start_turn_position[0], self.start_turn_position[1],  click_pos[0],  click_pos[1])   
         line_point_colors = get_pixel_colors(movement_line, background_screen)
+        # count the movement cost of every pixel based on its color
         movement_costs = calculate_movement_cost(line_point_colors)
        
-       # find the pixel that overshoots the movement cost
+       # find the pixel that doesnt overshoot the movement cost
         print( movement_costs[-1][0]  )
-        if movement_costs[-1][0] <= self.base_movement:
-           
-            self.x =  movement_line[-1][0] - self.size // 2  #  len(movement_line)
-            self.y =  movement_line[-1][1] - self.size // 2   # len(movement_line)
-        # else: 
-        #     for cost, index, color in movement_costs:
-        #         if cost > self.base_movement:
-        #             # Set the unit's position to the last point before the condition was applied
-        #             new_x, new_y = movement_line[index - 1]
-        #             delta_x = movement_line[-1][0]  #new_x #- dx
-        #             delta_y = movement_line[-1][1]  #new_y #- dy
-        #             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-        #             break
-        
-        # Calculate the distance from the starting position to the new position
-        # distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
+        for cost, index, color in reversed(movement_costs):
+            if cost < self.base_movement:
+                # Set the unit's position to the last point before the condition was applied
+                new_center_x, new_center_y = movement_line[index - 1]
+                self.x = new_center_x - self.size // 2
+                self.y = new_center_y - self.size // 2
+                self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+                break
+            
+        new_rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        # check wheter the unit interferes with another of enemy units
 
-        # if distance > self.base_movement:
-        #     # Calculate the new position based on the line connecting the two points
-        #     scale_factor = (self.base_movement) / distance
-        #     new_x = int(
-        #         self.start_turn_position[0] + delta_x * scale_factor - self.size // 2)
-        #     new_y = int(
-        #         self.start_turn_position[1] + delta_y * scale_factor - self.size // 2)
-        # else:
-        #     # The movement is within the allowed range, so set the position directly
-        #     new_x = click_pos[0] - self.size // 2
-        #     new_y = click_pos[1] - self.size // 2
-        
-        # count the movement cost of every pixel based on its color
-         
-        # print(movement_costs[-1], "last pixel to go on")
-        # movement_points_and_costs = zip(movement_line, movement_costs)
-        # print(movement_points_and_costs , "moves and costs")
-         # If still cheaper at the end of costs, adjust self.x and self.y
-       
-        # if it the movement cost is bigger than base_movement*modifiers or it hit a river set it to the
-        # last point before one of these conditions was applied
-       
-
-        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        # if yes set the position to be just before the enemy unit
+        res = self.control_interference(living_units, new_center_x, new_center_y, new_rect)
+        print(res)
+        if res == "corrected":
+            print("corrected")
+            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+            return
+        else:
+            self.x = max(0, min(new_center_x - self.size // 2, WIDTH - self.size))
+            self.y = max(0, min(new_center_y - self.size // 2, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
+            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+    
         # check wheter the unit interferes with another of enemy units
 
         # if yes set the position to be just before the enemy unit
@@ -120,65 +104,16 @@ class Unit:
         # if there is a friendly unit where you want to place the unit set the moved unit before or arfter 
         # that unit
 
-
-
-
-
-    
-        # # Calculate the distance between the new position and the starting position in both x and y directions
-        # delta_x = click_pos[0] - self.start_turn_position[0]
-        # delta_y = click_pos[1] - self.start_turn_position[1]
-
-        # # Calculate the distance from the starting position to the new position
-        # distance = math.sqrt(delta_x ** 2 + delta_y ** 2)
-
-        # if distance > self.base_movement:
-        #     # Calculate the new position based on the line connecting the two points
-        #     scale_factor = (self.base_movement) / distance
-        #     new_x = int(
-        #         self.start_turn_position[0] + delta_x * scale_factor - self.size // 2)
-        #     new_y = int(
-        #         self.start_turn_position[1] + delta_y * scale_factor - self.size // 2)
-
-        # else:
-        #     # The movement is within the allowed range, so set the position directly
-        #     new_x = click_pos[0] - self.size // 2
-        #     new_y = click_pos[1] - self.size // 2
-     
-        # new_rect = pygame.Rect(new_x, new_y, self.size, self.size)
-        # res = self.check_for_direct_overlap(living_units, new_rect)
-        # if res:
-        #     return print("unit overlaps")
-        # res = self.control_interference(living_units, new_x, new_y)
-        # if res == "corrected":
-        #     print("corrected")
-        #     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-        #     return
-        # else:
-        #     self.x = max(0, min(new_x, WIDTH - self.size))
-        #     self.y = max(0, min(new_y, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
-        #     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-
-    def check_for_direct_overlap(self, living_units, new_rect):
-        for unit in living_units:
-            # Skip units of the same color, units that cannot be moved, and the unit itself
-            if unit is self:
-                continue
-
-            res = unit.rect.colliderect(new_rect)
-            if res and unit.color == self.color:
-                return "collision_with_team_member"
-            elif res and unit.color != self.color:
-                return "collision_with_enemy"
-        return False
-
-    def control_interference(self, living_units, new_x, new_y):
-        center_x = new_x + self.size // 2
-        center_y = new_y + self.size // 2
+    def control_interference(self, living_units, center_x, center_y, new_rect):
         # print(center_x,center_y,new_x,new_y)
         for unit in living_units:
-            if unit.color == self.color or unit is self:
-                continue
+            if unit is self:
+                    continue
+            if unit.color == self.color:
+                res = unit.rect.colliderect(new_rect)
+                if res and unit.color == self.color:
+                    return "collision_with_team_member"
+                 
 
             point_x, point_y, line_points = check_square_line_interference(
                 unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
@@ -192,7 +127,6 @@ class Unit:
         return None
 
     def render_attack_circle(self, screen):
-        pass
         pygame.draw.circle(screen, RED, (self.x + self.size //
                            2, self.y + self.size//2), self.attack_range*self.attack_range_modifiers, 1)
 
@@ -203,16 +137,15 @@ class Unit:
         if self.ammo != None:
             self.ammo -= 1
 
-    def render_attack_cross(self, screen):
-        pass
-        # if hasattr(self, 'attack_cross_position') and hasattr(self, 'attack_cross_time'):
-        #     time_elapsed = pygame.time.get_ticks() - self.attack_cross_time
-        #     # Render the cross for 1 second (1000 milliseconds)
-        #     if time_elapsed <= 1000:
-        #         render_attack_cross(screen, *self.attack_cross_position)
-        #     else:
-        #         del self.attack_cross_position
-        #         del self.attack_cross_time
+    def render_attack_cross(self, screen):  
+        if hasattr(self, 'attack_cross_position') and hasattr(self, 'attack_cross_time'):
+            time_elapsed = pygame.time.get_ticks() - self.attack_cross_time
+            # Render the cross for 1 second (1000 milliseconds)
+            if time_elapsed <= 1000:
+                render_attack_cross(screen, *self.attack_cross_position)
+            else:
+                del self.attack_cross_position
+                del self.attack_cross_time
 
     def try_attack(self, click_pos, living_units):
 

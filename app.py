@@ -38,7 +38,7 @@ blue_player.create_starting_unit((Musketeer, 200, 200), living_units)
 red_player.create_starting_unit((Canon, 300, 300), living_units)
 red_player.create_starting_unit((Shield, 400, 300), living_units)
 blue_player.create_starting_unit((Medic, 500, 400), living_units)
-blue_player.create_starting_unit((Commander, 600, 100), living_units)
+blue_player.create_starting_unit((Commander, 550, 100), living_units)
 red_player.create_starting_unit((Commander, 500, 100), living_units)
 red_player.create_starting_unit((Pikeman, 700, 100), living_units)
 blue_player.create_starting_unit((SupplyCart, 800, 300), living_units)
@@ -87,7 +87,6 @@ def disable_unit_for_turn():
     print("disabled")
     selected_unit.able_to_move = False
   
-
 
 def deselct_unit():
     global selected_unit

@@ -256,7 +256,7 @@ class BattleGround:
                     mid_point, road_end_point = augment_mid_point(road_end_point, road_start_point, mid_point)
 
                     # Check if the road intersects with any existing road segments
-            intersects_existing = check_for_roads_intersection(self.roads, town_rect.center, mid_point, end_point)
+            intersects_existing = False # check_for_roads_intersection(self.roads, town_rect.center, mid_point, end_point)
            
                 
             # If the road doesn't intersect with any existing road, add it to the roads list

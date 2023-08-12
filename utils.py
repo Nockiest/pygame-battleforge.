@@ -162,8 +162,6 @@ def get_pixel_colors(points, surface):
             pixel_color = surface.get_at(point)
             points_colors.append(pixel_color)
         else:
-            # Append a placeholder color (you can modify this as needed)
-            points_colors.append((1,1,1 ))  # terminate color
-            # Alternatively, you can use None to indicate that the pixel doesn't exist
-            # points_colors.append(None)
+            points_colors.append((1,1,1))  # terminate color
+          
     return points_colors

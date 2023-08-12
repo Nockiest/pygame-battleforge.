@@ -12,13 +12,12 @@ musika
     
 prostředí
     vytvořit scrolling
-    přidat řeky
-    přidat města
+   
     přidat zdi
-    přidat cesty
+
     přidat základny
     přidat mosty
-    přidat náhodnou generaci
+  
 
 ui
     přidat ukliádání
@@ -26,7 +25,3 @@ ui
     přidat počítání počtu jednotek
 
 game funcionality
-    přidat kontrolu vítěžství
-    zlepšit propočítáni pro to jakou funkci hráče zavolat
-
-vytvořit funkci na propočítání útoku
