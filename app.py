@@ -33,6 +33,7 @@ blue_player = Player(BLUE, WIDTH - 40, 0)
 players = [red_player, blue_player]
 cur_player = 0  # RED
 
+blue_player.create_starting_unit((Musketeer, 0, 0), living_units)
 blue_player.create_starting_unit((Musketeer, 200, 200), living_units)
 red_player.create_starting_unit((Canon, 300, 300), living_units)
 red_player.create_starting_unit((Shield, 400, 300), living_units)

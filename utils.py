@@ -158,7 +158,12 @@ def do_lines_intersect(p1, p2, p3, p4):
 def get_pixel_colors(points, surface):
     points_colors = []
     for point in points:
-        pixel_color = surface.get_at(point)
-        points_colors.append(pixel_color)
-        # print(f"Color at pixel {point}: {pixel_color}")
+        if point[0] >= 0 and point[0] < surface.get_width() and point[1] >= 0 and point[1] < surface.get_height():
+            pixel_color = surface.get_at(point)
+            points_colors.append(pixel_color)
+        else:
+            # Append a placeholder color (you can modify this as needed)
+            points_colors.append((1,1,1 ))  # terminate color
+            # Alternatively, you can use None to indicate that the pixel doesn't exist
+            # points_colors.append(None)
     return points_colors
