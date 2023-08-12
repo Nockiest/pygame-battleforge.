@@ -1,10 +1,13 @@
 vytvořit bojovou jednotku   
     přidat koupení jednotky   
         přidat aby mi ke kurzoru přilepilo novou jednotku
+            vytvořit unit component
+            dát mu vždy x a y kde mám kurzor
         
         
         zprovoznit hover function
- 
+    vykreslit kam se může pohnout
+    
     přidat movement soundfile
  
 musika
@@ -17,11 +20,13 @@ prostředí
 
     přidat základny
     přidat mosty
-  
+      
 
 ui
     přidat ukliádání
     přidat načítání
     přidat počítání počtu jednotek
+    vytvořit players info bar čitelný
+    opravit obrázek mušketýra    
 
 game funcionality

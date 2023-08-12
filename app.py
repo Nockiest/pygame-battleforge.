@@ -39,7 +39,7 @@ red_player.create_starting_unit((Canon, 300, 300), living_units)
 red_player.create_starting_unit((Shield, 400, 300), living_units)
 blue_player.create_starting_unit((Medic, 500, 400), living_units)
 blue_player.create_starting_unit((Commander, 550, 100), living_units)
-red_player.create_starting_unit((Commander, 500, 100), living_units)
+red_player.create_starting_unit((Commander, 500, 70), living_units)
 red_player.create_starting_unit((Pikeman, 700, 100), living_units)
 blue_player.create_starting_unit((SupplyCart, 800, 300), living_units)
 blue_player.create_starting_unit((Observer, 200, 150), living_units)
@@ -52,7 +52,6 @@ clock = pygame.time.Clock()  # will tick eveery second
 def switch_player():
     global cur_player
     cur_player = (cur_player + 1) % len(players)
-
 
 def find_players_with_same_color(players, cur_player):
     same_color_player = None
@@ -69,9 +68,6 @@ def find_players_with_same_color(players, cur_player):
 def next_turn():
     global living_units
 
-    # Your next turn logic here
-    # is_win =  check_game_ended(teams)
-    # print("game won?", is_win)
     for unit in living_units:
         unit.reset_for_next_turn()
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
@@ -144,7 +140,6 @@ def process_attack(attacker, attacked_pos):
         disable_unit_for_turn()
         deselct_unit()
     elif attack_result == "SUPPORTS DONT ATTACK":
-        print("XX")
         deselct_unit()
     if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
         deselct_unit()
@@ -210,7 +205,15 @@ def draw_screen(screen):
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
-button_bar = ButtonBar(WIDTH, buy_buttons)
+
+
+ 
+ 
+
+button_bar = ButtonBar(button_instances)
+
+# for button_instance in button_instances:
+#     button_bar.add_button(button_instance)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
  
  
@@ -260,6 +263,7 @@ while lets_continue:
     screen.fill(GREEN)
 
     # RENDER ELEMENTS ON THE MAIN SCREEN
+    # render the game state information
     battle_ground.draw(screen)
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
@@ -276,8 +280,9 @@ while lets_continue:
         if selected_unit.remain_actions > 0:
             apply_modifier(selected_unit, living_units, "in_observer_range")
             selected_unit.render_attack_circle(screen)
-    # Render the game state information
-       
+    if unit_placement_mode:
+        print("placing unit")
+   
     text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))
     text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
     screen.blit(text, text_rect)
