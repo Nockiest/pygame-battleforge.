@@ -32,7 +32,7 @@ class Knight(Melee):
 class Pikeman(Melee):
     def __init__(self, x, y,  color ):
         super().__init__(hp=3, attack_range=30,attack_resistance=0.1, base_actions=1, base_movement=100,
-                         size=20, x=x, y=y,  icon="pike.png",   color=color, cost=10)
+                         size=20, x=x, y=y,  icon="pikeman.png",   color=color, cost=10)
 
     # Additional methods or overrides for the Pikeman class
 
@@ -42,7 +42,7 @@ class Pikeman(Melee):
 class Musketeer(Ranged):
     def __init__(self,   x, y,  color):
         super().__init__(hp=2, attack_range=200,attack_resistance=0.05,base_actions=1, base_movement=125,
-                         size=20, x=x, y=y, ammo=10, icon="musket.png",   color=color, cost=15)
+                         size=20, x=x, y=y, ammo=10, icon="musketeer.png",   color=color, cost=15)
 
     # Additional methods or overrides for the Musketeer class
 
@@ -89,7 +89,7 @@ class Medic(Support):
 class SupplyCart(Support):
     def __init__(self,   x, y,  color):
         super().__init__(hp=1, attack_range=50,attack_resistance=0.05, base_actions=1, base_movement=150,
-                         size=30, x=x, y=y, icon="supply.png", color=color, cost=500)
+                         size=30, x=x, y=y, icon="supplycart.png", color=color, cost=500)
         self.supply = 10
 
     def provide_ammo(self, units):
@@ -105,12 +105,12 @@ class SupplyCart(Support):
 class Observer(Support):
     def __init__(self, x, y,  color):
         super().__init__(hp=1, attack_range=0,attack_resistance=0.05, base_actions=1,  base_movement=50,
-                         icon="spyglass.png", size=20, x=x, y=y,  color=color, cost=500)
+                         icon="observer.png", size=20, x=x, y=y,  color=color, cost=500)
         
 class Shield(Support):
     def __init__(self, x, y, color):
         super().__init__(hp=5, attack_range=0,attack_resistance=0.2,base_actions=1, base_movement=30,
-                         size=30, x=x, y=y,   icon="armor.png",  color=color, cost=50)
+                         size=30, x=x, y=y,   icon="shield.png",  color=color, cost=50)
 
     # Additional methods or overrides for the Shield class
 

@@ -11,6 +11,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
 background_screen = pygame.display.set_mode((WIDTH, HEIGHT) )
 square_size = 10  # Adjust the size range as needed
 
+# Define the width and height of the tender rectangle
+TENDER_WIDTH = 60
+TENDER_HEIGHT = BUTTON_BAR_HEIGHT * 2
 
 
 GREEN = (20, 200, 50)
@@ -27,8 +30,8 @@ HOUSE_PURPLE = (255, 0, 255)
 BRIDGE_COLOR = (139, 69, 19)  # Saddle Brown
 
 knight_buy_img = pygame.image.load("img/knight.png")
-shield_buy_img = pygame.image.load("img/armor.png")
+shield_buy_img = pygame.image.load("img/shield.png")
 canon_buy_img = pygame.image.load("img/canon.png")
 medic_buy_img = pygame.image.load("img/medic.png")
-pike_buy_img = pygame.image.load("img/pike.png")
-musket_buy_img = pygame.image.load("img/musket.png")
+pike_buy_img = pygame.image.load("img/pikeman.png")
+musket_buy_img = pygame.image.load("img/musketeer.png")

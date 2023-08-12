@@ -28,8 +28,8 @@ unit_placement_mode = None
 game_won = False
 living_units = []
 unit_to_be_placed = None
-red_player = Player(RED, 0, 0)
-blue_player = Player(BLUE, WIDTH - 40, 0)
+red_player = Player(RED, 0) 
+blue_player = Player(BLUE, WIDTH -TENDER_WIDTH)
 players = [red_player, blue_player]
 cur_player = 0  # RED
 
@@ -162,21 +162,20 @@ def check_in_range(itself, other_object):
 
 
 def buy_unit(click_pos):
+    global unit_to_be_placed
     global unit_placement_mode
-    print("bought", unit_placement_mode)
-    unit_type_class = globals().get(unit_placement_mode)
-    if unit_type_class:
-        # Call the create_unit function with the class name
-
-        print(players[cur_player].color)
+ 
+    if unit_to_be_placed:
+        dummy = unit_to_be_placed(-100, - 100, BLACK)
         players[cur_player].create_unit(
-            (unit_type_class, click_pos[0], click_pos[1]), living_units)
+            (unit_to_be_placed, click_pos[0] - dummy.size//2, click_pos[1]  - dummy.size//2) , living_units)
         # print(unit_placement_mode, living_units)
     else:
-        print(f"Error: Unit type {unit_placement_mode} not found.")
-    unit_placement_mode = None
+        print(f"Error: Unit type {unit_to_be_placed} not found.")
+    unit_placement_mode = False
+    unit_to_be_placed = None
 
-def enter_buy_mode(unit_type,  ):
+def enter_buy_mode(unit_type   ):
     global unit_to_be_placed
     unit_to_be_placed = unit_type
     print(unit_to_be_placed)
@@ -203,16 +202,23 @@ def draw_screen(screen):
     next_turn_button.draw(screen)
  
 button_instances = [
-    BuyButton(knight_buy_img, "Knight", "Buy Knight", 100, enter_buy_mode),
-    BuyButton(shield_buy_img, "Shield", "Buy Shield", 600, enter_buy_mode),
-    BuyButton(canon_buy_img, "Canon", "Buy Canon", 200, enter_buy_mode),
-    BuyButton(medic_buy_img, "Medic", "Buy Medic",300, enter_buy_mode),
-    BuyButton(pike_buy_img, "Pikeman", "Buy Pike", 400, enter_buy_mode),
-    BuyButton(musket_buy_img, "Musketeer", "Buy Musket", 500, enter_buy_mode)
+    BuyButton(knight_buy_img, Knight, "Buy Knight", 100, enter_buy_mode ),
+    BuyButton(shield_buy_img, Shield, "Buy Shield", 600, enter_buy_mode ),
+    BuyButton(canon_buy_img, Canon, "Buy Canon", 200, enter_buy_mode ),
+    BuyButton(medic_buy_img, Medic, "Buy Medic",300, enter_buy_mode ),
+    BuyButton(pike_buy_img, Pikeman, "Buy Pike", 400, enter_buy_mode  ),
+    BuyButton(musket_buy_img, Musketeer, "Buy Musket", 500, enter_buy_mode )
 ]
 button_bar = ButtonBar(button_instances)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
  
+def draw_ui(screen):
+    battle_ground.draw(screen)
+    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
+    red_player.render_tender(screen)
+    blue_player.render_tender(screen) 
+    next_turn_button.draw(screen)
+  
 while lets_continue:
     # check for events
     for event in pygame.event.get():
@@ -256,16 +262,15 @@ while lets_continue:
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
             if selected_unit:
                 selected_unit.move_in_game_field(event.pos, living_units)
-
+  
+    for player in players:
+        player.handle_input()
     screen.fill(GREEN)
 
     # RENDER ELEMENTS ON THE MAIN SCREEN
     # render the game state information
-    battle_ground.draw(screen)
-    red_player.render_tender(screen)
-    blue_player.render_tender(screen)
-    next_turn_button.draw(screen)
-    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
+    draw_ui(screen)
+ 
     if selected_unit:
             selected_unit.draw_as_active(screen)
             selected_unit.attack_range_modifiers = 1
@@ -279,7 +284,7 @@ while lets_continue:
             selected_unit.render_attack_circle(screen)
     if unit_placement_mode:
         print("placing unit")
-        players[cur_player].show_unit_to_be_placed((Musketeer, 0, 0)   )
+        players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0)   )
    
     text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))
     text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
@@ -289,12 +294,9 @@ while lets_continue:
     pygame.display.update()
 
     # RENDER ELEMENTS ON THE BACKGROUND SCREEN
-    background_screen.fill(GREEN)
-    battle_ground.draw(background_screen)
-    red_player.render_tender(background_screen)
-    blue_player.render_tender(background_screen)
-    next_turn_button.draw(background_screen)
-    button_bar.draw(background_screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
+    draw_ui(background_screen)
+ 
+    
     clock.tick(fps)
 
 # Ukončení pygame

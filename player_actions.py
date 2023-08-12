@@ -1,17 +1,14 @@
 import pygame
 from config import *
-# Define the width and height of the tender rectangle
-TENDER_WIDTH = 40
-TENDER_HEIGHT = 100
-
+ 
 class Player:
-    def __init__(self, color, tender_x, tender_y):
+    def __init__(self, color, tender_x  ):
         self.supplies = 100  # Initial supplies
         self.units = []  # List to store units (use 'list()' to create a copy)
         self.color = color  # Player's color
         self.tender_x = tender_x  # X position for the tender rectangle
-        self.tender_y = tender_y  # Y position for the tender rectangle
-
+        self.scroll_position = -100
+        self.max_scroll = 100  # Initialize to 0, will be calculated later in render_tender
     def create_unit( self, unit_params, living_units ):
         # Create the unit object
         unit_class, x, y = unit_params
@@ -41,20 +38,24 @@ class Player:
     def show_unit_to_be_placed(self, unit_params ):
         print("i have been called")
         unit_class_name, _, _ = unit_params
-        print(unit_class_name)
-        unit_class = unit_class_name # globals().get(unit_class_name)  # Retrieve class object based on string
-        print(unit_class)
+        print(unit_class_name, "x")
+        # unit_class =  globals().get(unit_class_name)  # Retrieve class object based on string
+        print(unit_class_name,"y")
         cursor_x, cursor_y = pygame.mouse.get_pos()
-        dummy_unit = unit_class(x=-100, y=-100, color=BLACK)
-        unit_x = cursor_x - dummy_unit.size // 2
-        unit_y = cursor_y - dummy_unit.size // 2
-        unit = unit_class(x=unit_x, y=unit_y, color=self.color)
-        unit.render_on_screen(screen)
-       
+        
+        try:
+            dummy_unit = unit_class_name(x=-100, y=-100, color=BLACK)
+            unit_x = cursor_x - dummy_unit.size // 2
+            unit_y = cursor_y - dummy_unit.size // 2
+            unit = unit_class_name(x=unit_x, y=unit_y, color=self.color)
+            unit.render_on_screen(screen)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     
     def render_tender(self, screen):
         # Render the tender rectangle on the screen at the specified position
-        tender_rect = pygame.Rect(self.tender_x, self.tender_y, TENDER_WIDTH, TENDER_HEIGHT)
+        tender_rect = pygame.Rect(self.tender_x, HEIGHT-TENDER_HEIGHT, TENDER_WIDTH, TENDER_HEIGHT)
         pygame.draw.rect(screen, self.color, tender_rect)
 
         # Create a font object for rendering text
@@ -62,17 +63,44 @@ class Player:
 
         # Render the player's supplies on the tender
         supplies_text = font.render(f"Supplies: {self.supplies}", True, (255, 255, 255))
-        screen.blit(supplies_text, (self.tender_x + 10, self.tender_y + 10))
+        screen.blit(supplies_text, (self.tender_x + 10, HEIGHT-TENDER_HEIGHT + 10))
 
-        # Render the units' information on the tender
-        unit_y = self.tender_y + 40
+        unit_count = {}  # Create a dictionary to store unit type counts
+
         for unit in self.units:
-            unit_info = f"{unit.__class__.__name__} at ({unit.x}, {unit.y})"
+            unit_type = unit.__class__.__name__
+            unit_count[unit_type] = unit_count.get(unit_type, 0) + 1
+
+        unit_y = HEIGHT - TENDER_HEIGHT + 40  # Starting y-coordinate for printing
+        for unit_type, count in unit_count.items():
+            unit_info = f"{count} "
             unit_text = font.render(unit_info, True, (255, 255, 255))
-            screen.blit(unit_text, (self.tender_x + 10, unit_y))
-            unit_y += 20
+            
+            # Calculate the y-coordinate for rendering
+            render_y = unit_y + self.scroll_position
+            if render_y >= HEIGHT - TENDER_HEIGHT + 20:
+                # Render the unit count text
+                screen.blit(unit_text, (self.tender_x + 10, render_y))
+                
+                # Load and render the unit image
+                unit_img_path = f"img/{unit_type.lower()}.png"  # Assuming lowercase filenames
+                unit_img = pygame.image.load(unit_img_path)
+                unit_img = pygame.transform.scale(unit_img, (20, 20))
+                screen.blit(unit_img, (self.tender_x + 30, render_y))
+            
+            unit_y += 30  # Move down for the next unit type
 
-
+    def handle_input(self):
+        
+        keys = pygame.key.get_pressed()
+        print(keys[pygame.K_UP],keys[pygame.K_DOWN])
+        print(self.scroll_position)
+        if keys[pygame.K_UP]:
+            self.scroll_position -= 5
+            self.scroll_position = max(self.scroll_position, -100)  # Ensure scroll position doesn't go below 0
+        if keys[pygame.K_DOWN]:
+            self.scroll_position += 5
+            self.scroll_position = min(self.scroll_position, self.max_scroll)  # Ensure scroll position doesn't exceed max
     def get_boost(self):
         # Add logic to calculate and apply boost to the player's units
         # (e.g., increase attack, defense, or other attributes)
