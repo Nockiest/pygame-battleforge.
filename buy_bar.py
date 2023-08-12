@@ -3,18 +3,14 @@ from config import *
 from button import Button
 
 BUTTON_BAR_Y = HEIGHT - 100
-# Define the buy_unit function
-def buy_unit(unit_type):
-    # Add your logic here to handle the purchase of the unit_type
-    print(f"Bought {unit_type}!")
+ 
 
 class BuyButton(Button):
-    def __init__(self, icon, unit_type, description, x  ):
-        super().__init__(description, x, y=(HEIGHT - 100), width=60, height=60, callback=buy_unit)
+    def __init__(self, icon, unit_type, description, x, enter_buy_mode  ):
+        super().__init__(description, x, y=(HEIGHT - 100), width=60, height=60, callback=enter_buy_mode)
         self.icon = icon
         self.unit_type = unit_type
-        
-        
+               
         # Calculate padding for the icon
         icon_padding_x = (self.width - icon.get_width()) // 2
         icon_padding_y = (self.height - icon.get_height()) // 2
@@ -46,26 +42,14 @@ class BuyButton(Button):
     def is_clicked(self, mouse_pos):
         x, y = mouse_pos
         button_rect = self.button_surface.get_rect(topleft=self.position)
-        return button_rect.collidepoint(mouse_pos)
+        if button_rect.collidepoint(mouse_pos):
+            self.callback( self.unit_type)
+            return True
 
     def set_hovered(self, hovered):
         self.hovered = hovered
 
-# Assuming you have icons for the buttons, load them here (replace with actual icons)
-knight_buy_img = pygame.image.load("img/knight.png")
-shield_buy_img = pygame.image.load("img/armor.png")
-canon_buy_img = pygame.image.load("img/canon.png")
-medic_buy_img = pygame.image.load("img/medic.png")
-pike_buy_img = pygame.image.load("img/pike.png")
-musket_buy_img = pygame.image.load("img/musket.png")
-button_instances = [
-    BuyButton(knight_buy_img, "Knight", "Buy Knight", 100),
-    BuyButton(shield_buy_img, "Shield", "Buy Shield", 600),
-    BuyButton(canon_buy_img, "Canon", "Buy Canon", 200),
-    BuyButton(medic_buy_img, "Medic", "Buy Medic",300),
-    BuyButton(pike_buy_img, "Pikeman", "Buy Pike", 400),
-    BuyButton(musket_buy_img, "Musketeer", "Buy Musket", 500)
-]
+ 
 class ButtonBar:
     def __init__(self, buttons):
         self.button_width = 60

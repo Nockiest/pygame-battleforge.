@@ -1,5 +1,5 @@
 import pygame
-
+from config import *
 # Define the width and height of the tender rectangle
 TENDER_WIDTH = 40
 TENDER_HEIGHT = 100
@@ -38,6 +38,20 @@ class Player:
         self.units.append(unit)
         print("created starting unit")
 
+    def show_unit_to_be_placed(self, unit_params ):
+        print("i have been called")
+        unit_class_name, _, _ = unit_params
+        print(unit_class_name)
+        unit_class = unit_class_name # globals().get(unit_class_name)  # Retrieve class object based on string
+        print(unit_class)
+        cursor_x, cursor_y = pygame.mouse.get_pos()
+        dummy_unit = unit_class(x=-100, y=-100, color=BLACK)
+        unit_x = cursor_x - dummy_unit.size // 2
+        unit_y = cursor_y - dummy_unit.size // 2
+        unit = unit_class(x=unit_x, y=unit_y, color=self.color)
+        unit.render_on_screen(screen)
+       
+    
     def render_tender(self, screen):
         # Render the tender rectangle on the screen at the specified position
         tender_rect = pygame.Rect(self.tender_x, self.tender_y, TENDER_WIDTH, TENDER_HEIGHT)

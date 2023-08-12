@@ -27,7 +27,7 @@ render_units_attack_screen = False
 unit_placement_mode = None
 game_won = False
 living_units = []
-
+unit_to_be_placed = None
 red_player = Player(RED, 0, 0)
 blue_player = Player(BLUE, WIDTH - 40, 0)
 players = [red_player, blue_player]
@@ -51,19 +51,7 @@ clock = pygame.time.Clock()  # will tick eveery second
 
 def switch_player():
     global cur_player
-    cur_player = (cur_player + 1) % len(players)
-
-def find_players_with_same_color(players, cur_player):
-    same_color_player = None
-    for player in players:
-        if player.color == cur_player:
-            same_color_player = player
-            break  # No need to continue searching once a match is found
-
-    if same_color_player is None:
-        raise ValueError(f"No player found with color {cur_player}")
-
-    return same_color_player
+    cur_player = (cur_player + 1) % len(players) 
 
 def next_turn():
     global living_units
@@ -144,6 +132,7 @@ def process_attack(attacker, attacked_pos):
     if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
         deselct_unit()
 
+
 def apply_modifier(selected_unit, living_units, modifier_type):   
     if modifier_type == "in_observer_range":
       for unit in living_units:    
@@ -187,6 +176,13 @@ def buy_unit(click_pos):
         print(f"Error: Unit type {unit_placement_mode} not found.")
     unit_placement_mode = None
 
+def enter_buy_mode(unit_type,  ):
+    global unit_to_be_placed
+    unit_to_be_placed = unit_type
+    print(unit_to_be_placed)
+    print(f"{players[cur_player].color} is going to buy {unit_type}")
+    # players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0), unit_to_be_placed)
+    
 
 def try_select_unit(click_pos, unit):
     print(unit,living_units)
@@ -205,17 +201,17 @@ def draw_screen(screen):
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
-
-
  
- 
-
+button_instances = [
+    BuyButton(knight_buy_img, "Knight", "Buy Knight", 100, enter_buy_mode),
+    BuyButton(shield_buy_img, "Shield", "Buy Shield", 600, enter_buy_mode),
+    BuyButton(canon_buy_img, "Canon", "Buy Canon", 200, enter_buy_mode),
+    BuyButton(medic_buy_img, "Medic", "Buy Medic",300, enter_buy_mode),
+    BuyButton(pike_buy_img, "Pikeman", "Buy Pike", 400, enter_buy_mode),
+    BuyButton(musket_buy_img, "Musketeer", "Buy Musket", 500, enter_buy_mode)
+]
 button_bar = ButtonBar(button_instances)
-
-# for button_instance in button_instances:
-#     button_bar.add_button(button_instance)
 next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
- 
  
 while lets_continue:
     # check for events
@@ -233,6 +229,7 @@ while lets_continue:
 
             elif unit_placement_mode:
                 buy_unit(event.pos)
+                unit_to_be_placed = None
 
             else:
                 if next_turn_button.is_clicked(event.pos):
@@ -282,6 +279,7 @@ while lets_continue:
             selected_unit.render_attack_circle(screen)
     if unit_placement_mode:
         print("placing unit")
+        players[cur_player].show_unit_to_be_placed((Musketeer, 0, 0)   )
    
     text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))
     text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
