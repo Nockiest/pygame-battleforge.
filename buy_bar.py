@@ -6,11 +6,11 @@ BUTTON_BAR_Y = HEIGHT - 100
  
 
 class BuyButton(Button):
-    def __init__(self, icon, unit_type, description, x, enter_buy_mode  ):
-        super().__init__(description, x, y=(HEIGHT - 100), width=60, height=60, callback=enter_buy_mode)
+    def __init__(self, icon, unit_type, description,  x, enter_buy_mode,width ):
+        super().__init__(description, x, y=(HEIGHT - 100), width=width, height=60, callback=enter_buy_mode)
         self.icon = icon
         self.unit_type = unit_type
-               
+        self.width = width     
         # Calculate padding for the icon
         icon_padding_x = (self.width - icon.get_width()) // 2
         icon_padding_y = (self.height - icon.get_height()) // 2
@@ -54,7 +54,7 @@ class ButtonBar:
     def __init__(self, buttons):
         self.button_width = 60
         self.buttons = buttons
-        
+        self.width = WIDTH #400
         # Calculate the total width of all buttons
         total_button_width = self.button_width * len(buttons)
         
@@ -69,21 +69,31 @@ class ButtonBar:
             self.buttons.append(button)
             self.update_button_positions()
 
+    
     def update_button_positions(self):
         total_button_width = sum(self.button_width for button in self.buttons) + (len(self.buttons) - 1) * self.button_spacing
-        start_x = (WIDTH - total_button_width) // 2
+        start_x = (self.width - total_button_width) // 2
+        
+        # Check if the total button width exceeds the maximum width (500 pixels)
+        if total_button_width > 500:
+            scaling_factor = 500 / total_button_width
+            self.button_width = int(self.button_width * scaling_factor)
+            total_button_width = sum(self.button_width for button in self.buttons) + (len(self.buttons) - 1) * self.button_spacing
+            start_x = (self.width - total_button_width) // 2
+        
         x_position = start_x
         for button in self.buttons:
             button.set_position(x_position, BUTTON_BAR_Y)
-            x_position += self.button_width + self.button_spacing
+            x_position += self.button_width + self.button_spacing + TENDER_WIDTH
+            print(x_position)
 
     def draw(self, screen, y, current_player_color):
         # Draw the background rectangle for the button bar
-        button_bar_rect = pygame.Rect(0, y,WIDTH, BUTTON_BAR_HEIGHT)
+        button_bar_rect = pygame.Rect(TENDER_WIDTH, y,TENDER_WIDTH +self.width, BUTTON_BAR_HEIGHT)
         pygame.draw.rect(screen, self.background_color, button_bar_rect)
 
         # Draw the narrow strip with the current player's color at the bottom
-        current_player_strip_rect = pygame.Rect(0, y + BUTTON_BAR_HEIGHT - 10, WIDTH, 10)
+        current_player_strip_rect = pygame.Rect(0, y + BUTTON_BAR_HEIGHT - 10, self.width, 10)
         pygame.draw.rect(screen, current_player_color, current_player_strip_rect)
 
         x = self.button_spacing

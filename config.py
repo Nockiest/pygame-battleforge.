@@ -4,8 +4,9 @@ import pygame
 WIDTH = 1200
 HEIGHT = 700
 MAIN_FONT_URL = "fonts/Kanit-Regular.ttf"
-BUTTON_BAR_HEIGHT = 75
 
+BUTTON_BAR_HEIGHT = 75
+UPPER_BAR_HEIGHT = 50
 # Vytvoření obrazovky
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
 background_screen = pygame.display.set_mode((WIDTH, HEIGHT) )

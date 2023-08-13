@@ -105,7 +105,7 @@ class Unit:
             return
         else:
             self.x = max(0, min(new_center_x - self.size // 2, WIDTH - self.size))
-            self.y = max(0, min(new_center_y - self.size // 2, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
+            self.y = max(UPPER_BAR_HEIGHT, min(new_center_y - self.size // 2, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
 
         # check wheter the unit interferes with another of enemy units
@@ -137,42 +137,60 @@ class Unit:
                 return "corrected"
         return None
 
-    def get_units_movement_area(self, screen  ):
+    def get_units_movement_area(self, screen):
         max_distance = self.base_movement  # Maximum distance to check from the unit's center
         num_samples = 360  # Number of samples (angles) around the unit's center
 
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
-        valid_movement_positions = []
         angles_with_obstacle = []
 
         # Determine enemy color based on unit's color
         if self.color == BLUE:
             enemy_color = RED
+            enemy_outline_color = RED_OUTLINE_COLOR
         else:
             enemy_color = BLUE
+            enemy_outline_color = BLUE_OUTLINE_COLOR
 
         for angle in range(0, 360, 360 // num_samples):
             # Convert angle to radians
             radians = math.radians(angle)
+
+            valid_movement_positions = []
 
             for distance in range(1, max_distance + 1):
                 new_x = center_x + distance * math.cos(radians)
                 new_y = center_y + distance * math.sin(radians)
 
                 # Check if the new position is within the screen boundaries
-                if 0 <= new_x < WIDTH and 0 <= new_y < HEIGHT - BUTTON_BAR_HEIGHT:
+                if 0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT:
                     pixel_color = screen.get_at((int(new_x), int(new_y)))
 
                     # Check for obstacles (river, enemy units, black)
-                    if pixel_color == RIVER_BLUE or pixel_color in [BLACK, enemy_color]:
-                        angles_with_obstacle.append(angle)
-                    elif angle not in angles_with_obstacle:
-                        valid_movement_positions.append((int(new_x), int(new_y)))
+                    if pixel_color == RIVER_BLUE or pixel_color in [enemy_outline_color, enemy_color]:
+                        break
+                    valid_movement_positions.append((int(new_x), int(new_y)))
 
-        self.valid_movement_positions = valid_movement_positions
+                # Calculate movement cost
+                line_pixel_colors=  get_pixel_colors(valid_movement_positions, background_screen)
+                movement_costs = calculate_movement_cost(line_pixel_colors)
+                
+                # Check if total cost exceeds base movement
+                if movement_costs[-1][0] > self.base_movement:
+                    break
+
+            angles_with_obstacle.append(valid_movement_positions)
+
+        # Find the common valid movement positions for all angles
+        farthest_points = []
+        for angle in angles_with_obstacle:
+            farthest_points.append(angle[-1])
+
+        self.valid_movement_positions = farthest_points
+
 
     def draw_possible_movement_area(self, screen   ):
-        
+       
         # Draw valid movement positions on the screen
         for pos in self.valid_movement_positions:
             pygame.draw.circle(screen, (0, 255, 0), pos, 2)  # Draw a green circle at the valid position

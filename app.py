@@ -33,7 +33,7 @@ blue_player = Player(BLUE, WIDTH -TENDER_WIDTH)
 players = [red_player, blue_player]
 cur_player = 0  
 
-blue_player.create_starting_unit((Musketeer, 0, 0), living_units)
+blue_player.create_starting_unit((Musketeer, 0, 100), living_units)
 blue_player.create_starting_unit((Musketeer, 200, 200), living_units)
 red_player.create_starting_unit((Canon, 300, 300), living_units)
 red_player.create_starting_unit((Shield, 400, 300), living_units)
@@ -207,28 +207,22 @@ def try_select_unit(click_pos, unit):
         print("no attacks or ammo left for this unit", unit.__class__.__name__)
     # print(
     #     f"Selected {unit.__class__.__name__} with right button")
-
-def draw_screen(screen):
-    button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
-    battle_ground.draw(screen)
-    red_player.render_tender(screen)
-    blue_player.render_tender(screen)
-    next_turn_button.draw(screen)
+ 
 
 def check_button_hover(buttons, mouse_pos):
     for button in buttons:
         button.hovered = button.is_hovered(mouse_pos)
  
 button_instances = [
-    BuyButton(knight_buy_img, Knight, "Buy Knight", 100, enter_buy_mode ),
-    BuyButton(shield_buy_img, Shield, "Buy Shield", 600, enter_buy_mode ),
-    BuyButton(canon_buy_img, Canon, "Buy Canon", 200, enter_buy_mode ),
-    BuyButton(medic_buy_img, Medic, "Buy Medic",300, enter_buy_mode ),
-    BuyButton(pike_buy_img, Pikeman, "Buy Pike", 400, enter_buy_mode  ),
-    BuyButton(musket_buy_img, Musketeer, "Buy Musket", 500, enter_buy_mode )
+    BuyButton(knight_buy_img, Knight, "Buy Knight", 40, enter_buy_mode, 60),
+    BuyButton(shield_buy_img, Shield, "Buy Shield", 80, enter_buy_mode,60 ),
+    BuyButton(canon_buy_img, Canon, "Buy Canon", 120, enter_buy_mode, 60),
+    BuyButton(medic_buy_img, Medic, "Buy Medic",160, enter_buy_mode, 60),
+    BuyButton(pike_buy_img, Pikeman, "Buy Pike", 200, enter_buy_mode ,60 ),
+    BuyButton(musket_buy_img, Musketeer, "Buy Musket", 240, enter_buy_mode,60 )
 ]
 button_bar = ButtonBar(button_instances)
-next_turn_button = Button("Next Turn", 400, 30, 100, 30, next_turn)
+next_turn_button = Button("Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, next_turn)
  
 def draw_ui(screen):
     battle_ground.draw(screen)
@@ -308,7 +302,7 @@ while lets_continue:
         players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0)   )
    
     text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))
-    text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+    text_rect = text.get_rect(center=(WIDTH // 2, 10))
     screen.blit(text, text_rect)
     
     # Render everything on the display

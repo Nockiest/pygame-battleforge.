@@ -32,17 +32,12 @@ class Player:
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color )
         living_units.append(unit)
-        self.units.append(unit)
-        print("created starting unit")
+        self.units.append(unit) 
 
-    def show_unit_to_be_placed(self, unit_params ):
-        print("i have been called")
+    def show_unit_to_be_placed(self, unit_params ):     
         unit_class_name, _, _ = unit_params
         print(unit_class_name, "x")
-        # unit_class =  globals().get(unit_class_name)  # Retrieve class object based on string
-        print(unit_class_name,"y")
         cursor_x, cursor_y = pygame.mouse.get_pos()
-        
         try:
             dummy_unit = unit_class_name(x=-100, y=-100, color=BLACK)
             unit_x = cursor_x - dummy_unit.size // 2
@@ -62,12 +57,12 @@ class Player:
         font = pygame.font.Font(None, 20)
 
         # Render the player's supplies on the tender
-        supplies_text_line1 = font.render("Stored:", True, (255, 255, 255))
+  
         supplies_text_line2 = font.render(f"Ammo {self.supplies}" , True, (255, 255, 255))
         unit_head_text =  font.render("Deployed" , True, (255, 255, 255))
-        screen.blit(supplies_text_line1, (self.tender_x + 10, HEIGHT - TENDER_HEIGHT + 10))
-        screen.blit(supplies_text_line2, (self.tender_x + 10, HEIGHT - TENDER_HEIGHT + 30))  # Adjust y-coordinate for the second line
-        unit_head_text_y =  HEIGHT - TENDER_HEIGHT + 50
+        
+        screen.blit(supplies_text_line2, (self.tender_x + 10, HEIGHT - TENDER_HEIGHT + 10))  # Adjust y-coordinate for the second line
+        unit_head_text_y =  HEIGHT - TENDER_HEIGHT + 30
         screen.blit(unit_head_text, (self.tender_x + 10, unit_head_text_y))
         unit_count = {}  # Create a dictionary to store unit type counts
 
