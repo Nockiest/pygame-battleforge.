@@ -17,8 +17,8 @@ battle_ground.place_towns(screen)
 battle_ground.place_roads( )
 # battle_ground.place_bridges()
 battle_ground.place_supply_depots()
-intersections =  find_river_segments_for_crossing(battle_ground.rivers)
-print(intersections)
+# intersections =  find_river_segments_for_crossing(battle_ground.rivers)
+ 
 
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
 
@@ -59,7 +59,7 @@ def next_turn():
     for unit in living_units:
         unit.reset_for_next_turn()
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
-    print("Next Turn")
+    
     apply_modifier(selected_unit, living_units, "in_cart_range")
     apply_modifier(selected_unit, living_units, "in_medic_range")
     switch_player()
@@ -68,7 +68,7 @@ def next_turn():
 
 def disable_unit_for_turn():
     global selected_unit
-    print("disabled")
+    print("unit disabled for turn")
     selected_unit.able_to_move = False
   
 
@@ -85,20 +85,20 @@ def select_unit():
     global render_units_attack_screen
     global cur_player
     global players
-   
+    if selected_unit:
+        return
         # Check if any living unit has been clicked
     for unit in living_units:
-
         if not unit.able_to_move:
             continue
-        print(unit.color, players[cur_player].color,unit.rect.collidepoint(event.pos),unit.rect, event.pos )
+        
         if unit.color != players[cur_player].color:
             continue
         if unit.rect.collidepoint(event.pos):
 
             selected_unit = unit
             render_units_attack_screen = True
-            unit.get_units_movement_area(screen)
+            unit.get_units_movement_area(screen, living_units)
 
             break
 
@@ -170,7 +170,7 @@ def buy_unit(click_pos):
         dummy = unit_to_be_placed(100, 100, BLACK)
         x = click_pos[0] - dummy.size // 2
         y = click_pos[1] - dummy.size // 2
-        print(background_screen.get_at((click_pos[0], click_pos[1])), background_screen.get_at((click_pos[0], click_pos[1])) != RIVER_BLUE)
+        
         
         # Check if the clicked position is not on the river
         if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
@@ -193,20 +193,19 @@ def enter_buy_mode(unit_type   ):
     global unit_to_be_placed
     unit_to_be_placed = unit_type
     print(unit_to_be_placed)
-    print(f"{players[cur_player].color} is going to buy {unit_type}")
+    print(f"{players[cur_player].color} is going to buy {unit_to_be_placed}")
     # players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0), unit_to_be_placed)
     
 
 def try_select_unit(click_pos, unit):
-    print(unit,living_units)
+     
     if unit.rect.collidepoint(click_pos):
-        return ("unit wasnt clicked on", click_pos)
-    if unit.able_to_move:
-        return True
+        
+        if unit.able_to_move:
+             return ("unit was  clicked on", click_pos)
     else:
         print("no attacks or ammo left for this unit", unit.__class__.__name__)
-    # print(
-    #     f"Selected {unit.__class__.__name__} with right button")
+        return False 
  
 
 def check_button_hover(buttons, mouse_pos):
@@ -251,26 +250,27 @@ while lets_continue:
                 if next_turn_button.is_clicked(event.pos):
                     next_turn_button.callback()  # Call the callback function when the button is clicked
                 else:
-                   for unit in living_units:
-                    can_select = try_select_unit(event.pos, unit)
-                    # print(can_select)
-                    if can_select:
+                #    for unit in living_units:
+                #     print(living_units)
+                #     can_select = try_select_unit(event.pos, unit)
+                #     # print(can_select)
+                #     if can_select:
                         
-                        select_unit()
+                    select_unit()
                   
-                    break
+                    
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
             if render_units_attack_screen:
                 process_attack(selected_unit, event.pos)
 
             else:
-                for unit in living_units:
-                    can_select = try_select_unit(event.pos, unit)
-                    # print(can_select)
-                    if can_select:
-                        select_unit()
+                # for unit in living_units:
+                #     can_select = try_select_unit(event.pos, unit)
+                #     # print(can_select)
+                #     if can_select:
+                    select_unit()
                         
-                    break
+                     
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
             if selected_unit:
@@ -300,7 +300,7 @@ while lets_continue:
             apply_modifier(selected_unit, living_units, "in_observer_range")
             selected_unit.render_attack_circle(screen)
     if unit_placement_mode:
-        print("placing unit")
+         
         players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0)   )
    
     text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))

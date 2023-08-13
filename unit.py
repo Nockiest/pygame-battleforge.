@@ -76,48 +76,77 @@ class Unit:
         new_center_x, new_center_y = click_pos
 
         # Check if the clicked position is a valid movement position
-       
         if any((new_center_x, new_center_y) in valid_pos for valid_pos in self.valid_movement_positions):
             self.x = new_center_x - self.size // 2
             self.y = new_center_y - self.size // 2
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        else:
+            # Create a line between the click position and starting position
+            movement_line = bresenham_line( new_center_x, new_center_y, self.start_turn_position[0], self.start_turn_position[1]  )
+
+            # Find the first valid movement position along the line
+            for pos in movement_line:
+               
+                if any(pos in valid_pos for valid_pos in self.valid_movement_positions):
+                    self.x, self.y = pos[0] - self.size // 2, pos[1] - self.size // 2
+                    self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+                    break
+
+       
+    # # Calculate the endpoint of the Bresenham line
+    #     movement_line = bresenham_line(self.start_turn_position[0], self.start_turn_position[1],  click_pos[0],  click_pos[1])   
+    #     line_point_colors = get_pixel_colors(movement_line, background_screen)
+    #     # count the movement cost of every pixel based on its color
+    #     movement_costs = calculate_movement_cost(line_point_colors)
+
+    #     new_center_x, new_center_y = self.start_turn_position  # Initialize new_center_x and new_center_y
+
+    #     # find the pixel that doesn't overshoot the movement cost
+    #     print(movement_costs[-1][0])
+    #     for cost, index, color in reversed(movement_costs):
+    #         if cost < self.base_movement:
+    #             # Update the new_center_x and new_center_y
+    #             new_center_x, new_center_y = movement_line[index - 1]
+    #             # Set the unit's position to the last point before the condition was applied
+    #             self.x = new_center_x - self.size // 2
+    #             self.y = new_center_y - self.size // 2
+    #             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+    #             break
+
+    #     new_rect = pygame.Rect(self.x, self.y, self.size, self.size)
+    #     # check whether the unit interferes with another of enemy units
  
-    def control_interference(self, living_units, center_x, center_y, new_rect):
-        # print(center_x,center_y,new_x,new_y)
+
+    def new_point_interferes(self, living_units, point_x, point_y  ):
+        
+        # Create a new rectangle for the unit's position
+        new_rect = pygame.Rect(point_x - self.size // 2, point_y - self.size // 2, self.size, self.size)
+
         for unit in living_units:
             if unit is self:
                     continue
-            if unit.color == self.color:
-                res = unit.rect.colliderect(new_rect)
-                if res and unit.color == self.color:
-                    return "collision_with_team_member"
+      
+            res = unit.rect.colliderect(new_rect)
+            if res :
+                return True
                  
+        return False
+      
 
-            point_x, point_y, line_points = check_square_line_interference(
-                unit, self.start_turn_position[0], self.start_turn_position[1], center_x, center_y)
-
-            # print( point_x  , point_y, line_points   )
-            if point_x != None and point_y != None:
-
-                move_unit_along_line(
-                    line_points, (point_x, point_y), self, screen)
-                return "corrected"
-        return None
-
-    def get_units_movement_area(self, screen):
+    def get_units_movement_area(self, screen,living_units):
         max_distance = self.base_movement  # Maximum distance to check from the unit's center
         num_samples = 360  # Number of samples (angles) around the unit's center
 
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
 
-        # Determine enemy color based on unit's color
-        if self.color == BLUE:
-            enemy_color = RED
-            enemy_outline_color = RED_OUTLINE_COLOR
-        else:
-            enemy_color = BLUE
-            enemy_outline_color = BLUE_OUTLINE_COLOR
+        # # Determine enemy color based on unit's color
+        # if self.color == BLUE:
+        #     enemy_color = RED
+        #     enemy_outline_color = RED_OUTLINE_COLOR
+        # else:
+        #     enemy_color = BLUE
+        #     enemy_outline_color = BLUE_OUTLINE_COLOR
 
         for angle in range(0, 360, 360 // num_samples):
             # Convert angle to radians
@@ -135,8 +164,10 @@ class Unit:
                     pixel_color = screen.get_at((int(new_x), int(new_y)))
 
                     # Check for obstacles (river, enemy units, black)
-                    if pixel_color in [RIVER_BLUE,enemy_outline_color, enemy_color]:
-                        
+                    if pixel_color in [RIVER_BLUE ]:                      
+                        break
+
+                    if self.new_point_interferes(  living_units, new_x, new_y  ):
                         break
                     valid_movement_positions.append((int(new_x), int(new_y)),)
                     
