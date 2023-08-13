@@ -21,8 +21,8 @@ class BuyButton(Button):
     def draw(self, screen, x, y ):
         if self.hovered:
             # Darken the button when hovered
-            dark_surface = pygame.Surface((self.button_width, self.button_height))
-            dark_surface.fill(0,0,50)  # Dark gray color
+            dark_surface = pygame.Surface((60, 60))
+            dark_surface.fill( 50)  # Dark gray color
             dark_surface.set_alpha(100)  # Set transparency to achieve the hover effect
             screen.blit(dark_surface, (x, y))
         screen.blit(self.button_surface, (x, y))

@@ -15,7 +15,7 @@ battle_ground.place_forrests()
 battle_ground.place_rivers()
 battle_ground.place_towns(screen)
 battle_ground.place_roads( )
-battle_ground.place_bridges()
+# battle_ground.place_bridges()
 battle_ground.place_supply_depots()
 intersections =  find_river_segments_for_crossing(battle_ground.rivers)
 print(intersections)
@@ -98,6 +98,7 @@ def select_unit():
 
             selected_unit = unit
             render_units_attack_screen = True
+            unit.get_units_movement_area(screen)
 
             break
 
@@ -213,6 +214,10 @@ def draw_screen(screen):
     red_player.render_tender(screen)
     blue_player.render_tender(screen)
     next_turn_button.draw(screen)
+
+def check_button_hover(buttons, mouse_pos):
+    for button in buttons:
+        button.hovered = button.is_hovered(mouse_pos)
  
 button_instances = [
     BuyButton(knight_buy_img, Knight, "Buy Knight", 100, enter_buy_mode ),
@@ -248,8 +253,6 @@ while lets_continue:
 
             elif unit_placement_mode:
                 buy_unit(event.pos)
-                
-
             else:
                 if next_turn_button.is_clicked(event.pos):
                     next_turn_button.callback()  # Call the callback function when the button is clicked
@@ -258,7 +261,9 @@ while lets_continue:
                     can_select = try_select_unit(event.pos, unit)
                     # print(can_select)
                     if can_select:
+                        
                         select_unit()
+                  
                     break
         if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
             if render_units_attack_screen:
@@ -270,6 +275,7 @@ while lets_continue:
                     # print(can_select)
                     if can_select:
                         select_unit()
+                        
                     break
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
@@ -278,6 +284,7 @@ while lets_continue:
   
     for player in players:
         player.handle_input()
+    check_button_hover(all_buttons, pygame.mouse.get_pos())
     screen.fill(GREEN)
 
     # RENDER ELEMENTS ON THE MAIN SCREEN
@@ -287,6 +294,7 @@ while lets_continue:
     if selected_unit:
             selected_unit.draw_as_active(screen)
             selected_unit.attack_range_modifiers = 1
+            selected_unit.draw_possible_movement_area(screen)
     for unit in living_units:
         unit.render_on_screen(screen)
     if hasattr(selected_unit, 'attack_cross_position'):
@@ -308,7 +316,7 @@ while lets_continue:
 
     # RENDER ELEMENTS ON THE BACKGROUND SCREEN
     draw_ui(background_screen)
- 
+    
     
     clock.tick(fps)
 

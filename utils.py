@@ -158,10 +158,10 @@ def do_lines_intersect(p1, p2, p3, p4):
 def get_pixel_colors(points, surface):
     points_colors = []
     for point in points:
-        if point[0] >= 0 and point[0] < surface.get_width() and point[1] >= 0 and point[1] < surface.get_height():
+        if point[0] >= 0 and point[0] < WIDTH and point[1] >= 0 and point[1] < HEIGHT:
             pixel_color = surface.get_at(point)
             points_colors.append(pixel_color)
         else:
-            points_colors.append((1,1,1))  # terminate color
+            points_colors.append(TERMINATE_COLOR)  # terminate color
           
     return points_colors
