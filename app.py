@@ -15,13 +15,13 @@ battle_ground.place_forrests()
 battle_ground.place_rivers()
 battle_ground.place_towns(screen)
 battle_ground.place_roads( )
-# battle_ground.place_bridges()
+battle_ground.place_bridges()
 battle_ground.place_supply_depots()
 # intersections =  find_river_segments_for_crossing(battle_ground.rivers)
- 
-
+pygame.display.set_caption("BattleForge")
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
-
+ 
+game_state = "game-is-running"
 selected_unit = None
 render_units_attack_screen = False
 unit_placement_mode = None
@@ -35,7 +35,7 @@ cur_player = 0
 
 blue_player.create_starting_unit((Musketeer, 0, 100), living_units)
 blue_player.create_starting_unit((Musketeer, 200, 200), living_units)
-red_player.create_starting_unit((Canon, 300, 300), living_units)
+red_player.create_starting_unit((Canon, 250, 250), living_units)
 red_player.create_starting_unit((Shield, 400, 300), living_units)
 blue_player.create_starting_unit((Medic, 500, 400), living_units)
 blue_player.create_starting_unit((Commander, 550, 100), living_units)
@@ -48,6 +48,11 @@ screen.fill(GREEN)
 lets_continue = True
 fps = 60
 clock = pygame.time.Clock()  # will tick eveery second
+
+def start_game():
+    global game_state
+    print("click")
+    game_state = "game is running"
 
 def switch_player():
     global cur_player
@@ -222,7 +227,7 @@ button_instances = [
 ]
 button_bar = ButtonBar(button_instances)
 next_turn_button = Button("Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, next_turn)
- 
+start_game_button = Button("BEGIN GAME", WIDTH//2-50, HEIGHT//2-50, 100, 100, start_game)
 def draw_ui(screen):
     battle_ground.draw(screen)
     button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT, players[cur_player].color)
@@ -231,90 +236,91 @@ def draw_ui(screen):
     next_turn_button.draw(screen)
   
 while lets_continue:
-    # check for events
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            print(event)
-            lets_continue = False
+    # # check for events
+    if game_state ==  "start-menu":
+        start_screen.fill(BRIDGE_COLOR)
+        start_game_button.draw(start_screen)
+        
+        pygame.display.update()
+        clock.tick(fps)
 
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            # Check if any button in the button bar is clicked
-            clicked_button = button_bar.get_clicked_button(event.pos)
-            if clicked_button and not selected_unit:
-                print(f"Clicked {clicked_button.unit_type} button.")
-                unit_placement_mode = clicked_button.unit_type
+        continue
 
-            elif unit_placement_mode:
-                buy_unit(event.pos)
-            else:
-                if next_turn_button.is_clicked(event.pos):
-                    next_turn_button.callback()  # Call the callback function when the button is clicked
+        
+    if game_state == "game-is-running":
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print(event)
+                lets_continue = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                # Check if any button in the button bar is clicked
+                clicked_button = button_bar.get_clicked_button(event.pos)
+                if clicked_button and not selected_unit:
+                    print(f"Clicked {clicked_button.unit_type} button.")
+                    unit_placement_mode = clicked_button.unit_type
+
+                elif unit_placement_mode:
+                    buy_unit(event.pos)
                 else:
-                #    for unit in living_units:
-                #     print(living_units)
-                #     can_select = try_select_unit(event.pos, unit)
-                #     # print(can_select)
-                #     if can_select:
-                        
-                    select_unit()
-                  
+                    if next_turn_button.is_clicked(event.pos):
+                        next_turn_button.callback()  # Call the callback function when the button is clicked
+                    else:          
+                        select_unit()
                     
-        if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
-            if render_units_attack_screen:
-                process_attack(selected_unit, event.pos)
-
-            else:
-                # for unit in living_units:
-                #     can_select = try_select_unit(event.pos, unit)
-                #     # print(can_select)
-                #     if can_select:
-                    select_unit()
                         
-                     
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
+                if render_units_attack_screen:
+                    process_attack(selected_unit, event.pos)
 
-        if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
-            if selected_unit:
-                selected_unit.move_in_game_field(event.pos, living_units)
-  
-    for player in players:
-        player.handle_input()
-    check_button_hover(all_buttons, pygame.mouse.get_pos())
-    screen.fill(GREEN)
+                else:
+                    select_unit()
+                            
+                        
 
-    # RENDER ELEMENTS ON THE MAIN SCREEN
-    # render the game state information
-    draw_ui(screen)
- 
-    if selected_unit:
-            selected_unit.draw_as_active(screen)
-            # selected_unit.attack_range_modifiers = 1
-            selected_unit.draw_possible_movement_area(screen)
-    for unit in living_units:
-        if unit == selected_unit:
-            continue
-        unit.render_on_screen(screen)
-    if hasattr(selected_unit, 'attack_cross_position'):
-        selected_unit.render_attack_cross(screen)
-    if render_units_attack_screen:
-        if selected_unit.remain_actions > 0:
-            apply_modifier(selected_unit, living_units, "in_observer_range")
-            selected_unit.render_attack_circle(screen)
-    if unit_placement_mode:
-         
-        players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0)   )
-   
-    text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))
-    text_rect = text.get_rect(center=(WIDTH // 2, 10))
-    screen.blit(text, text_rect)
+            if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
+                if selected_unit:
+                    selected_unit.move_in_game_field(event.pos, living_units)
     
-    # Render everything on the display
-    pygame.display.update()
+        for player in players:
+            player.handle_input()
+        check_button_hover(all_buttons, pygame.mouse.get_pos())
+        screen.fill(GREEN)
 
-    # RENDER ELEMENTS ON THE BACKGROUND SCREEN
-    draw_ui(background_screen)
+        # RENDER ELEMENTS ON THE MAIN SCREENKs
+        # render the game state information
+        draw_ui(screen)
     
+        if selected_unit:
+                selected_unit.draw_as_active(screen)
+                # selected_unit.attack_range_modifiers = 1
+                selected_unit.draw_possible_movement_area(screen)
+        for unit in living_units:
+            if unit == selected_unit:
+                continue
+            unit.render_on_screen(screen)
+        if hasattr(selected_unit, 'attack_cross_position'):
+            selected_unit.render_attack_cross(screen)
+        if render_units_attack_screen:
+            if selected_unit.remain_actions > 0:
+                apply_modifier(selected_unit, living_units, "in_observer_range")
+                selected_unit.render_attack_circle(screen)
+        if unit_placement_mode:
+            
+            players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0)   )
     
-    clock.tick(fps)
+        text = my_font.render("game" +(" ended  " if game_won else "  is running ")  , True, (255, 255, 255))
+        text_rect = text.get_rect(center=(WIDTH // 2, 10))
+        screen.blit(text, text_rect)
+        
+        # Render everything on the display
+        pygame.display.update()
+
+        # RENDER ELEMENTS ON THE BACKGROUND SCREEN
+        draw_ui(background_screen)
+        
+        
+        clock.tick(fps)
 
 # Ukončení pygame
 pygame.quit()

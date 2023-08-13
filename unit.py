@@ -64,11 +64,11 @@ class Unit:
         self.able_to_move = self.remain_actions > 0
         self.color = color
         
-        # Assign outline color based on unit's team color
-        if self.color == BLUE:
-            self.outline_color = BLUE_OUTLINE_COLOR
-        else:
-            self.outline_color = RED_OUTLINE_COLOR
+       
+        # if self.color == BLUE:
+        #     self.outline_color = BLUE_OUTLINE_COLOR
+        # else:
+        #     self.outline_color = RED_OUTLINE_COLOR
             
         self.valid_movement_positions = []
 
@@ -92,31 +92,6 @@ class Unit:
                     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
                     break
 
-       
-    # # Calculate the endpoint of the Bresenham line
-    #     movement_line = bresenham_line(self.start_turn_position[0], self.start_turn_position[1],  click_pos[0],  click_pos[1])   
-    #     line_point_colors = get_pixel_colors(movement_line, background_screen)
-    #     # count the movement cost of every pixel based on its color
-    #     movement_costs = calculate_movement_cost(line_point_colors)
-
-    #     new_center_x, new_center_y = self.start_turn_position  # Initialize new_center_x and new_center_y
-
-    #     # find the pixel that doesn't overshoot the movement cost
-    #     print(movement_costs[-1][0])
-    #     for cost, index, color in reversed(movement_costs):
-    #         if cost < self.base_movement:
-    #             # Update the new_center_x and new_center_y
-    #             new_center_x, new_center_y = movement_line[index - 1]
-    #             # Set the unit's position to the last point before the condition was applied
-    #             self.x = new_center_x - self.size // 2
-    #             self.y = new_center_y - self.size // 2
-    #             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-    #             break
-
-    #     new_rect = pygame.Rect(self.x, self.y, self.size, self.size)
-    #     # check whether the unit interferes with another of enemy units
- 
-
     def new_point_interferes(self, living_units, point_x, point_y  ):
         
         # Create a new rectangle for the unit's position
@@ -139,14 +114,7 @@ class Unit:
 
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
-
-        # # Determine enemy color based on unit's color
-        # if self.color == BLUE:
-        #     enemy_color = RED
-        #     enemy_outline_color = RED_OUTLINE_COLOR
-        # else:
-        #     enemy_color = BLUE
-        #     enemy_outline_color = BLUE_OUTLINE_COLOR
+ 
 
         for angle in range(0, 360, 360 // num_samples):
             # Convert angle to radians
@@ -187,21 +155,20 @@ class Unit:
 
             self.valid_movement_positions.append(valid_movement_positions)
             
-    def draw_possible_movement_area(self, screen   ):
+    def draw_possible_movement_area(self, screen):
         # Find the common valid movement positions for all angles
         farthest_points = []
-        
         for angle in self.valid_movement_positions:
-             
             farthest_points.append(angle[-1])
             farthest_points.append(angle[-2])
-        # Draw valid movement positions on the screen
-        for pos in  farthest_points:
-            pygame.draw.circle(screen, (0, 255, 0), pos, 2)  # Draw a green circle at the valid position
- 
+        
+        # Draw the connected path using lines
+        if len(farthest_points) > 1:
+            pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
+
     def render_attack_circle(self, screen):
         pygame.draw.circle(screen, RED, (self.x + self.size //
-                           2, self.y + self.size//2), self.attack_range*self.attack_range_modifiers, 1)
+                        2, self.y + self.size//2), self.attack_range*self.attack_range_modifiers, 1)
 
     def attack_square(self, click_pos):
         self.attack_cross_position = click_pos
@@ -271,7 +238,7 @@ class Unit:
 
     def remove_from_game(self, living_units, player):
         # Remove the unit from the 'units' list of the player
-        # self.player.units.remove(self)
+      
         print(player.color, self.color, player.units, self)
         # Remove the unit from the 'cur_players' array
         player.units.remove(self)
@@ -307,7 +274,7 @@ class Unit:
             self.x + self.size // 2, self.y + self.size // 2)
 
         # Determine the outline color based on the unit's team color
-        outline_color = self.outline_color  # Use the unit's color for the outline
+        outline_color = BLACK# self.outline_color  # Use the unit's color for the outline
 
         # Draw the filled rectangle for the unit
         pygame.draw.rect(screen, self.color, self.rect)
@@ -328,7 +295,7 @@ class Unit:
     def draw_as_active(self, screen):
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
-        pygame.draw.rect(screen, self.outline_color, outline_rect, 2)
+        pygame.draw.rect(screen,  BLACK, outline_rect, 2)
      
 
         # Draw a line from self.start_turn_position to the center of the unit in red

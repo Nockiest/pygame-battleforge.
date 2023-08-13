@@ -10,6 +10,8 @@ UPPER_BAR_HEIGHT = 50
 # Vytvoření obrazovky
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
 background_screen = pygame.display.set_mode((WIDTH, HEIGHT) )
+start_screen = pygame.display.set_mode((WIDTH, HEIGHT) )
+
 square_size = 10  # Adjust the size range as needed
 
 # Define the width and height of the tender rectangle
@@ -33,7 +35,7 @@ HOUSE_PURPLE = (255, 0, 255)
 BRIDGE_COLOR = (139, 69, 19)  # Saddle Brown
 TERMINATE_COLOR = (3,3,3)
 
-
+ 
 
 knight_buy_img = pygame.image.load("img/knight.png")
 shield_buy_img = pygame.image.load("img/shield.png")

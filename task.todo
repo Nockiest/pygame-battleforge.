@@ -1,14 +1,15 @@
 vytvořit bojovou jednotku   
-    přidat koupení jednotky   
+      
        
         
-    zprovoznit hover function
-    vykreslit kam se může pohnout
+    zobrazit informace na hover
+    přepsat propočet pohybu, aby konroloval každý pixel kolem sebe
+     
     rozestavit jednotky na začítku do formace
     přidat movement soundfile
      nedovol jendotkám na blízko útočit přes řeku
      nedovol jednotkám na dálku střílet přes les
-    opravit chybu se selekcí mušketýra
+   
     --dát kanonu area damage
     **dovolit kavalerii útočit po zabití
     zastavit stackování observerů
@@ -23,6 +24,7 @@ prostředí
         přidat aby doplnovaly zásoby
     přidat mosty
         opravtz angle
+
       
 
 ui
