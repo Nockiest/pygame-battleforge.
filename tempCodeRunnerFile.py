@@ -1,1 +1,2 @@
-draw_possible_movement_area
+  # selected_unit.draw_as_active(screen)
+            

@@ -287,9 +287,11 @@ while lets_continue:
  
     if selected_unit:
             selected_unit.draw_as_active(screen)
-            selected_unit.attack_range_modifiers = 1
+            # selected_unit.attack_range_modifiers = 1
             selected_unit.draw_possible_movement_area(screen)
     for unit in living_units:
+        if unit == selected_unit:
+            continue
         unit.render_on_screen(screen)
     if hasattr(selected_unit, 'attack_cross_position'):
         selected_unit.render_attack_cross(screen)

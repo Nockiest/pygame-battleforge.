@@ -70,51 +70,18 @@ class Unit:
         else:
             self.outline_color = RED_OUTLINE_COLOR
             
-        self.valid_movement_positions = None
+        self.valid_movement_positions = []
 
     def move_in_game_field(self, click_pos, living_units):
-    # Calculate the endpoint of the Bresenham line
-        movement_line = bresenham_line(self.start_turn_position[0], self.start_turn_position[1],  click_pos[0],  click_pos[1])   
-        line_point_colors = get_pixel_colors(movement_line, background_screen)
-        # count the movement cost of every pixel based on its color
-        movement_costs = calculate_movement_cost(line_point_colors)
+        new_center_x, new_center_y = click_pos
 
-        new_center_x, new_center_y = self.start_turn_position  # Initialize new_center_x and new_center_y
-
-        # find the pixel that doesn't overshoot the movement cost
-        print(movement_costs[-1][0])
-        for cost, index, color in reversed(movement_costs):
-            if cost < self.base_movement:
-                # Update the new_center_x and new_center_y
-                new_center_x, new_center_y = movement_line[index - 1]
-                # Set the unit's position to the last point before the condition was applied
-                self.x = new_center_x - self.size // 2
-                self.y = new_center_y - self.size // 2
-                self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-                break
-
-        new_rect = pygame.Rect(self.x, self.y, self.size, self.size)
-        # check whether the unit interferes with another of enemy units
-
-        # if yes set the position to be just before the enemy unit
-        res = self.control_interference(living_units, new_center_x, new_center_y, new_rect)
-        print(res)
-        if res == "corrected":
-            print("corrected")
+        # Check if the clicked position is a valid movement position
+       
+        if any((new_center_x, new_center_y) in valid_pos for valid_pos in self.valid_movement_positions):
+            self.x = new_center_x - self.size // 2
+            self.y = new_center_y - self.size // 2
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-            return
-        else:
-            self.x = max(0, min(new_center_x - self.size // 2, WIDTH - self.size))
-            self.y = max(UPPER_BAR_HEIGHT, min(new_center_y - self.size // 2, HEIGHT - BUTTON_BAR_HEIGHT - self.size))
-            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-
-        # check wheter the unit interferes with another of enemy units
-
-        # if yes set the position to be just before the enemy unit
-
-        # if there is a friendly unit where you want to place the unit set the moved unit before or arfter 
-        # that unit
-
+ 
     def control_interference(self, living_units, center_x, center_y, new_rect):
         # print(center_x,center_y,new_x,new_y)
         for unit in living_units:
@@ -142,7 +109,7 @@ class Unit:
         num_samples = 360  # Number of samples (angles) around the unit's center
 
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
-        angles_with_obstacle = []
+        self.valid_movement_positions = []
 
         # Determine enemy color based on unit's color
         if self.color == BLUE:
@@ -157,42 +124,48 @@ class Unit:
             radians = math.radians(angle)
 
             valid_movement_positions = []
-
-            for distance in range(1, max_distance + 1):
+            current_cost = 0
+            distance = 0
+            while current_cost  < self.base_movement:
                 new_x = center_x + distance * math.cos(radians)
                 new_y = center_y + distance * math.sin(radians)
-
+                distance += 1
                 # Check if the new position is within the screen boundaries
                 if 0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT:
                     pixel_color = screen.get_at((int(new_x), int(new_y)))
 
                     # Check for obstacles (river, enemy units, black)
-                    if pixel_color == RIVER_BLUE or pixel_color in [enemy_outline_color, enemy_color]:
+                    if pixel_color in [RIVER_BLUE,enemy_outline_color, enemy_color]:
+                        
                         break
-                    valid_movement_positions.append((int(new_x), int(new_y)))
+                    valid_movement_positions.append((int(new_x), int(new_y)),)
+                    
 
                 # Calculate movement cost
                 line_pixel_colors=  get_pixel_colors(valid_movement_positions, background_screen)
-                movement_costs = calculate_movement_cost(line_pixel_colors)
+                movement_cost  = calculate_movement_cost([pixel_color])
+                # print(movement_cost[-1][0])  # Extract the last value from movement_cost tuple
+                current_cost += movement_cost[-1][0]
+                 
                 
                 # Check if total cost exceeds base movement
-                if movement_costs[-1][0] > self.base_movement:
+                if current_cost  >= self.base_movement:
+                    
                     break
+                 
 
-            angles_with_obstacle.append(valid_movement_positions)
-
+            self.valid_movement_positions.append(valid_movement_positions)
+            
+    def draw_possible_movement_area(self, screen   ):
         # Find the common valid movement positions for all angles
         farthest_points = []
-        for angle in angles_with_obstacle:
+        
+        for angle in self.valid_movement_positions:
+             
             farthest_points.append(angle[-1])
-
-        self.valid_movement_positions = farthest_points
-
-
-    def draw_possible_movement_area(self, screen   ):
-       
+            farthest_points.append(angle[-2])
         # Draw valid movement positions on the screen
-        for pos in self.valid_movement_positions:
+        for pos in  farthest_points:
             pygame.draw.circle(screen, (0, 255, 0), pos, 2)  # Draw a green circle at the valid position
  
     def render_attack_circle(self, screen):
@@ -324,9 +297,8 @@ class Unit:
     def draw_as_active(self, screen):
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
-        pygame.draw.rect(screen, self.outline_color, outline_rect)
-        pygame.draw.circle(
-            screen, YELLOW, self.start_turn_position, self.base_movement, 1)
+        pygame.draw.rect(screen, self.outline_color, outline_rect, 2)
+     
 
         # Draw a line from self.start_turn_position to the center of the unit in red
         center_x = self.x + self.size // 2
