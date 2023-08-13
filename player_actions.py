@@ -62,23 +62,27 @@ class Player:
         font = pygame.font.Font(None, 20)
 
         # Render the player's supplies on the tender
-        supplies_text = font.render(f"Supplies: {self.supplies}", True, (255, 255, 255))
-        screen.blit(supplies_text, (self.tender_x + 10, HEIGHT-TENDER_HEIGHT + 10))
-
+        supplies_text_line1 = font.render("Stored:", True, (255, 255, 255))
+        supplies_text_line2 = font.render(f"Ammo {self.supplies}" , True, (255, 255, 255))
+        unit_head_text =  font.render("Deployed" , True, (255, 255, 255))
+        screen.blit(supplies_text_line1, (self.tender_x + 10, HEIGHT - TENDER_HEIGHT + 10))
+        screen.blit(supplies_text_line2, (self.tender_x + 10, HEIGHT - TENDER_HEIGHT + 30))  # Adjust y-coordinate for the second line
+        unit_head_text_y =  HEIGHT - TENDER_HEIGHT + 50
+        screen.blit(unit_head_text, (self.tender_x + 10, unit_head_text_y))
         unit_count = {}  # Create a dictionary to store unit type counts
 
         for unit in self.units:
             unit_type = unit.__class__.__name__
             unit_count[unit_type] = unit_count.get(unit_type, 0) + 1
 
-        unit_y = HEIGHT - TENDER_HEIGHT + 40  # Starting y-coordinate for printing
+        unit_y = HEIGHT - TENDER_HEIGHT + 60  # Starting y-coordinate for printing
         for unit_type, count in unit_count.items():
             unit_info = f"{count} "
             unit_text = font.render(unit_info, True, (255, 255, 255))
             
             # Calculate the y-coordinate for rendering
             render_y = unit_y + self.scroll_position
-            if render_y >= HEIGHT - TENDER_HEIGHT + 20:
+            if render_y >= unit_head_text_y:
                 # Render the unit count text
                 screen.blit(unit_text, (self.tender_x + 10, render_y))
                 
@@ -93,8 +97,7 @@ class Player:
     def handle_input(self):
         
         keys = pygame.key.get_pressed()
-        print(keys[pygame.K_UP],keys[pygame.K_DOWN])
-        print(self.scroll_position)
+        
         if keys[pygame.K_UP]:
             self.scroll_position -= 5
             self.scroll_position = max(self.scroll_position, -100)  # Ensure scroll position doesn't go below 0

@@ -31,7 +31,7 @@ unit_to_be_placed = None
 red_player = Player(RED, 0) 
 blue_player = Player(BLUE, WIDTH -TENDER_WIDTH)
 players = [red_player, blue_player]
-cur_player = 0  # RED
+cur_player = 0  
 
 blue_player.create_starting_unit((Musketeer, 0, 0), living_units)
 blue_player.create_starting_unit((Musketeer, 200, 200), living_units)
@@ -43,7 +43,7 @@ red_player.create_starting_unit((Commander, 500, 70), living_units)
 red_player.create_starting_unit((Pikeman, 700, 100), living_units)
 blue_player.create_starting_unit((SupplyCart, 800, 300), living_units)
 blue_player.create_starting_unit((Observer, 200, 150), living_units)
-
+blue_player.create_starting_unit((Observer, 250, 150), living_units)
 screen.fill(GREEN)
 lets_continue = True
 fps = 60
@@ -166,14 +166,27 @@ def buy_unit(click_pos):
     global unit_placement_mode
  
     if unit_to_be_placed:
-        dummy = unit_to_be_placed(-100, - 100, BLACK)
+        dummy = unit_to_be_placed(100, 100, BLACK)
+        x = click_pos[0] - dummy.size // 2
+        y = click_pos[1] - dummy.size // 2
+        print(background_screen.get_at((click_pos[0], click_pos[1])), background_screen.get_at((click_pos[0], click_pos[1])) != RIVER_BLUE)
+        
+        # Check if the clicked position is not on the river
+        if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
+            return print("Cannot place unit on river.")
+            # Check if the unit is being placed within the valid Y coordinate range
+        if HEIGHT - BUTTON_BAR_HEIGHT < y :
+            return   print("Cannot place unit in this Y coordinate range.")
         players[cur_player].create_unit(
-            (unit_to_be_placed, click_pos[0] - dummy.size//2, click_pos[1]  - dummy.size//2) , living_units)
-        # print(unit_placement_mode, living_units)
+            (unit_to_be_placed, x, y), living_units)
+        unit_placement_mode = False
+        unit_to_be_placed = None
+         
+             
+        del dummy
     else:
         print(f"Error: Unit type {unit_to_be_placed} not found.")
-    unit_placement_mode = False
-    unit_to_be_placed = None
+     
 
 def enter_buy_mode(unit_type   ):
     global unit_to_be_placed
@@ -235,7 +248,7 @@ while lets_continue:
 
             elif unit_placement_mode:
                 buy_unit(event.pos)
-                unit_to_be_placed = None
+                
 
             else:
                 if next_turn_button.is_clicked(event.pos):

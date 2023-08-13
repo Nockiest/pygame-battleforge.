@@ -1,30 +1,36 @@
 vytvořit bojovou jednotku   
     přidat koupení jednotky   
-      nepostav jednotku do řeky
+       
         
-        zprovoznit hover function
+    zprovoznit hover function
     vykreslit kam se může pohnout
-    
+    rozestavit jednotky na začítku do formace
     přidat movement soundfile
      nedovol jendotkám na blízko útočit přes řeku
      nedovol jednotkám na dálku střílet přes les
+    opravit chybu se selekcí mušketýra
+    --dát kanonu area damage
+    **dovolit kavalerii útočit po zabití
+    zastavit stackování observerů
+    dát supply cartu omezený počet nábojů
 musika
     najít 5 písniček
     
 prostředí
-    vytvořit scrolling
-   
-    přidat zdi
-
+    **vytvořit scrolling
+    **přidat zdi
     přidat základny
+        přidat aby doplnovaly zásoby
     přidat mosty
+        opravtz angle
       
 
 ui
     přidat ukliádání
     přidat načítání
-    přidat počítání počtu jednotek
     scrollovat unit bar, jen když jsou v ěm skryté jednotky
     opravit obrázek mušketýra    
+    posnout game is running text
+    přidat úvodní nastavení hry
 
-game funcionality
+ ** = můj rozmar

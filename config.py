@@ -1,8 +1,8 @@
 import pygame
 
 
-WIDTH = 1000
-HEIGHT = 500
+WIDTH = 1200
+HEIGHT = 700
 MAIN_FONT_URL = "fonts/Kanit-Regular.ttf"
 BUTTON_BAR_HEIGHT = 75
 
@@ -12,7 +12,7 @@ background_screen = pygame.display.set_mode((WIDTH, HEIGHT) )
 square_size = 10  # Adjust the size range as needed
 
 # Define the width and height of the tender rectangle
-TENDER_WIDTH = 60
+TENDER_WIDTH = 80
 TENDER_HEIGHT = BUTTON_BAR_HEIGHT * 2
 
 
