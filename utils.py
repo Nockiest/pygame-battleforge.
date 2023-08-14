@@ -1,5 +1,4 @@
 import math
-
 from config import *
 
 
@@ -103,12 +102,12 @@ def find_edge_points(points):
     for x_axis in range(leftmost_x, rightmost_x + 1, square_size):
         same_x_points = [(x, y) for x, y in points if x == x_axis]
         if same_x_points:
-            # print(f"Points with x-coordinate {x_axis}: {same_x_points}")
+          
 
             # Find points with lowest and highest y-values in the same_x_points array
             lowest_y_point = min(same_x_points, key=lambda p: p[1])
             highest_y_point = max(same_x_points, key=lambda p: p[1])
-            # print(f"Lowest y-value: {lowest_y_point}, Highest y-value: {highest_y_point}")
+            
 
             # Add lowest and highest points to the result array
             result.insert(0, lowest_y_point)
@@ -165,3 +164,29 @@ def get_pixel_colors(points, surface):
             points_colors.append(TERMINATE_COLOR)  # terminate color
           
     return points_colors
+
+def calculate_movement_cost(color_list):
+    movement_costs = []
+    total_cost = 0
+    
+    for i, color in enumerate(color_list):
+        if color == FORREST_GREEN:
+            total_cost += 2
+        elif color == ROAD_GRAY:
+            total_cost += 0.5
+        elif color == RIVER_BLUE:
+            total_cost += 1000000 # to prevent the unit from going over the river 
+        elif color == BRIDGE_COLOR:
+            total_cost += 1
+        elif color == TOWN_RED or color == HOUSE_PURPLE:
+            total_cost += 1
+        elif color == TERMINATE_COLOR:
+            total_cost += 10000000000
+            movement_costs.append((total_cost, i, color))
+            return movement_costs
+        else:
+            total_cost += 1  # Default movement cost
+        
+        movement_costs.append((total_cost, i, color))
+    
+    return movement_costs

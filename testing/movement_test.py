@@ -10,7 +10,7 @@ sys.path.append(parent_dir)
 from unit import Unit
 from unit_classes import *
 from config import *
-GREEN, WHITE, BLACK, RED, BLUE, YELLOW = colors_tuple
+ 
 class TestUnitMethods(unittest.TestCase):
 
     def setUp(self):
@@ -30,7 +30,7 @@ class TestUnitMethods(unittest.TestCase):
                  y=150, size=20, ammo=50, icon="pike.png", color=BLUE),
             Knight(x=100, y=100, color=RED),
             Musketeer(x=200, y=200, color=BLUE),
-            Cannon(x=300, y=300, color=RED),
+            Canon(x=300, y=300, color=RED),
             Shield(x=400, y=400, color=RED),
             Medic(x=500, y=400, color=BLUE),
             Commander(x=600, y=100, color=BLUE),

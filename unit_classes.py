@@ -1,22 +1,64 @@
 from unit import Unit
 import math
-from utils import get_two_units_center_distance
-
+from utils import *
+from config import *
+from game_state import *
+ 
 class Melee(Unit):
     def __init__(self, hp, attack_range,attack_resistance,   base_actions,  base_movement, size, x, y, icon, color, cost):
         super().__init__(hp, attack_range,attack_resistance, base_actions,
                          base_movement, size, x, y, None, icon, color, cost)
+    def try_attack(self, click_pos, living_units   ):
+        res = super().try_attack(click_pos, living_units)
+
+        if res[0] == "UNIT ATTACKS":
+            # Calculate the line between unit's center and click position
+            
+            line_points = bresenham_line(
+                self.center[0], self.center[1], click_pos[0], click_pos[1]
+            )
+
+            # Get the pixel colors along the line
+            line_pixel_colors = get_pixel_colors(line_points, background_screen)
+            print(line_pixel_colors)
+            # Check if FORREST_GREEN is present in pixel colors
+            if RIVER_BLUE   in line_pixel_colors:
+                print("Ranged unit can't attack through forests")
+                res = ("MELEE UNIT CAN'T ATTACK THROUGH RIVERS ", click_pos, None)
+
+        return res
 
 class Ranged(Unit):
-      def __init__(self, hp, attack_range, attack_resistance, base_actions, ammo, base_movement, size, x, y, icon, color, cost):
+    def __init__(self, hp, attack_range, attack_resistance, base_actions, ammo, base_movement, size, x, y, icon, color, cost):
         super().__init__(hp, attack_range, attack_resistance, base_actions,
                          base_movement, size, x, y, ammo, icon, color, cost)
  
+    def try_attack(self, click_pos, living_units   ):
+        res = super().try_attack(click_pos, living_units)
+
+        if res[0] == "UNIT ATTACKS":
+            # Calculate the line between unit's center and click position
+             
+            line_points = bresenham_line(
+                self.center[0], self.center[1], click_pos[0], click_pos[1]
+            )
+
+            # Get the pixel colors along the line
+            line_pixel_colors = get_pixel_colors(line_points, background_screen)
+
+            # Check if FORREST_GREEN is present in pixel colors
+            if FORREST_GREEN in line_pixel_colors:
+                print("Ranged unit can't attack through forests")
+                res = ("RANGED UNIT CAN'T ATTACK THROUGH FORESTS", click_pos, None)
+
+        return res
 class Support(Unit):
-    def __init__(self, hp, attack_range,attack_resistance, base_actions, base_movement, size, x, y, icon, color, cost):
+    def __init__(self, hp, attack_range,attack_resistance, base_actions, base_movement, size, x, y, icon, color, cost, custom_ammo=None):
         # Call the constructor of the parent class (Unit) without specifying the 'ammo' parameter
+        ammo = custom_ammo if custom_ammo is not None else None
         super().__init__(hp, attack_range, attack_resistance, base_actions,
-                         base_movement, size, x, y, None, icon, color, cost)
+                         base_movement, size, x, y, ammo, icon, color, cost)
+        
         
     def try_attack(self, click_pos, living_units):
         return  ("SUPPORTS DONT ATTACK") 
@@ -54,10 +96,10 @@ class Canon(Ranged):
 
     # Additional methods or overrides for the Cannon class
 
-class Commander(Ranged):
+class Commander(Melee):
     def __init__(self, x, y, color):
         super().__init__(hp=1, attack_range=40,attack_resistance=0.2, base_actions=1, base_movement=150,
-                         size=20, x=x, y=y, ammo=1, icon="commander.png", color=color, cost=10000)
+                         size=20, x=x, y=y,    icon="commander.png", color=color, cost=10000)
 
     # Additional methods or overrides for the Commander class
     def support(self):
@@ -89,17 +131,35 @@ class Medic(Support):
 class SupplyCart(Support):
     def __init__(self,   x, y,  color):
         super().__init__(hp=1, attack_range=50,attack_resistance=0.05, base_actions=1, base_movement=150,
-                         size=30, x=x, y=y, icon="supplycart.png", color=color, cost=500)
-        self.supply = 10
+                         size=30, x=x, y=y, icon="supplycart.png", color=color, cost=500, custom_ammo=20)
+         
 
-    def provide_ammo(self, units):
-        for unit in units:
-            # Check if the target unit is not a Melee or Support unit
-            if not isinstance(unit, (Melee, Support)):
-                distance = get_two_units_center_distance(self,unit   )
-                if distance <= self.base_movement:
-                    unit.ammo += 1  # Provide the target unit with 10 ammo
-                    self.supply -= 1
+    def dispense_ammo(self, amount, living_units):
+        print("called")
+        for unit in living_units:
+            if self.ammo <= 0:
+                print("no ammo left")
+                break
+
+            if unit.color != self.color:
+                continue
+
+            if isinstance(unit, Ranged) and distance(self.center, unit.center) < RESUPPLY_RANGE:
+                print(self.ammo)
+                unit.ammo += amount
+                self.ammo -= amount
+                print(f"Dispensing {amount} ammo. Remaining ammo: {self.ammo} to {unit}vv")
+
+    # def provide_ammo(self,ammount, units):
+    #     print("called")
+    #     for unit in units:
+    #         # Check if the target unit is not a Melee or Support unit
+    #         if isinstance(unit,  Ranged ):
+    #             distance = get_two_units_center_distance(self ,unit    )
+    #             if distance <= self.base_movement:
+    #                 unit.ammo += ammount  # Provide the target unit with 10 ammo
+    #                 self.ammo -= ammount  # Provide the target unit with 10 ammo
+                     
 
 
 class Observer(Support):

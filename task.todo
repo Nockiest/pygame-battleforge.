@@ -1,27 +1,24 @@
-vytvořit bojovou jednotku   
-      
-       
-        
+vytvořit bojovou jednotku      
     zobrazit informace na hover
+        zobtazit munici životy útoky
+    přidat útočnou animaci
     přepsat propočet pohybu, aby konroloval každý pixel kolem sebe
      
     rozestavit jednotky na začítku do formace
     přidat movement soundfile
-     nedovol jendotkám na blízko útočit přes řeku
-     nedovol jednotkám na dálku střílet přes les
+    vykreslit přesný attack circle
    
     --dát kanonu area damage
     **dovolit kavalerii útočit po zabití
     zastavit stackování observerů
-    dát supply cartu omezený počet nábojů
 musika
     najít 5 písniček
     
 prostředí
     **vytvořit scrolling
     **přidat zdi
-    přidat základny
-        přidat aby doplnovaly zásoby
+  
+        
     přidat mosty
         opravtz angle
 
@@ -32,9 +29,9 @@ ui
     přidat načítání
     scrollovat unit bar, jen když jsou v ěm skryté jednotky
     opravit obrázek mušketýra    
-    posnout game is running text
+    zvýraznit jednotky co může enpřítel zasáhnout
     přidat úvodní nastavení hry
 
  ** = můj rozmar
 
-zajistit aby se ikony vojáků eninterferovaly s chceckingem pozic
+ 

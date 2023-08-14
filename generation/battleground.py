@@ -5,7 +5,7 @@ from config import *
 from utils import *
 from generation.town_generation import *
 from generation.road_generation import *
- 
+from structures import *
  
 
 
@@ -59,6 +59,7 @@ class BattleGround:
         self.roads = []
         self.supply_depots = []
         self.bridges= []
+
         # Define quantities of each element to generate
         self.num_forests = 6
         self.num_rivers = 2
@@ -207,9 +208,7 @@ class BattleGround:
                     self.towns.append(town_params)
             else:
                 print(f"Failed to place town after {max_attempts} attempts.")
-                break
-   
-       
+                break   
  
     def place_roads(self):
         connected_towns = set()  # Keep track of connected towns to prevent duplicated roads
@@ -305,8 +304,6 @@ class BattleGround:
                
         for part in all_river_parts:
             river_part_intersects = False
-            # print(part, "river part")
-            # print(len(part))
             if len(part) <= 3:
                 continue
             for i in range(len(part) - 2):
@@ -357,14 +354,14 @@ class BattleGround:
         for _ in range(self.num_supply_depots // 2):
             x_left = random.randint(50, self.width // 2 - 50)  # Ensure at least 50 pixels from the left edge
             y = random.randint(50, self.height - 50)  # Ensure at least 50 pixels from top and bottom edges
-            self.supply_depots.append((x_left, y))
+            self.supply_depots.append(SupplyDepo(x_left, y))
 
 
         # Place supply depots on the right side
         for _ in range(self.num_supply_depots // 2):
             x_right = random.randint(self.width // 2 + 50, self.width - 50)  # Ensure at least 50 pixels from the right edge
             y = random.randint(50, self.height - 50)  # Ensure at least 50 pixels from top and bottom edges
-            self.supply_depots.append((x_right, y))
+            self.supply_depots.append(SupplyDepo(x_right, y))
 
     def draw_bezier_curve(self, screen, points):
             num_segments = 100
@@ -390,17 +387,17 @@ class BattleGround:
         # Draw forrests
         for forest in self.forests:
             pygame.draw.polygon(screen, FORREST_GREEN, forest)
-
-        # Draw rivers
+        # Draw towns
+        for town_rect in self.towns:
+            pygame.draw.rect(screen, TOWN_RED  , town_rect[0])  # Red rectangle for town center with reduced opacity
+            for house_rect in town_rect[1]:
+                pygame.draw.rect(screen, HOUSE_PURPLE , house_rect, 2)  # Magenta rectangle for each house
+          # Draw rivers
         for points in self.rivers:
             pygame.draw.lines(screen, RIVER_BLUE  , False, points, 10)
-
-
-        # Draw roads
+         # Draw roads
         for road in self.roads:
             points = road
-            # pygame.draw.circle(screen,  (128, 128, 128), points[0], dot_radius)  # Saddle Brown
-            # pygame.draw.circle(screen, (128, 128, 128), points[-1], dot_radius)  # Saddle Brown
             for i in range(len(points) - 1):
                 pygame.draw.line(screen, ROAD_GRAY  , points[i], points[i + 1], 15)  # Saddle Brown
                
@@ -416,14 +413,6 @@ class BattleGround:
                
                 # Draw the square
                 pygame.draw.polygon(screen, ROAD_GRAY, square_corners)
-
-        # Draw towns
-        for town_rect in self.towns:
-            pygame.draw.rect(screen, TOWN_RED  , town_rect[0])  # Red rectangle for town center with reduced opacity
-            for house_rect in town_rect[1]:
-                pygame.draw.rect(screen, HOUSE_PURPLE , house_rect, 2)  # Magenta rectangle for each house
-
-
         # Draw bridges
          
         bridge_width = 25
@@ -448,8 +437,8 @@ class BattleGround:
 
 
         # Draw supply depots
-        for x, y in self.supply_depots:
-            pygame.draw.circle(screen, (255, 255, 0), (x, y), dot_radius)  # Yellow
+        for depo in self.supply_depots:
+            depo.draw()
 
 
         # # Update the display

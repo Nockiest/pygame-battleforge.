@@ -1,7 +1,7 @@
 import pygame
 from config import *
 from button import Button
-
+from game_state import *
 BUTTON_BAR_Y = HEIGHT - 100
  
 

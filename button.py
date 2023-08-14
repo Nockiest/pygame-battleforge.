@@ -1,6 +1,6 @@
 import pygame
 from config import * 
- 
+from game_state import *
 
 class Button:
     def __init__(self, description, x, y, width, height, callback):

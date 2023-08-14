@@ -3,8 +3,8 @@ from config import *
 from utils import *
 import math
 import random
-
-
+# from game_state import *
+ 
 def render_attack_cross(screen, x, y):
     cross_color = (255, 165, 0)  # Orange color
     cross_thickness = 2
@@ -15,31 +15,7 @@ def render_attack_cross(screen, x, y):
     pygame.draw.line(screen, cross_color, (x, y - cross_length),
                      (x, y + cross_length), cross_thickness)
 
-def calculate_movement_cost(color_list):
-    movement_costs = []
-    total_cost = 0
-    
-    for i, color in enumerate(color_list):
-        if color == FORREST_GREEN:
-            total_cost += 2
-        elif color == ROAD_GRAY:
-            total_cost += 0.5
-        elif color == RIVER_BLUE:
-            total_cost += 1000000 # to prevent the unit from going over the river 
-        elif color == BRIDGE_COLOR:
-            total_cost += 1
-        elif color == TOWN_RED or color == HOUSE_PURPLE:
-            total_cost += 1
-        elif color == TERMINATE_COLOR:
-            total_cost += 10000000000
-            movement_costs.append((total_cost, i, color))
-            return movement_costs
-        else:
-            total_cost += 1  # Default movement cost
-        
-        movement_costs.append((total_cost, i, color))
-    
-    return movement_costs
+ 
 class Unit:
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
         self.hp = hp
@@ -52,7 +28,9 @@ class Unit:
         self.atttack_resistance = attack_resistance
         self.x = x
         self.y = y
+        
         self.size = size
+        self.center = (self.x + self.size//2, self.y + self.size//2)
         self.start_turn_position = (
             self.x + self.size // 2, self.y + self.size // 2)
 
@@ -92,19 +70,16 @@ class Unit:
                     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
                     break
 
-    def new_point_interferes(self, living_units, point_x, point_y  ):
-        
+    def new_point_interferes(self, living_units, point_x, point_y  ):   
         # Create a new rectangle for the unit's position
         new_rect = pygame.Rect(point_x - self.size // 2, point_y - self.size // 2, self.size, self.size)
 
         for unit in living_units:
             if unit is self:
-                    continue
-      
+                    continue   
             res = unit.rect.colliderect(new_rect)
             if res :
-                return True
-                 
+                return True              
         return False
       
 
@@ -143,7 +118,7 @@ class Unit:
                 # Calculate movement cost
                 line_pixel_colors=  get_pixel_colors(valid_movement_positions, background_screen)
                 movement_cost  = calculate_movement_cost([pixel_color])
-                # print(movement_cost[-1][0])  # Extract the last value from movement_cost tuple
+                
                 current_cost += movement_cost[-1][0]
                  
                 
@@ -156,12 +131,13 @@ class Unit:
             self.valid_movement_positions.append(valid_movement_positions)
             
     def draw_possible_movement_area(self, screen):
-        # Find the common valid movement positions for all angles
+    # Find the common valid movement positions for all angles
         farthest_points = []
         for angle in self.valid_movement_positions:
-            farthest_points.append(angle[-1])
-            farthest_points.append(angle[-2])
-        
+            if len(angle) >= 2:
+                farthest_points.append(angle[-1])
+                farthest_points.append(angle[-2])
+            
         # Draw the connected path using lines
         if len(farthest_points) > 1:
             pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
@@ -188,7 +164,6 @@ class Unit:
                 del self.attack_cross_time
 
     def try_attack(self, click_pos, living_units):
-
         # Check if the click position is within the attack range of the unit
         dx = click_pos[0] - (self.x + self.size // 2)
         dy = click_pos[1] - (self.y + self.size // 2)
@@ -197,17 +172,26 @@ class Unit:
         if distance <= self.attack_range:
             # Check if the click position does not collide with the unit's rectangle
             if self.rect.collidepoint(click_pos):
-                return ("CANT ATTACK SELF", click_pos)
+                return ("CANT ATTACK SELF", click_pos, [])
+
+            # Calculate the line between unit's center and click position
+            line_points = bresenham_line(
+                self.start_turn_position[0], self.start_turn_position[1], click_pos[0], click_pos[1]
+            )
+            print(line_points)
+            # points_on_line = []
+            # for point in line_points:
+            #     points_on_line.append(point)
 
             for unit in living_units:
                 if unit.rect.collidepoint(click_pos):
                     if unit.color == self.color:
-                        return ("YOU CANT DO FRIENDLY FIRE", click_pos)
+                        return ("YOU CANT DO FRIENDLY FIRE", click_pos, line_points)
                         break
 
-                    return ("UNIT ATTACKS", click_pos, unit)
+                    return ("UNIT ATTACKS", click_pos, unit, line_points)
 
-        return ("Attack not possible", click_pos)
+        return ("Attack not possible", click_pos, [])
 
     def check_if_hit(self, base_hit_chance):
 

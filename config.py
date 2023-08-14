@@ -1,5 +1,6 @@
 import pygame
 
+pygame.init()  # Initialize the Pygame library
 
 WIDTH = 1200
 HEIGHT = 700
@@ -17,7 +18,7 @@ square_size = 10  # Adjust the size range as needed
 # Define the width and height of the tender rectangle
 TENDER_WIDTH = 80
 TENDER_HEIGHT = BUTTON_BAR_HEIGHT * 2
-
+BUTTON_BAR_Y = HEIGHT - 100
 
 GREEN = (20, 200, 50)
 WHITE = (255, 255, 255)
@@ -35,6 +36,8 @@ HOUSE_PURPLE = (255, 0, 255)
 BRIDGE_COLOR = (139, 69, 19)  # Saddle Brown
 TERMINATE_COLOR = (3,3,3)
 
+RESUPPLY_RANGE = 100
+ 
  
 
 knight_buy_img = pygame.image.load("img/knight.png")
@@ -44,4 +47,9 @@ medic_buy_img = pygame.image.load("img/medic.png")
 pike_buy_img = pygame.image.load("img/pikeman.png")
 musket_buy_img = pygame.image.load("img/musketeer.png")
 
-all_buttons = []
+ 
+
+default_font =  pygame.font.Font(None, 20)
+my_font = pygame.font.Font(MAIN_FONT_URL, 15)
+clock = pygame.time.Clock()  # will tick eveery second
+fps = 60
