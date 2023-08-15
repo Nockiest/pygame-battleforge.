@@ -67,7 +67,22 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
 
     return (point_x, point_y, line_points)
 
-
+def draw_bezier_curve(self, screen, points):
+            num_segments = 100
+            curve_points = []
+            for t in range(num_segments + 1):
+                t_normalized = t / num_segments
+                x = int((1 - t_normalized)**3 * points[0][0] +
+                        3 * (1 - t_normalized)**2 * t_normalized * points[2][0] +
+                        3 * (1 - t_normalized) * t_normalized**2 * points[3][0] +
+                        t_normalized**3 * points[1][0])
+                y = int((1 - t_normalized)**3 * points[0][1] +
+                        3 * (1 - t_normalized)**2 * t_normalized * points[2][1] +
+                        3 * (1 - t_normalized) * t_normalized**2 * points[3][1] +
+                        t_normalized**3 * points[1][1])
+                curve_points.append((x, y))
+           
+            pygame.draw.lines(screen, (128, 128, 128), False, curve_points, 2)
 def move_unit_along_line(line_points, intersecting_point, unit, screen):
     # Find the index of the intersecting point in the line_points list
     intersecting_index = line_points.index(intersecting_point)

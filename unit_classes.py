@@ -78,8 +78,6 @@ class Pikeman(Melee):
 
     # Additional methods or overrides for the Pikeman class
 
-
-
  
 class Musketeer(Ranged):
     def __init__(self,   x, y,  color):
@@ -143,8 +141,9 @@ class SupplyCart(Support):
 
             if unit.color != self.color:
                 continue
+            print(isinstance(unit, Ranged) , distance(self.center, unit.center) <= RESUPPLY_RANGEs)
 
-            if isinstance(unit, Ranged) and distance(self.center, unit.center) < RESUPPLY_RANGE:
+            if isinstance(unit, Ranged) and distance(self.center, unit.center) <= RESUPPLY_RANGE:
                 print(self.ammo)
                 unit.ammo += amount
                 self.ammo -= amount

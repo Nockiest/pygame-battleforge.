@@ -4,7 +4,7 @@ pygame.init()  # Initialize the Pygame library
 
 WIDTH = 1200
 HEIGHT = 700
-MAIN_FONT_URL = "fonts/Kanit-Regular.ttf"
+MAIN_FONT_URL = "_fonts/Kanit-Regular.ttf"
 
 BUTTON_BAR_HEIGHT = 75
 UPPER_BAR_HEIGHT = 50

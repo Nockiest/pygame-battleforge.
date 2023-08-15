@@ -3,12 +3,11 @@ import pygame
 import math
 from config import *
 from utils.utils import *
-from generation.town_generation import *
+# from generation.town_generation import *
 from generation.road_generation import *
-from structures import *
- 
-
-
+from buildings.supply_depo import SupplyDepo
+from buildings.bridge import Bridge
+from buildings.town import Town, is_far_enough
 def find_river_segments_for_crossing(rivers):
     river_segments = []
 
@@ -175,37 +174,40 @@ class BattleGround:
                 x =random.randint(0, self.width - 60)
                 y =random.randint(0, self.height- 60)
                 town_coors = (x, y)
-                town_params = []
+                # town_params = []
              
                 if  is_far_enough(town_coors, min_distance, self.towns):
                     town_size = (random.randint(40, 60), random.randint(40, 60))  # Random size for the rectangles
                     town_topleft = (x, y)
                     house_rectangles = []
                     num_houses = random.randint(3, 6)
-                    for _ in range(num_houses):
-                        placed_house = False
-                        for _ in range(50):  # Attempt at most 50 times to place a house
-                            house_x = random.randint(x, x + town_size[0] - square_size)
-                            house_y = random.randint(y, y + town_size[1] - square_size)
-                            new_house = pygame.Rect(house_x, house_y, square_size, square_size) # square size is the default size of a square
+                    new_town = Town(x,y, town_size, TOWN_RED, num_houses)
+                    new_town.place_houses(self.rivers)
+                    
+                    # for _ in range(num_houses):
+                    #     placed_house = False
+                    #     for _ in range(50):  # Attempt at most 50 times to place a house
+                    #         house_x = random.randint(x, x + town_size[0] - square_size)
+                    #         house_y = random.randint(y, y + town_size[1] - square_size)
+                    #         new_house = pygame.Rect(house_x, house_y, square_size, square_size) # square size is the default size of a square
                            
-                            # Check for interference with other town rectangles
-                            interferes_with_town = any(rect.colliderect(new_house) for rect in house_rectangles)
+                    #         # Check for interference with other town rectangles
+                    #         interferes_with_town = any(rect.colliderect(new_house) for rect in house_rectangles)
                            
-                            if not interferes_with_town:
-                                interferes_with_river = check_river_collision(new_house, self.rivers, screen)                      
-                                if not interferes_with_river:
-                                    house_rectangles.append(new_house)
-                                    placed_house = True
-                                    break
+                    #         if not interferes_with_town:
+                    #             interferes_with_river = check_river_collision(new_house, self.rivers, screen)                      
+                    #             if not interferes_with_river:
+                    #                 house_rectangles.append(new_house)
+                    #                 placed_house = True
+                    #                 break
                        
-                        if not placed_house:
-                            break  # If failed to place a house 50 times or if it interferes with rivers, break the loop
+                    #     if not placed_house:
+                    #         break  # If failed to place a house 50 times or if it interferes with rivers, break the loop
                    
-                    town_rect = pygame.Rect(town_coors[0], town_coors[1], town_size[0], town_size[1])
-                    town_params.append(town_rect )
-                    town_params.append(house_rectangles)
-                    self.towns.append(town_params)
+                    # town_rect = pygame.Rect(town_coors[0], town_coors[1], town_size[0], town_size[1])
+                    # town_params.append(town_rect )
+                    # town_params.append(house_rectangles)
+                    self.towns.append(new_town)
             else:
                 print(f"Failed to place town after {max_attempts} attempts.")
                 break   
@@ -339,46 +341,36 @@ class BattleGround:
                     int(random_point[1] + t * (next_point[1] - random_point[1]))
                 )
 
-
+                
                 # Calculate the angle between the line segment and the x-axis
                 dx = next_point[0] - random_point[0]
                 dy = next_point[1] - random_point[1]
                 angle = math.atan2(dy, dx)
 
+                new_bridge = Bridge(bridge_point[0], bridge_point[1], angle, (40, 30), BRIDGE_COLOR)
+
 
                 print(f"River segment doesn't intersect with any road. Bridge declared at {bridge_point}, angle: {angle}")
-                self.bridges.append((bridge_point, angle))
+                self.bridges.append(new_bridge)
 
     def place_supply_depots(self):
+        DEPO_SIZE = 50
+        AMMO_RANGE = 100
+        AMMO_PER_UNIT = 1
     # Place supply depots on the left side
         for _ in range(self.num_supply_depots // 2):
             x_left = random.randint(50, self.width // 2 - 50)  # Ensure at least 50 pixels from the left edge
             y = random.randint(50, self.height - 50)  # Ensure at least 50 pixels from top and bottom edges
-            self.supply_depots.append(SupplyDepo(x_left, y))
+            self.supply_depots.append(SupplyDepo(x_left, y,  DEPO_SIZE, AMMO_RANGE, AMMO_PER_UNIT))
 
 
         # Place supply depots on the right side
         for _ in range(self.num_supply_depots // 2):
             x_right = random.randint(self.width // 2 + 50, self.width - 50)  # Ensure at least 50 pixels from the right edge
             y = random.randint(50, self.height - 50)  # Ensure at least 50 pixels from top and bottom edges
-            self.supply_depots.append(SupplyDepo(x_right, y))
+            self.supply_depots.append(SupplyDepo(x_right, y, DEPO_SIZE, AMMO_RANGE, AMMO_PER_UNIT))
 
-    def draw_bezier_curve(self, screen, points):
-            num_segments = 100
-            curve_points = []
-            for t in range(num_segments + 1):
-                t_normalized = t / num_segments
-                x = int((1 - t_normalized)**3 * points[0][0] +
-                        3 * (1 - t_normalized)**2 * t_normalized * points[2][0] +
-                        3 * (1 - t_normalized) * t_normalized**2 * points[3][0] +
-                        t_normalized**3 * points[1][0])
-                y = int((1 - t_normalized)**3 * points[0][1] +
-                        3 * (1 - t_normalized)**2 * t_normalized * points[2][1] +
-                        3 * (1 - t_normalized) * t_normalized**2 * points[3][1] +
-                        t_normalized**3 * points[1][1])
-                curve_points.append((x, y))
-           
-            pygame.draw.lines(screen, (128, 128, 128), False, curve_points, 2)
+     
 
     def draw(self, screen):
         dot_radius = 10
@@ -388,10 +380,12 @@ class BattleGround:
         for forest in self.forests:
             pygame.draw.polygon(screen, FORREST_GREEN, forest)
         # Draw towns
-        for town_rect in self.towns:
-            pygame.draw.rect(screen, TOWN_RED  , town_rect[0])  # Red rectangle for town center with reduced opacity
-            for house_rect in town_rect[1]:
-                pygame.draw.rect(screen, HOUSE_PURPLE , house_rect, 2)  # Magenta rectangle for each house
+        for town in self.towns:
+            town.draw_self(screen)
+            town.draw_houses(screen)
+            # pygame.draw.rect(screen, TOWN_RED  , town_rect[0])  # Red rectangle for town center with reduced opacity
+            # for house_rect in town_rect[1]:
+            #     pygame.draw.rect(screen, HOUSE_PURPLE , house_rect, 2)  # Magenta rectangle for each house
           # Draw rivers
         for points in self.rivers:
             pygame.draw.lines(screen, RIVER_BLUE  , False, points, 10)
@@ -419,26 +413,27 @@ class BattleGround:
         bridge_height = 50
 
 
-        for bridge_center, angle in self.bridges:
-            # Calculate the position for the top-left corner of the rotated rectangle
-            x = bridge_center[0] - bridge_width / 2
-            y = bridge_center[1] - bridge_height / 2
+        for bridge  in self.bridges:
+            bridge.draw(screen)
+            # # Calculate the position for the top-left corner of the rotated rectangle
+            # x = bridge_center[0] - bridge_width / 2
+            # y = bridge_center[1] - bridge_height / 2
            
-            # Create a rotated surface for the rectangle
-            bridge_surface = pygame.Surface((bridge_width, bridge_height), pygame.SRCALPHA)
-            pygame.draw.rect(bridge_surface, BRIDGE_COLOR, (0, 0, bridge_width, bridge_height))
-            rotated_surface = pygame.transform.rotate(bridge_surface, math.degrees(angle   ))
+            # # Create a rotated surface for the rectangle
+            # bridge_surface = pygame.Surface((bridge_width, bridge_height), pygame.SRCALPHA)
+            # pygame.draw.rect(bridge_surface, BRIDGE_COLOR, (0, 0, bridge_width, bridge_height))
+            # rotated_surface = pygame.transform.rotate(bridge_surface, math.degrees(angle   ))
            
-            # Calculate the position to blit the rotated rectangle
-            blit_position = rotated_surface.get_rect(topleft=(x, y))
+            # # Calculate the position to blit the rotated rectangle
+            # blit_position = rotated_surface.get_rect(topleft=(x, y))
            
-            # Draw the rotated rectangle onto the screen
-            screen.blit(rotated_surface, blit_position)
+            # # Draw the rotated rectangle onto the screen
+            # screen.blit(rotated_surface, blit_position)
 
 
         # Draw supply depots
         for depo in self.supply_depots:
-            depo.draw()
+            depo.draw(screen)
 
 
         # # Update the display

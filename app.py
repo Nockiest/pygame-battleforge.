@@ -15,7 +15,7 @@ battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
 battle_ground.place_forrests()
 battle_ground.place_rivers()
 battle_ground.place_towns(screen)
-battle_ground.place_roads( )
+# battle_ground.place_roads( )
 battle_ground.place_bridges()
 battle_ground.place_supply_depots()
 # intersections =  find_river_segments_for_crossing(battle_ground.rivers)
@@ -54,8 +54,11 @@ def next_turn():
 
     for unit in living_units:
         unit.reset_for_next_turn()
+        if isinstance(unit, SupplyCart):
+            unit.dispense_ammo(1, living_units)
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
-    
+    for depo in battle_ground.supply_depots:
+        depo.dispense_ammo(living_units)
     apply_modifier(selected_unit, living_units, "in_cart_range")
     apply_modifier(selected_unit, living_units, "in_medic_range")
     switch_player()
@@ -137,14 +140,14 @@ def apply_modifier(selected_unit, living_units, modifier_type):
                 distance = get_two_units_center_distance(selected_unit, unit)
                 if distance <= 75:
                     selected_unit.attack_range_modifiers += 0.5
-    elif modifier_type == "in_cart_range":
-        for unit in living_units:
-            if isinstance(unit, Ranged) and unit.color == players[cur_player].color:
-                for supply_cart in living_units:
-                    if isinstance(supply_cart, SupplyCart) and supply_cart.color == players[cur_player].color:
-                        distance = get_two_units_center_distance(unit, supply_cart)
-                        if distance <= supply_cart.attack_range:
-                            supply_cart.provide_ammo([unit])
+    # elif modifier_type == "in_cart_range":
+    #     for unit in living_units:
+    #         if isinstance(unit, Ranged) and unit.color == players[cur_player].color:
+    #             for supply_cart in living_units:
+    #                 if isinstance(supply_cart, SupplyCart) and supply_cart.color == players[cur_player].color:
+    #                     distance = get_two_units_center_distance(unit, supply_cart)
+    #                     if distance <= supply_cart.attack_range:
+    #                         supply_cart.provide_ammo([unit])
     elif modifier_type == "in_medic_range":
          for unit in living_units:
             if unit.color == players[cur_player].color:
