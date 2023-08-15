@@ -9,6 +9,7 @@ from buildings.supply_depo import SupplyDepo
 from buildings.bridge import Bridge
 from buildings.town import Town, is_far_enough, get_town_distances
 from buildings.road import *
+from buildings.river import River
 def find_river_segments_for_crossing(rivers):
     river_segments = []
 
@@ -122,49 +123,50 @@ class BattleGround:
             control_x2 = random.randint(0, self.width)
             control_y2 = random.randint(0, self.height)
 
-
-            points = []
-            num_segments = 10
-            convergence_point = None  # Initialize the intersection point as None
-
-
-            for i in range(num_segments + 1):
-                t = i / num_segments
-                point = calculate_bezier_curve(t, (start_x, start_y), (control_x1, control_y1), (control_x2, control_y2), (end_x, end_y))
-                rounded_point = (round(point[0]), round(point[1]))
-                intersects = False  # Initialize the intersection flag as False
-                points.append(rounded_point)
+            new_river = River((start_x, start_y),(end_x,end_y), [(control_x1,control_y1),(control_x2, control_y2)])
+            new_river.generate_chunks(self.rivers)
+            # points = []
+            # num_segments = 10
+            # convergence_point = None  # Initialize the intersection point as None
 
 
-                for existing in self.rivers:
-                    for j in range(len(existing) - 1):
-                        intersection = do_lines_intersect(points[len(points) - 2], rounded_point, existing[j], existing[j+1])
-                        # print(intersection, existing[j], existing[j+1] )
-                        if intersection:
-                            intersects = True  # Set the intersection flag to True
-                            # print(intersection)
-                            convergence_point = existing[j+1]  # Store the intersection point
-                            self.convergence_points.append(convergence_point)
-                            break  # Break the inner loop once an intersection is found
+            # for i in range(num_segments + 1):
+            #     t = i / num_segments
+            #     point = calculate_bezier_curve(t, (start_x, start_y), (control_x1, control_y1), (control_x2, control_y2), (end_x, end_y))
+            #     rounded_point = (round(point[0]), round(point[1]))
+            #     intersects = False  # Initialize the intersection flag as False
+            #     points.append(rounded_point)
 
 
-                    if intersects:  # If an intersection is found, break the outer loop
-                        break
+            #     for existing in self.rivers:
+            #         for j in range(len(existing) - 1):
+            #             intersection = do_lines_intersect(points[len(points) - 2], rounded_point, existing[j], existing[j+1])
+            #             # print(intersection, existing[j], existing[j+1] )
+            #             if intersection:
+            #                 intersects = True  # Set the intersection flag to True
+            #                 # print(intersection)
+            #                 convergence_point = existing[j+1]  # Store the intersection point
+            #                 self.convergence_points.append(convergence_point)
+            #                 break  # Break the inner loop once an intersection is found
 
 
-                if intersects:  # If an intersection is found, break the loop and do not add the river
-                    break
+            #         if intersects:  # If an intersection is found, break the outer loop
+            #             break
 
 
-            if convergence_point:
-                points[-1] = convergence_point  # Replace the last point with the intersection point
+            #     if intersects:  # If an intersection is found, break the loop and do not add the river
+            #         break
 
 
-            # Only add the river if there were no intersections
+            # if convergence_point:
+            #     points[-1] = convergence_point  # Replace the last point with the intersection point
+
+
+            # # Only add the river if there were no intersections
            
-            self.rivers.append(points)
+            self.rivers.append(new_river)
 
-    def place_towns(self, screen):
+    def place_towns(self  ):
         min_distance = 200
         max_attempts = 10
 
@@ -212,58 +214,28 @@ class BattleGround:
                     ((random.randint(100, self.width - 100), self.height), (random.randint(100, self.width - 100), 0))   # Right side
                 ]
                 print(i, nearby_town, "this is the nearby twon")
-                new_road = Road(self.roads, nearby_town, town,  )
+                new_road = Road(nearby_town, town)
                 new_road.generate_road_points(self.roads, screen_sides)
-        #         # Calculate the point along the x or y axis to move first
-        #         mid_point = calculate_mid_point_pos(nearby_town  ,town.center)
-                      
-        #         # Calculate the direction of the road (angle towards the other town)
-        #         angle = math.atan2(nearby_town.center[1] - mid_point[1], nearby_town.center[0] - mid_point[0])
-               
-        #         # Calculate the endpoint of the road
-        #         road_length = math.dist(mid_point, nearby_town.center)
-        #         end_point = (
-        #             int(mid_point[0] + road_length * math.cos(angle)),
-        #             int(mid_point[1] + road_length * math.sin(angle))
-        #         )
-               
-        #         # Check for road intersections
-        #         for road in self.roads:
-        #             _, road_start_point, road_end_point = road                
-        #             mid_point, road_end_point = augment_mid_point(road_end_point, road_start_point, mid_point)
-
-        #             # Check if the road intersects with any existing road segments
-        #     intersects_existing = False # check_for_roads_intersection(self.roads, town_rect.center, mid_point, end_point)
-           
-                
-        #     # If the road doesn't intersect with any existing road, add it to the roads list
+     
             # if not new_road.intersects:
             connected_towns.add((index, i))
             connected_towns.add((i, index))
             self.roads.append(new_road)
-
-
-                        
-    # Iterate through each side of the screen
-        
       
-
-      
-       
-        # edge_roads = generate_from_edge_roads( screen_sides, self.towns )
-        # print(edge_roads)
-        # for road in edge_roads:
-        #     # Save the road path to self.roads
-            # self.roads.append(road)
+        edge_roads = generate_from_edge_roads( screen_sides, self.towns )
+        print(edge_roads)
+        for road in edge_roads:
+            # Save the road path to self.roads
+            self.roads.append(road)
 
     def place_bridges(self):
         all_river_parts = []
         for river in self.rivers:
             river_parts = []  # Initialize the list to hold current river segment
            
-            for point in river:
+            for point in river.points:
                 # Check if the point matches any convergence point
-                if point in self.convergence_points:
+                if point in river.convergence_points:
                     # if len(river_parts) > 1:
                     river_parts.append(point)
                     all_river_parts.append(river_parts)  # Append the current segment to the list
@@ -355,31 +327,18 @@ class BattleGround:
         # Draw towns
         for town in self.towns:
             town.draw_self(screen)
-            town.draw_houses(screen)
-            # pygame.draw.rect(screen, TOWN_RED  , town_rect[0])  # Red rectangle for town center with reduced opacity
-            # for house_rect in town_rect[1]:
-            #     pygame.draw.rect(screen, HOUSE_PURPLE , house_rect, 2)  # Magenta rectangle for each house
+            
           # Draw rivers
-        for points in self.rivers:
-            pygame.draw.lines(screen, RIVER_BLUE  , False, points, 10)
+        for river in self.rivers:
+            print(river, river.points)
+            pygame.draw.lines(screen, RIVER_BLUE  , False, river.points, 10)
          # Draw roads
         for road in self.roads:
-            points = road.points
-            for i in range(len(points) - 1):
-                pygame.draw.line(screen, ROAD_GRAY  , points[i], points[i + 1], 15)  # Saddle Brown
-               
-                # Calculate the coordinates for the corners of the square
-                x, y = points[i + 1]
-                square_size = 15
-                square_corners = [
-                    (x - square_size / 2, y - square_size / 2),
-                    (x + square_size / 2, y - square_size / 2),
-                    (x + square_size / 2, y + square_size / 2),
-                    (x - square_size / 2, y + square_size / 2)
-                ]
-               
-                # Draw the square
-                pygame.draw.polygon(screen, ROAD_GRAY, square_corners)
+            road.draw(screen)
+
+        for town in self.towns:
+            
+            town.draw_houses(screen)
         # Draw bridges
          
         bridge_width = 25
@@ -388,22 +347,6 @@ class BattleGround:
 
         for bridge  in self.bridges:
             bridge.draw(screen)
-            # # Calculate the position for the top-left corner of the rotated rectangle
-            # x = bridge_center[0] - bridge_width / 2
-            # y = bridge_center[1] - bridge_height / 2
-           
-            # # Create a rotated surface for the rectangle
-            # bridge_surface = pygame.Surface((bridge_width, bridge_height), pygame.SRCALPHA)
-            # pygame.draw.rect(bridge_surface, BRIDGE_COLOR, (0, 0, bridge_width, bridge_height))
-            # rotated_surface = pygame.transform.rotate(bridge_surface, math.degrees(angle   ))
-           
-            # # Calculate the position to blit the rotated rectangle
-            # blit_position = rotated_surface.get_rect(topleft=(x, y))
-           
-            # # Draw the rotated rectangle onto the screen
-            # screen.blit(rotated_surface, blit_position)
-
-
         # Draw supply depots
         for depo in self.supply_depots:
             depo.draw(screen)

@@ -6,7 +6,6 @@ from utils.utils import *
  
 
 def calculate_mid_point_pos(nearby_town ,start_town ):
-    print(nearby_town.center,start_town.center)
     if abs(start_town.center[1] - nearby_town.center[1]) <= 150:
        return start_town.center[0], start_town.center[1] 
     if start_town.center[1] < nearby_town.center[1]:
@@ -68,15 +67,16 @@ def generate_from_edge_roads(screen_sides, towns):
         road_length = math.dist(town.center, selected_point)
         end_point = (int(town.center[0] + road_length * math.cos(angle)),
                     int(town.center[1] + road_length * math.sin(angle)))
-        
-        edge_roads.append((town.center, selected_point, selected_point))
+        new_edge_road = Road(town, selected_point)
+        new_edge_road.points = (town.center, selected_point, selected_point)
+        edge_roads.append(new_edge_road)
     return edge_roads
 
 
 class Road(Structure):
-    def __init__(self,existing_roads,nearby_town, start_town   ):
+    def __init__(self, nearby_town, start_town   ):
 
-        super().__init__(start_town.x, start_town.y, size = 5, color=ROAD_GRAY)
+        super().__init__(None, None, size = 5, color=ROAD_GRAY)
         self.points = [] 
         self.start_town = start_town
         self.end_town = nearby_town
@@ -114,4 +114,19 @@ class Road(Structure):
  
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.size, self.size))
+          
+            for i in range(len(self.points) - 1):
+                pygame.draw.line(screen, ROAD_GRAY  , self.points[i], self.points[i + 1], 15)  # Saddle Brown
+               
+                # Calculate the coordinates for the corners of the square
+                x, y = self.points[i + 1]
+                square_size = 15
+                square_corners = [
+                    (x - square_size / 2, y - square_size / 2),
+                    (x + square_size / 2, y - square_size / 2),
+                    (x + square_size / 2, y + square_size / 2),
+                    (x - square_size / 2, y + square_size / 2)
+                ]
+               
+                # Draw the square
+                pygame.draw.polygon(screen, ROAD_GRAY, square_corners)
