@@ -1,6 +1,6 @@
 import pygame
 from config import *
-from utils import *
+from utils.utils import *
 from game_state import *
 
 def select_unit(clicked_pos   ):

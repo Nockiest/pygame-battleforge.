@@ -1,6 +1,6 @@
 import pygame
 from config import *
-from utils import *
+from utils.utils import *
 from unit_classes import *
 dot_radius = 10
 

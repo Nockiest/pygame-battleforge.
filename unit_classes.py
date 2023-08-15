@@ -1,6 +1,6 @@
 from unit import Unit
 import math
-from utils import *
+from utils.utils import *
 from config import *
 from game_state import *
  

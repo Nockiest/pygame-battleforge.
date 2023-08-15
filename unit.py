@@ -1,6 +1,6 @@
 import pygame
 from config import *
-from utils import *
+from utils.utils import *
 import math
 import random
 # from game_state import *
@@ -226,6 +226,7 @@ class Unit:
         print(player.color, self.color, player.units, self)
         # Remove the unit from the 'cur_players' array
         player.units.remove(self)
+        player.update_sorted_units()
         living_units.remove(self)
         # Set the unit's x, y, and rect attributes to None to remove it from the game field
         self.x = None

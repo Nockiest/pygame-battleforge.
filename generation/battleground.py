@@ -2,7 +2,7 @@ import random
 import pygame
 import math
 from config import *
-from utils import *
+from utils.utils import *
 from generation.town_generation import *
 from generation.road_generation import *
 from structures import *

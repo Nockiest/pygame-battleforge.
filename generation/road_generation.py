@@ -1,5 +1,5 @@
 import math
-from utils import *
+from utils.utils import *
 def get_town_distances(all_towns, town_center, town_rect, town_index):
     distances = []  # Compare the center of the current town with the centers of other towns
     for i, other_town_tuple in enumerate(all_towns):

@@ -1,15 +1,23 @@
 import pygame
 from config import *
 from game_state import *
+from utils.image_utils import render_image
 SCROLL_SPEED = 5
 class Player:
     def __init__(self, color, tender_x  ):
         self.supplies = 100  # Initial supplies
         self.units = []  # List to store units (use 'list()' to create a copy)
+        self.sorted_by_class_units = {}
         self.color = color  # Player's color
+        
         self.tender_x = tender_x  # X position for the tender rectangle
         self.scroll_position = 0
         
+    def update_sorted_units(self):
+        self.sorted_by_class_units = {}
+        for unit in self.units:
+            unit_type = unit.__class__.__name__
+            self.sorted_by_class_units[unit_type] = self.sorted_by_class_units.get(unit_type, 0) + 1
 
     def create_unit( self, unit_params, living_units ):
         # Create the unit object
@@ -27,6 +35,7 @@ class Player:
             print("you cant buy this unit")
             del unit  # Remove the unit from memory since it won't be added to the lists
             return None
+        self.update_sorted_units()
 
         return unit
 
@@ -35,6 +44,7 @@ class Player:
         unit = unit_class(x=x, y=y,  color=self.color )
         living_units.append(unit)
         self.units.append(unit) 
+        self.update_sorted_units()
 
     def show_unit_to_be_placed(self, unit_params ):   
            
@@ -63,56 +73,50 @@ class Player:
         unit_head_text_y =  HEIGHT - TENDER_HEIGHT + 30
         screen.blit(unit_head_text, (self.tender_x + 10, unit_head_text_y))
        
-        # Create a dictionary to store unit type counts
-        unit_count = {}  
-        for unit in self.units:
-            unit_type = unit.__class__.__name__
-            unit_count[unit_type] = unit_count.get(unit_type, 0) + 1
+        total_text_height = supplies_text_line2.get_height() + unit_head_text.get_height() 
 
-        unit_y = HEIGHT - TENDER_HEIGHT + 60  # Starting y-coordinate for printing
+        # Calculate unit_y based on the total text height
+        unit_y = HEIGHT - TENDER_HEIGHT + total_text_height + 10  # Adjust 10 for spacing
         total_content_height = len(self.units) * 30 + unit_head_text_y - HEIGHT + TENDER_HEIGHT
 
         # Adjust the scroll position based on total content height
         space_for_unit_list =  TENDER_HEIGHT - unit_head_text_y
         self.max_scroll = max(0, total_content_height  - space_for_unit_list )
         
-        # Check if there is hidden content below the visible area
-        if total_content_height > TENDER_HEIGHT and self.scroll_position <  self.max_scroll:
-            self.scroll_position += SCROLL_SPEED
-
-        # Check if there is hidden content above the visible area
-        if total_content_height > TENDER_HEIGHT and self.scroll_position > 0:
-           self.scroll_position -= SCROLL_SPEED
+        
         # print(self.scroll_position , self.color,  self.max_scroll)
-        for unit_type, count in unit_count.items():
+        for unit_type, count in self.sorted_by_class_units.items():
             unit_info = f"{count} "
             unit_text = default_font.render(unit_info, True, (255, 255, 255))
             
             # Calculate the y-coordinate for rendering
             render_y = unit_y + self.scroll_position
+            
             if render_y >= unit_head_text_y:
                 # Render the unit count text
-                screen.blit(unit_text, (self.tender_x + 10, render_y))
-                
+                screen.blit(unit_text, (self.tender_x + 10, render_y))              
                 # Load and render the unit image
-                unit_img_path = f"img/{unit_type.lower()}.png"  # Assuming lowercase filenames
-                unit_img = pygame.image.load(unit_img_path)
-                unit_img = pygame.transform.scale(unit_img, (20, 20))
-                screen.blit(unit_img, (self.tender_x + 30, render_y))
+                unit_img_path = f"img/{unit_type.lower()}.png"
+                unit_size = (20, 20)
+                render_position = (self.tender_x + 30, render_y)
+
+                render_image(unit_img_path, unit_size, render_position, screen)
             
             unit_y += 30  # Move down for the next unit type
 
     def handle_input(self):
-        
+        #  # Check if there is hidden content below the visible are  
         keys = pygame.key.get_pressed()
         
         if keys[pygame.K_UP]:
             self.scroll_position -= 5
-            self.scroll_position = max(self.scroll_position, self.max_scroll)  # Ensure scroll position doesn't go below 0
+            self.scroll_position = min(self.scroll_position, self.max_scroll)  # Ensure scroll position doesn't go below 0
         if keys[pygame.K_DOWN]:
             # print(self.scroll_position)
             self.scroll_position += 5
-            self.scroll_position = max(self.scroll_position, 0)  # Ensure scroll position doesn't exceed max
+            self.scroll_position = min(self.scroll_position, 0)  # Ensure scroll position doesn't exceed max
+  
+  
     def get_boost(self):
         # Add logic to calculate and apply boost to the player's units
         # (e.g., increase attack, defense, or other attributes)

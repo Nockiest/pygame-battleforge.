@@ -1,4 +1,4 @@
-from utils import *
+from utils.utils import *
 from config import *
 import pygame
 def is_far_enough(  new_town, min_distance, towns):
