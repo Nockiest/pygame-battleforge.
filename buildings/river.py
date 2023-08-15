@@ -11,7 +11,7 @@ class River(Structure):
         super().__init__(startpoint[0], startpoint[1], size = 5, color=RIVER_BLUE)
         self.points = [] 
         self.control_points =  control_points 
-        self.convergence_points = []
+        self.convergence_point  = None
         self.chunks = []
         self.num_segments = 10
         self.startpoint = startpoint
@@ -35,7 +35,7 @@ class River(Structure):
                         intersects = True  # Set the intersection flag to True
                         # print(intersection)
                         convergence_point = existing_river.points[j+1]  # Store the intersection point
-                        self.convergence_points.append(convergence_point)
+                        self.convergence_point = convergence_point
                         break  # Break the inner loop once an intersection is found
 
 
@@ -47,8 +47,8 @@ class River(Structure):
                 break
 
 
-        if self.convergence_points:
-            self.points[-1] = self.convergence_points  # Replace the last point with the intersection point
+        if self.convergence_point  != None:
+            self.points[-1] = self.convergence_point   # Replace the last point with the intersection point
 
  
         # self.intersects = False

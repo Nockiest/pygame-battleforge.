@@ -52,13 +52,7 @@ class BattleGround:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.forests = []
-        self.rivers =   []# [(0, 0), (400, 300)]#[(0,0),(100, 200),(300,300), (350, 200)]
-        self.convergence_points = []
-        self.towns = []
-        self.roads = []
-        self.supply_depots = []
-        self.bridges= []
+         
 
         # Define quantities of each element to generate
         self.num_forests = 6
@@ -67,17 +61,27 @@ class BattleGround:
         self.num_roads = 9
         self.num_supply_depots = 2
 
+        self.forests = self.place_forrests( )
+        self.rivers =  self.place_rivers()# [(0, 0), (400, 300)]#[(0,0),(100, 200),(300,300), (350, 200)]
+        # self.convergence_points = []
+        self.towns =  self.place_towns()
+        self.roads = self.place_roads()
+        self.bridges= self.place_bridges()
+        self.supply_depots =self.place_supply_depots()
+        
 
     def place_forrests(self):
-          for _ in range(self.num_forests):
+        forests = []
+        for _ in range(self.num_forests):
             x = round(random.randint(0, self.width))
             y = round(random.randint(0, self.height - BUTTON_BAR_HEIGHT))
-     
+    
             forest_size = 4500 # round(random.randint(20, 50))
             forest_from_squares = self.create_forest_squares(x, y, square_size, 0.2, forest_size)
             forest_shape = find_edge_points(forest_from_squares)
             if len(forest_shape) >= 3:
-             self.forests.append(forest_shape)
+                forests.append(forest_shape)
+        return forests
    
     def create_forest_squares(self, x, y, size, regularity, forest_size):
         points = [(x, y)]  # Start with the initial square's center
@@ -111,6 +115,7 @@ class BattleGround:
         return points
      
     def place_rivers(self):
+        rivers = []
         for _ in range(self.num_rivers):
             start_x = random.choice([0, self.width])
             start_y = random.randint(0, self.height)
@@ -124,49 +129,11 @@ class BattleGround:
             control_y2 = random.randint(0, self.height)
 
             new_river = River((start_x, start_y),(end_x,end_y), [(control_x1,control_y1),(control_x2, control_y2)])
-            new_river.generate_chunks(self.rivers)
-            # points = []
-            # num_segments = 10
-            # convergence_point = None  # Initialize the intersection point as None
-
-
-            # for i in range(num_segments + 1):
-            #     t = i / num_segments
-            #     point = calculate_bezier_curve(t, (start_x, start_y), (control_x1, control_y1), (control_x2, control_y2), (end_x, end_y))
-            #     rounded_point = (round(point[0]), round(point[1]))
-            #     intersects = False  # Initialize the intersection flag as False
-            #     points.append(rounded_point)
-
-
-            #     for existing in self.rivers:
-            #         for j in range(len(existing) - 1):
-            #             intersection = do_lines_intersect(points[len(points) - 2], rounded_point, existing[j], existing[j+1])
-            #             # print(intersection, existing[j], existing[j+1] )
-            #             if intersection:
-            #                 intersects = True  # Set the intersection flag to True
-            #                 # print(intersection)
-            #                 convergence_point = existing[j+1]  # Store the intersection point
-            #                 self.convergence_points.append(convergence_point)
-            #                 break  # Break the inner loop once an intersection is found
-
-
-            #         if intersects:  # If an intersection is found, break the outer loop
-            #             break
-
-
-            #     if intersects:  # If an intersection is found, break the loop and do not add the river
-            #         break
-
-
-            # if convergence_point:
-            #     points[-1] = convergence_point  # Replace the last point with the intersection point
-
-
-            # # Only add the river if there were no intersections
-           
-            self.rivers.append(new_river)
-
+            new_river.generate_chunks(rivers)
+            rivers.append(new_river)
+        return rivers
     def place_towns(self  ):
+        towns = []
         min_distance = 200
         max_attempts = 10
 
@@ -178,19 +145,22 @@ class BattleGround:
                 town_coors = (x, y)
                 # town_params = []
              
-                if  is_far_enough(town_coors, min_distance, self.towns):
+                if  is_far_enough(town_coors, min_distance,  towns):
                     town_size = (random.randint(40, 60), random.randint(40, 60))  # Random size for the rectangles
                     town_topleft = (x, y)
                     house_rectangles = []
                     num_houses = random.randint(3, 6)
                     new_town = Town(x,y, town_size, TOWN_RED, num_houses)
-                    new_town.place_houses(self.rivers)
-                    self.towns.append(new_town)
+                    print(self.rivers)
+                    new_town.place_houses(self.rivers  )
+                    towns.append(new_town)
             else:
                 print(f"Failed to place town after {max_attempts} attempts.")
-                break   
+                break 
+        return towns  
  
     def place_roads(self):
+        roads = []
         connected_towns = set()  # Keep track of connected towns to prevent duplicated roads
    
         for index, town  in enumerate(self.towns):       
@@ -215,27 +185,28 @@ class BattleGround:
                 ]
                 print(i, nearby_town, "this is the nearby twon")
                 new_road = Road(nearby_town, town)
-                new_road.generate_road_points(self.roads, screen_sides)
+                new_road.generate_road_points( roads, screen_sides)
      
             # if not new_road.intersects:
             connected_towns.add((index, i))
             connected_towns.add((i, index))
-            self.roads.append(new_road)
+            roads.append(new_road)
       
         edge_roads = generate_from_edge_roads( screen_sides, self.towns )
         print(edge_roads)
         for road in edge_roads:
             # Save the road path to self.roads
-            self.roads.append(road)
-
+            roads.append(road)
+        return roads
     def place_bridges(self):
+        bridges = []
         all_river_parts = []
         for river in self.rivers:
             river_parts = []  # Initialize the list to hold current river segment
            
             for point in river.points:
                 # Check if the point matches any convergence point
-                if point in river.convergence_points:
+                if point ==  river.convergence_point:
                     # if len(river_parts) > 1:
                     river_parts.append(point)
                     all_river_parts.append(river_parts)  # Append the current segment to the list
@@ -296,9 +267,10 @@ class BattleGround:
 
 
                 print(f"River segment doesn't intersect with any road. Bridge declared at {bridge_point}, angle: {angle}")
-                self.bridges.append(new_bridge)
-
+                bridges.append(new_bridge)
+        return bridges
     def place_supply_depots(self):
+        supply_depots = []
         DEPO_SIZE = 50
         AMMO_RANGE = 100
         AMMO_PER_UNIT = 1
@@ -306,15 +278,15 @@ class BattleGround:
         for _ in range(self.num_supply_depots // 2):
             x_left = random.randint(50, self.width // 2 - 50)  # Ensure at least 50 pixels from the left edge
             y = random.randint(50, self.height - 50)  # Ensure at least 50 pixels from top and bottom edges
-            self.supply_depots.append(SupplyDepo(x_left, y,  DEPO_SIZE, AMMO_RANGE, AMMO_PER_UNIT))
+            supply_depots.append(SupplyDepo(x_left, y,  DEPO_SIZE, AMMO_RANGE, AMMO_PER_UNIT))
 
 
         # Place supply depots on the right side
         for _ in range(self.num_supply_depots // 2):
             x_right = random.randint(self.width // 2 + 50, self.width - 50)  # Ensure at least 50 pixels from the right edge
             y = random.randint(50, self.height - 50)  # Ensure at least 50 pixels from top and bottom edges
-            self.supply_depots.append(SupplyDepo(x_right, y, DEPO_SIZE, AMMO_RANGE, AMMO_PER_UNIT))
-
+            supply_depots.append(SupplyDepo(x_right, y, DEPO_SIZE, AMMO_RANGE, AMMO_PER_UNIT))
+        return supply_depots
      
 
     def draw(self, screen):
