@@ -49,7 +49,8 @@ class Ranged(Unit):
             # Check if FORREST_GREEN is present in pixel colors
             if FORREST_GREEN in line_pixel_colors:
                 print("Ranged unit can't attack through forests")
-                res = ("RANGED UNIT CAN'T ATTACK THROUGH FORESTS", click_pos, None)
+                print("Pixel with forest green color:", line_pixel_colors[line_pixel_colors.index(FORREST_GREEN)])
+                res = ("RANGED UNIT CAN'T ATTACK THROUGH FORESTS", click_pos, None )
 
         return res
 class Support(Unit):
@@ -141,7 +142,7 @@ class SupplyCart(Support):
 
             if unit.color != self.color:
                 continue
-            print(isinstance(unit, Ranged) , distance(self.center, unit.center) <= RESUPPLY_RANGEs)
+            print(isinstance(unit, Ranged) , distance(self.center, unit.center) <= RESUPPLY_RANGE )
 
             if isinstance(unit, Ranged) and distance(self.center, unit.center) <= RESUPPLY_RANGE:
                 print(self.ammo)

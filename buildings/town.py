@@ -4,6 +4,16 @@ from .structure import Structure
 from config import *
 from utils.utils import *
  
+def get_town_distances(all_towns, town_center, town_rect, town_index):
+    distances = []  # Compare the center of the current town with the centers of other towns
+    for i, other_town  in enumerate(all_towns):
+        if i == town_index:
+            continue  # Skip comparing with itself
+            
+   
+        distance = math.dist(town_center,  other_town.center)
+        distances.append((distance, i))
+    return distances
 
 def is_far_enough(  new_coors, min_distance, towns):
         for town in towns:

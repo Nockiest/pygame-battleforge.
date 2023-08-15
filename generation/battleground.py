@@ -4,10 +4,11 @@ import math
 from config import *
 from utils.utils import *
 # from generation.town_generation import *
-from generation.road_generation import *
+# from generation.road_generation import *
 from buildings.supply_depo import SupplyDepo
 from buildings.bridge import Bridge
-from buildings.town import Town, is_far_enough
+from buildings.town import Town, is_far_enough, get_town_distances
+from buildings.road import *
 def find_river_segments_for_crossing(rivers):
     river_segments = []
 
@@ -45,7 +46,6 @@ def find_river_segments_for_crossing(rivers):
     return river_segments
 
 
- 
  
 class BattleGround:
     def __init__(self, width, height):
@@ -183,30 +183,6 @@ class BattleGround:
                     num_houses = random.randint(3, 6)
                     new_town = Town(x,y, town_size, TOWN_RED, num_houses)
                     new_town.place_houses(self.rivers)
-                    
-                    # for _ in range(num_houses):
-                    #     placed_house = False
-                    #     for _ in range(50):  # Attempt at most 50 times to place a house
-                    #         house_x = random.randint(x, x + town_size[0] - square_size)
-                    #         house_y = random.randint(y, y + town_size[1] - square_size)
-                    #         new_house = pygame.Rect(house_x, house_y, square_size, square_size) # square size is the default size of a square
-                           
-                    #         # Check for interference with other town rectangles
-                    #         interferes_with_town = any(rect.colliderect(new_house) for rect in house_rectangles)
-                           
-                    #         if not interferes_with_town:
-                    #             interferes_with_river = check_river_collision(new_house, self.rivers, screen)                      
-                    #             if not interferes_with_river:
-                    #                 house_rectangles.append(new_house)
-                    #                 placed_house = True
-                    #                 break
-                       
-                    #     if not placed_house:
-                    #         break  # If failed to place a house 50 times or if it interferes with rivers, break the loop
-                   
-                    # town_rect = pygame.Rect(town_coors[0], town_coors[1], town_size[0], town_size[1])
-                    # town_params.append(town_rect )
-                    # town_params.append(house_rectangles)
                     self.towns.append(new_town)
             else:
                 print(f"Failed to place town after {max_attempts} attempts.")
@@ -215,73 +191,70 @@ class BattleGround:
     def place_roads(self):
         connected_towns = set()  # Keep track of connected towns to prevent duplicated roads
    
-        for index, town_tuple in enumerate(self.towns):
-            town_rect = town_tuple[0]  # Get the rectangle representing the town
-            town_center = town_rect.center
-           
+        for index, town  in enumerate(self.towns):       
             # List to store distances and corresponding town indices
-            distances = get_town_distances(self.towns, town_center, town_rect, index)
-                      
+            distances = get_town_distances(self.towns, town.center, town.rect, index)                    
             # Sort distances in ascending order
             distances.sort()         
             # Get the indices of the two closest towns
             closest_indices = [i for _, i in distances[:2]]
             # Get the rectangles of the two closest towns
-            closest_town_rects = [self.towns[i][0] for i in closest_indices]
+            closest_town_rects = [self.towns[i]  for i in closest_indices]
            
-            for i, rect in zip(closest_indices, closest_town_rects):
+            for i, nearby_town in zip(closest_indices, closest_town_rects):
                 # Check if a road connection already exists between these towns
                 if (index, i) in connected_towns or (i, index) in connected_towns:
                     continue
-               
-                # Mark these towns as connected
-                connected_towns.add((index, i))
-                connected_towns.add((i, index))
-               
-                # Calculate the point along the x or y axis to move first
-                mid_point = calculate_mid_point_pos(rect,town_center)
+                screen_sides = [
+                    ((0, random.randint(100, self.height - 100)), (self.width, random.randint(100, self.height - 100))),  # Top side
+                    ((random.randint(100, self.width - 100), 0), (random.randint(100, self.width - 100), self.height)),  # Left side
+                    ((self.width, random.randint(100, self.height - 100)), (0, random.randint(100, self.height - 100))),  # Bottom side
+                    ((random.randint(100, self.width - 100), self.height), (random.randint(100, self.width - 100), 0))   # Right side
+                ]
+                print(i, nearby_town, "this is the nearby twon")
+                new_road = Road(self.roads, nearby_town, town,  )
+                new_road.generate_road_points(self.roads, screen_sides)
+        #         # Calculate the point along the x or y axis to move first
+        #         mid_point = calculate_mid_point_pos(nearby_town  ,town.center)
                       
-                # Calculate the direction of the road (angle towards the other town)
-                angle = math.atan2(rect.center[1] - mid_point[1], rect.center[0] - mid_point[0])
+        #         # Calculate the direction of the road (angle towards the other town)
+        #         angle = math.atan2(nearby_town.center[1] - mid_point[1], nearby_town.center[0] - mid_point[0])
                
-                # Calculate the endpoint of the road
-                road_length = math.dist(mid_point, rect.center)
-                end_point = (
-                    int(mid_point[0] + road_length * math.cos(angle)),
-                    int(mid_point[1] + road_length * math.sin(angle))
-                )
+        #         # Calculate the endpoint of the road
+        #         road_length = math.dist(mid_point, nearby_town.center)
+        #         end_point = (
+        #             int(mid_point[0] + road_length * math.cos(angle)),
+        #             int(mid_point[1] + road_length * math.sin(angle))
+        #         )
                
-                # Check for road intersections
-                for road in self.roads:
-                    _, road_start_point, road_end_point = road                
-                    mid_point, road_end_point = augment_mid_point(road_end_point, road_start_point, mid_point)
+        #         # Check for road intersections
+        #         for road in self.roads:
+        #             _, road_start_point, road_end_point = road                
+        #             mid_point, road_end_point = augment_mid_point(road_end_point, road_start_point, mid_point)
 
-                    # Check if the road intersects with any existing road segments
-            intersects_existing = False # check_for_roads_intersection(self.roads, town_rect.center, mid_point, end_point)
+        #             # Check if the road intersects with any existing road segments
+        #     intersects_existing = False # check_for_roads_intersection(self.roads, town_rect.center, mid_point, end_point)
            
                 
-            # If the road doesn't intersect with any existing road, add it to the roads list
-            if not intersects_existing:
-                connected_towns.add((index, i))
-                connected_towns.add((i, index))
-                self.roads.append((town_center, mid_point, end_point))
+        #     # If the road doesn't intersect with any existing road, add it to the roads list
+            # if not new_road.intersects:
+            connected_towns.add((index, i))
+            connected_towns.add((i, index))
+            self.roads.append(new_road)
 
-               
-                # Save the road path to self.roads
-                # self.roads.append((town_center, mid_point, endpoint))
-        # Iterate through each side of the screen
-        screen_sides = [
-            ((0, random.randint(100, self.height - 100)), (self.width, random.randint(100, self.height - 100))),  # Top side
-            ((random.randint(100, self.width - 100), 0), (random.randint(100, self.width - 100), self.height)),  # Left side
-            ((self.width, random.randint(100, self.height - 100)), (0, random.randint(100, self.height - 100))),  # Bottom side
-            ((random.randint(100, self.width - 100), self.height), (random.randint(100, self.width - 100), 0))   # Right side
-        ]
+
+                        
+    # Iterate through each side of the screen
+        
+      
+
+      
        
-        edge_roads = generate_from_edge_roads( screen_sides, self.towns )
-        print(edge_roads)
-        for road in edge_roads:
-            # Save the road path to self.roads
-            self.roads.append(road)
+        # edge_roads = generate_from_edge_roads( screen_sides, self.towns )
+        # print(edge_roads)
+        # for road in edge_roads:
+        #     # Save the road path to self.roads
+            # self.roads.append(road)
 
     def place_bridges(self):
         all_river_parts = []
@@ -315,7 +288,7 @@ class BattleGround:
                
                 # print(point1, point2, "points")
                 for road in self.roads:
-                    start_point, mid_point, end_point = road
+                    start_point, mid_point, end_point = road.points
                    
 
 
@@ -391,7 +364,7 @@ class BattleGround:
             pygame.draw.lines(screen, RIVER_BLUE  , False, points, 10)
          # Draw roads
         for road in self.roads:
-            points = road
+            points = road.points
             for i in range(len(points) - 1):
                 pygame.draw.line(screen, ROAD_GRAY  , points[i], points[i + 1], 15)  # Saddle Brown
                
