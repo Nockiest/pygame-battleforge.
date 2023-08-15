@@ -10,9 +10,9 @@ class River(Structure):
 
         super().__init__(startpoint[0], startpoint[1], size = 5, color=RIVER_BLUE)
         self.points = [] 
-        self.control_points =  control_points 
-        self.convergence_point  = None
-        self.chunks = []
+        self.control_points = control_points 
+        self.convergence_point = None
+        # self.chunks = []
         self.num_segments = 10
         self.startpoint = startpoint
         self.endpoint = endpoint
@@ -50,5 +50,4 @@ class River(Structure):
         if self.convergence_point  != None:
             self.points[-1] = self.convergence_point   # Replace the last point with the intersection point
 
- 
-        # self.intersects = False
+  

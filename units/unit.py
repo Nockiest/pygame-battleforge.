@@ -21,7 +21,7 @@ class Unit:
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range
-        self.attack_range_modifiers = 1
+        self.attack_range_modifiers = {"base_modifier": 1}
         self.remain_actions = 0  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
@@ -143,8 +143,10 @@ class Unit:
             pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
 
     def render_attack_circle(self, screen):
-        pygame.draw.circle(screen, RED, (self.x + self.size //
-                        2, self.y + self.size//2), self.attack_range*self.attack_range_modifiers, 1)
+        total_attack_range_modifier = sum(self.attack_range_modifiers.values())
+        attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
+
+        pygame.draw.circle(screen, RED, (self.x + self.size // 2, self.y + self.size // 2), int(attack_range_with_modifiers), 1)
 
     def attack_square(self, click_pos):
         self.attack_cross_position = click_pos

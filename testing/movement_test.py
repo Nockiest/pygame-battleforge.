@@ -7,7 +7,7 @@ import os
 # Add the parent directory to the Python path
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
-from unit import Unit
+from units.unit import Unit
 from unit_classes import *
 from config import *
  

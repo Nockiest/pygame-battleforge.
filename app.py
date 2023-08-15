@@ -1,24 +1,44 @@
 import pygame
-
+import os
+import importlib
 from config import *
-from unit import Unit
-from button import Button
-from unit_classes import *
+from units.unit import Unit
+ 
+from units.melee.commander  import Commander
+from units.melee.kngiht import Knight
+from units.melee.pikeman import Pikeman
+from units.melee.shield import Shield
+from units.melee.template import Melee
+from units.ranged.canon import Canon
+from units.ranged.musketeer import Musketeer
+from units.ranged.template import Ranged
+from units.support.medic import Medic
+from units.support.observer import Observer
+from units.support.supply_cart import SupplyCart
+from units.support.template import Support
+
+from button import Button  
 from utils.utils import *
 from buy_bar import *
 from player_actions import Player
 from generation.battleground import *
+def import_from_folder(folder_path):
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for filename in filenames:
+            if filename.endswith('.py') and filename != '__init__.py':
+                module_path = os.path.join(dirpath, filename)[:-3].replace(os.sep, '.')
+                print(module_path)
+                importlib.import_module(module_path)
+
+# Specify the path to the main folder containing subfolders and files
+main_folder_path = 'units'
+
+# Import all modules from the folder and its subfolders
+import_from_folder(main_folder_path)
 
 pygame.init()
 
 battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
-# battle_ground.place_forrests()
-# battle_ground.place_rivers()
-# battle_ground.place_towns()
-# battle_ground.place_roads( )
-# battle_ground.place_bridges()
-# battle_ground.place_supply_depots()
-# intersections =  find_river_segments_for_crossing(battle_ground.rivers)
 pygame.display.set_caption("BattleForge")
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
  
@@ -56,11 +76,14 @@ def next_turn():
         unit.reset_for_next_turn()
         if isinstance(unit, SupplyCart):
             unit.dispense_ammo(1, living_units)
+
+        if isinstance(unit, Medic):
+            unit.heal(living_units)
         # tohle musím přepsart abych nemusel používat tenhle divnžý elif
     for depo in battle_ground.supply_depots:
         depo.dispense_ammo(living_units)
-    apply_modifier(selected_unit, living_units, "in_cart_range")
-    apply_modifier(selected_unit, living_units, "in_medic_range")
+     
+   
     switch_player()
     deselct_unit()
 
@@ -131,31 +154,6 @@ def process_attack(attacker, attacked_pos):
         deselct_unit()
     if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
         deselct_unit()
-
-
-def apply_modifier(selected_unit, living_units, modifier_type):   
-    if modifier_type == "in_observer_range":
-      for unit in living_units:    
-            if issubclass(selected_unit.__class__, Ranged) and isinstance(unit, Observer) and unit.color == selected_unit.color:
-                distance = get_two_units_center_distance(selected_unit, unit)
-                if distance <= 75:
-                    selected_unit.attack_range_modifiers += 0.5
-    # elif modifier_type == "in_cart_range":
-    #     for unit in living_units:
-    #         if isinstance(unit, Ranged) and unit.color == players[cur_player].color:
-    #             for supply_cart in living_units:
-    #                 if isinstance(supply_cart, SupplyCart) and supply_cart.color == players[cur_player].color:
-    #                     distance = get_two_units_center_distance(unit, supply_cart)
-    #                     if distance <= supply_cart.attack_range:
-    #                         supply_cart.provide_ammo([unit])
-    elif modifier_type == "in_medic_range":
-         for unit in living_units:
-            if unit.color == players[cur_player].color:
-                for medic in living_units:
-                    if isinstance(medic, Medic) and medic.color == players[cur_player].color:
-                        medic.heal(unit)
-                        # distance = get_two_units_center_distance(unit, medic)
-                        # if distance <= supply_cart.attack_range:
 
 def check_in_range(itself, other_object):
     pass
@@ -287,7 +285,6 @@ while lets_continue:
     
         if selected_unit:
                 selected_unit.draw_as_active(screen)
-                # selected_unit.attack_range_modifiers = 1
                 selected_unit.draw_possible_movement_area(screen)
         for unit in living_units:
             if unit == selected_unit:
@@ -297,7 +294,14 @@ while lets_continue:
             selected_unit.render_attack_cross(screen)
         if render_units_attack_screen:
             if selected_unit.remain_actions > 0:
-                apply_modifier(selected_unit, living_units, "in_observer_range")
+                attack_range_provided = False
+                for unit in living_units:    
+                     
+                    if isinstance(unit, Observer) and unit.color == selected_unit.color:
+                        attack_range_provided = unit.provide_attack_range(selected_unit) 
+                if attack_range_provided is False:
+                    selected_unit.attack_range_modifiers["in_observer_range"] = 0  
+
                 selected_unit.render_attack_circle(screen)
         if unit_placement_mode:
             

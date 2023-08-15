@@ -10,7 +10,11 @@ vytvořit bojovou jednotku
    
     --dát kanonu area damage
     **dovolit kavalerii útočit po zabití
-    zastavit stackování observerů
+     
+    dát všechny classy do jiných souborů
+    uložit si všecchny jednotky do rozřazeného objektu
+    opravit supply depo dispensing
+    útok propočítat vždy se středem napadené jednotky
 musika
     najít 5 písniček
     
@@ -22,7 +26,7 @@ prostředí
     přidat mosty
         opravtz angle
 
-      
+    
 
 ui
     přidat ukliádání

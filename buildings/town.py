@@ -29,7 +29,7 @@ def check_river_collision(new_house, rivers, screen):
         for i in range(len(river.points) - 1):
             segment_start = river.points[i]
             segment_end = river.points[i + 1]
-            print(segment_end, segment_start)
+            
            
             # Create a rectangle representing the river segment
             segment_rect = pygame.Rect(segment_start, (segment_end[0] - segment_start[0], segment_end[1] - segment_start[1]))

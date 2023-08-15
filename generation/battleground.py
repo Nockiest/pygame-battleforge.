@@ -151,7 +151,7 @@ class BattleGround:
                     house_rectangles = []
                     num_houses = random.randint(3, 6)
                     new_town = Town(x,y, town_size, TOWN_RED, num_houses)
-                    print(self.rivers)
+                    
                     new_town.place_houses(self.rivers  )
                     towns.append(new_town)
             else:
@@ -193,7 +193,7 @@ class BattleGround:
             roads.append(new_road)
       
         edge_roads = generate_from_edge_roads( screen_sides, self.towns )
-        print(edge_roads)
+        
         for road in edge_roads:
             # Save the road path to self.roads
             roads.append(road)
@@ -302,7 +302,7 @@ class BattleGround:
             
           # Draw rivers
         for river in self.rivers:
-            print(river, river.points)
+         
             pygame.draw.lines(screen, RIVER_BLUE  , False, river.points, 10)
          # Draw roads
         for road in self.roads:
