@@ -10,15 +10,16 @@ class Ranged(Unit):
         super().__init__(hp, attack_range, attack_resistance, base_actions,
                          base_movement, size, x, y, ammo, icon, color, cost)
  
-    def try_attack(self, click_pos, living_units   ):
+    def try_attack(self, click_pos, living_units    ):
         res = super().try_attack(click_pos, living_units)
-
+        
         if res[0] == "UNIT ATTACKS":
             # Calculate the line between unit's center and click position
-             
+            attaacked_unit = res[2]
             line_points = bresenham_line(
-                self.center[0], self.center[1], click_pos[0], click_pos[1]
+                self.center[0], self.center[1], attaacked_unit.center[0], attaacked_unit.center[1]
             )
+            # calculate a line to the center of the enemy unit
 
             # Get the pixel colors along the line
             line_pixel_colors = get_pixel_colors(line_points, background_screen)

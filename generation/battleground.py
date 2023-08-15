@@ -183,7 +183,7 @@ class BattleGround:
                     ((self.width, random.randint(100, self.height - 100)), (0, random.randint(100, self.height - 100))),  # Bottom side
                     ((random.randint(100, self.width - 100), self.height), (random.randint(100, self.width - 100), 0))   # Right side
                 ]
-                print(i, nearby_town, "this is the nearby twon")
+                
                 new_road = Road(nearby_town, town)
                 new_road.generate_road_points( roads, screen_sides)
      

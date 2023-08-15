@@ -7,6 +7,7 @@ render_units_attack_screen = False
 unit_placement_mode = None
 game_won = False
 living_units = []
+sorted_living_units = {}
 unit_to_be_placed = None
 red_player = Player(RED, 0) 
 blue_player = Player(BLUE, WIDTH -TENDER_WIDTH)

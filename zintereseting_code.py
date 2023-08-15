@@ -159,3 +159,20 @@ while lets_continue:
 pygame.quit()
 
 
+import pygame
+import os
+ 
+import importlib
+def import_from_folder(folder_path):
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for filename in filenames:
+            if filename.endswith('.py') and filename != '__init__.py':
+                module_path = os.path.join(dirpath, filename)[:-3].replace(os.sep, '.')
+                print(module_path)
+                importlib.import_module(module_path)
+
+# Specify the path to the main folder containing subfolders and files
+main_folder_path = 'units'
+
+# Import all modules from the folder and its subfolders
+import_from_folder(main_folder_path)

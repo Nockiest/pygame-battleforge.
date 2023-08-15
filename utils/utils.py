@@ -205,3 +205,12 @@ def calculate_movement_cost(color_list):
         movement_costs.append((total_cost, i, color))
     
     return movement_costs
+
+def update_sorted_units(  living_units) :
+        global sorted_living_units
+        sorted_living_units = {}
+        for unit in living_units:
+            unit_type = unit.__class__.__name__
+            sorted_living_units.setdefault(unit_type, []).append(unit)
+
+        print("these are now soerted units", sorted_living_units)

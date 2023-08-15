@@ -1,6 +1,4 @@
-import pygame
-import os
-import importlib
+ 
 from config import *
 from units.unit import Unit
  
@@ -22,26 +20,13 @@ from utils.utils import *
 from buy_bar import *
 from player_actions import Player
 from generation.battleground import *
-def import_from_folder(folder_path):
-    for dirpath, dirnames, filenames in os.walk(folder_path):
-        for filename in filenames:
-            if filename.endswith('.py') and filename != '__init__.py':
-                module_path = os.path.join(dirpath, filename)[:-3].replace(os.sep, '.')
-                print(module_path)
-                importlib.import_module(module_path)
-
-# Specify the path to the main folder containing subfolders and files
-main_folder_path = 'units'
-
-# Import all modules from the folder and its subfolders
-import_from_folder(main_folder_path)
+ 
 
 pygame.init()
 
 battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
 pygame.display.set_caption("BattleForge")
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)
- 
  
 
 blue_player.create_starting_unit((Musketeer, 0, 100), living_units)
@@ -73,6 +58,7 @@ def next_turn():
     global living_units
 
     for unit in living_units:
+        unit.center = unit.start_turn_position
         unit.reset_for_next_turn()
         if isinstance(unit, SupplyCart):
             unit.dispense_ammo(1, living_units)
@@ -83,7 +69,7 @@ def next_turn():
     for depo in battle_ground.supply_depots:
         depo.dispense_ammo(living_units)
      
-   
+    update_sorted_units(  living_units)
     switch_player()
     deselct_unit()
 
@@ -134,7 +120,7 @@ def process_attack(attacker, attacked_pos):
     if attack_result[0] == "UNIT ATTACKS":
         attack_pos = attack_result[1]
         attacked_enemy = attack_result[2]
-        attacker.attack_square(attacked_pos)
+        attacker.attack_square(attacked_pos,)
         hit_result = attacked_enemy.check_if_hit(1)  # 80% hit chance
         print(f"{attacker} hit {unit}?", hit_result)
         if hit_result:
