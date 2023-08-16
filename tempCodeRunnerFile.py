@@ -1,1 +1,2 @@
-apply_modifier
+
+        attacked_enemy = attack_result[2]

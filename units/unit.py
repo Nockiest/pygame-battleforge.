@@ -82,11 +82,25 @@ class Unit:
                 return True              
         return False
       
+# # Check for obstacles (river, enemy units, black)
+                    # if pixel_color in [RIVER_BLUE]:
+                    #     distance -= iteration//2
+                    #     iteration -= iteration//2 -1
+                    # elif self.new_point_interferes(living_units, new_x, new_y):
+                    #     distance -= iteration//2
+                    #     iteration -= iteration//2 -1
 
+
+
+
+# zkus vytvořit linii vzdálenou 100 pixelů po směru úhlu
+    # je vyšší než má být => odečti polovinu iterace (50)
+        #(50) + (25) ´=> 75 
+
+    # je menší než má být => přičti iteraci
     def get_units_movement_area(self, screen,living_units):
-        max_distance = self.base_movement  # Maximum distance to check from the unit's center
+        
         num_samples = 360  # Number of samples (angles) around the unit's center
-
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
  
@@ -97,58 +111,83 @@ class Unit:
             distance = 100
             iteration = 100
             tries = 0
-
-            while iteration > 0 or tries < 100 or    current_cost !=  self.base_movement :
+            while iteration > 0 and tries < 50 and  current_cost !=  self.base_movement :
                 # distance += iteration
-                new_x = center_x + distance * math.cos(radians)
-                new_y = center_y + distance * math.sin(radians)
-                
-                if (0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT ):
-                     
-                    pixel_color = screen.get_at((int(new_x), int(new_y)))
-                    line_points = bresenham_line(center_x, center_y, new_x, new_y)
-                    line_pixel_colors=  get_pixel_colors(line_points, background_screen)
-                    movement_cost = calculate_movement_cost(line_pixel_colors)  
-                    print(self.base_movement, movement_cost[-1][0], center_x, center_y,new_x, new_y, distance,
-                             )
-                    print(angle)
+                new_x = min(WIDTH, max( center_x + distance * math.cos(radians), 0)) 
+                new_y =  min( HEIGHT - BUTTON_BAR_HEIGHT, max( center_y + distance * math.sin(radians), UPPER_BAR_HEIGHT))   
+                print(new_x, new_y)
+                line_points = bresenham_line(center_x, center_y, int(new_x), int(new_y))
+                self.valid_movement_positions.append(line_points)
+                break
+                # if (0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT ):     
                     
-                    # # Check for obstacles (river, enemy units, black)
-                    # if pixel_color in [RIVER_BLUE]:
-                    #     distance -= iteration//2
-                    #     iteration -= iteration//2 -1
-                    # elif self.new_point_interferes(living_units, new_x, new_y):
-                    #     distance -= iteration//2
-                    #     iteration -= iteration//2 -1
-           
-                    if movement_cost[-1][0] == self.base_movement:
-                        self.valid_movement_positions.append(line_points)
+                #     # print(center_x, center_y, new_x, new_y)
+                #     line_points = bresenham_line(center_x, center_y, int(new_x), int(new_y))
+                #     line_pixel_colors=  get_pixel_colors(line_points, background_screen)
+                #     river_index = None
+                #     try:
+                #         river_index = line_pixel_colors.index(RIVER_BLUE)
+                #         print("Found RIVER_BLUE at index:", river_index, angle)
+                #     except ValueError:
+                #         pass
+                #         #  print("RIVER_BLUE color not found in line_pixel_colors")
+                    
+                #     movement_cost = calculate_movement_cost(line_pixel_colors)  
+                #     if movement_cost[-1][0] > self.base_movement:
+                #         # print("before devrementing", distance, iteration)
+                #         distance -= iteration//2
+                #         iteration = iteration//2  
+                #         print(distance, iteration)
+                #         continue                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                #      # print("devrementing", distance, iteration)
+                   
+                #     if river_index is not None:
+                #         line_pixel_colors_up_to_river = line_pixel_colors[:river_index]  # Extract the portion of colors up to the river
+                #         movement_cost_up_to_river = calculate_movement_cost(line_pixel_colors_up_to_river)
                         
-                        print("found the right spot", line_points[-1])
-                        break
-                    elif movement_cost[-1][0] < self.base_movement:
+                #         distance = river_index - 1
+                #         iteration = 0
+                #         current_cost = movement_cost_up_to_river[-1][0]
+                #         self.valid_movement_positions.append(line_points[:river_index])
+                #         print(current_cost)
+                #         continue
+
+                   
+                #     # print(self.base_movement, movement_cost[-1][0], center_x, center_y,new_x, new_y, distance,) 
+                              
+                #     # print(angle, tries)                  
+           
+                #     if movement_cost[-1][0] == self.base_movement:
+                #         self.valid_movement_positions.append(line_points)
+                        
+                #         # print("found the right spot", line_points[-1])
                          
-                        distance += iteration
-                        print("incrementing", distance, iteration)
-                    elif movement_cost[-1][0] > self.base_movement:
-                        print("before devrementing", distance, iteration)
-                        distance -= iteration//2
-                        iteration -= iteration//2 +1
-                        print("devrementing", distance, iteration)
-                    else:
-                        print("distance not a real number or what?!")
+                #     elif movement_cost[-1][0] < self.base_movement:
+                         
+                #         distance += iteration
+                #         # print("incrementing", distance, iteration)
+                  
+                #     else:
+                #         print("distance not a real number or what?!")
 
-                    print(iteration, iteration//2  )
-                else:
-                    distance -= iteration//2
-                    iteration -= iteration//2  
+                     
+                # else:
+                #     distance -= iteration//2
+                #     iteration -= iteration//2  
 
-                current_cost = movement_cost[-1][0]
-                tries += 1
+                # current_cost = movement_cost[-1][0]
+                # tries += 1
+                # if tries >= 50:
+                #     print("to many tries", iteration, distance, current_cost, angle)
 
+                 # problém nastane když narazí nna řeku
+        # iterace je vždy v té fázi jedna
+###############################################################################xxxxxx
+        
+        
                 # Check if total cost exceeds base movement
                 
-        print( self.valid_movement_positions)
+        # print( self.valid_movement_positions)
                
         # for angle in range(0, 360, 360 // num_samples):
         #     # Convert angle to radians
@@ -185,12 +224,13 @@ class Unit:
         #         if current_cost  >= self.base_movement:
                     
         #             break
-                 
+          
 
     
             
     def draw_possible_movement_area(self, screen):
     # Find the common valid movement positions for all angles
+        # print(self.valid_movement_positions)
         farthest_points = []
         for angle in self.valid_movement_positions:
             if len(angle) >= 2:

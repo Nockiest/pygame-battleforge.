@@ -55,13 +55,14 @@ class BattleGround:
          
 
         # Define quantities of each element to generate
-        self.num_forests = 6
+        self.num_forests = 1
         self.num_rivers = 2
         self.num_towns = 2
         self.num_roads = 9
         self.num_supply_depots = 2
 
-        self.forests = self.place_forrests( )
+        self.forests =[[(378, 10), (368, 0), (358, 0), (348, 0), (338, 0), (328, 0), (318, 0), (308, 0), (298, 0), (288, 0), (278, 0), (268, 0), (258, 0), (248, 0), (238, 0), (228, 0), (218, 0), (208, 0), (198, 0), (188, 0), (178, 0), (168, 0), (158, 0), (148, 0), (138, 0), (128, 0), (118, 0), (108, 0), (98, 10), (88, 10), (78, 20), (68, 30), (68, 30), (78, 40), (88, 50), (98, 70), (108, 100), (118, 110), (128, 140), (138, 150), (148, 150), (158, 150), (168, 140), (178, 140), (188, 140), (198, 130), (208, 150), (218, 160), (228, 170), (238, 160), (248, 160), (258, 150), (268, 110), (278, 100), (288, 100), (298, 90), (308, 70), (318, 70), (328, 80), (338, 70), (348, 60), (358, 40), (368, 30), (378, 10)]]#self.place_forrests( ) #[[(1260, 240), (1250, 230), (1240, 210), (1230, 200), (1220, 200), (1210, 190), (1200, 180), (1190, 180), (1180, 150), (1170, 140), (1160, 140), (1150, 150), (1140, 140), (1130, 150), (1120, 150), (1110, 160), (1100, 170), (1090, 180), (1080, 170), (1070, 180), 
+#(1060, 190), (1050, 190), (1040, 200), (1030, 210), (1020, 230), (1010, 250), (1010, 260), (1020, 270), (1030, 270), (1040, 300), (1050, 330), (1060, 340), (1070, 360), (1080, 370), (1090, 360), (1100, 370), (1110, 380), (1120, 370), (1130, 370), (1140, 360), (1150, 350), (1160, 350), (1170, 350), (1180, 360), (1190, 350), (1200, 360), (1210, 350), (1220, 330), (1230, 320), (1240, 290), (1250, 280), (1260, 250)]]# 
         self.rivers =  self.place_rivers()# [(0, 0), (400, 300)]#[(0,0),(100, 200),(300,300), (350, 200)]
         # self.convergence_points = []
         self.towns =  self.place_towns()
@@ -81,6 +82,7 @@ class BattleGround:
             forest_shape = find_edge_points(forest_from_squares)
             if len(forest_shape) >= 3:
                 forests.append(forest_shape)
+                print(forest_shape)
         return forests
    
     def create_forest_squares(self, x, y, size, regularity, forest_size):
@@ -111,7 +113,7 @@ class BattleGround:
             last_points = new_points  # Update last_points with new points
             points.extend(new_points)
             num_squares = len(points)
-           
+         
         return points
      
     def place_rivers(self):
@@ -295,6 +297,7 @@ class BattleGround:
 
         # Draw forrests
         for forest in self.forests:
+
             pygame.draw.polygon(screen, FORREST_GREEN, forest)
         # Draw towns
         for town in self.towns:
@@ -324,6 +327,4 @@ class BattleGround:
             depo.draw(screen)
 
 
-        # # Update the display
-        # pygame.display.flip()
  
