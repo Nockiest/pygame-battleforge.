@@ -90,45 +90,104 @@ class Unit:
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
  
-
-        for angle in range(0, 360, 360 // num_samples):
+        for angle in range(0, 360, 360 // num_samples  ): 
             # Convert angle to radians
             radians = math.radians(angle)
-
-            valid_movement_positions = []
             current_cost = 0
-            distance = 0
-            while current_cost  < self.base_movement:
+            distance = 100
+            iteration = 100
+            tries = 0
+
+            while iteration > 0 or tries < 100 or    current_cost !=  self.base_movement :
+                # distance += iteration
                 new_x = center_x + distance * math.cos(radians)
                 new_y = center_y + distance * math.sin(radians)
-                distance += 1
-                # Check if the new position is within the screen boundaries
-                if 0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT:
+                
+                if (0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT ):
+                     
                     pixel_color = screen.get_at((int(new_x), int(new_y)))
-
-                    # Check for obstacles (river, enemy units, black)
-                    if pixel_color in [RIVER_BLUE ]:                      
-                        break
-
-                    if self.new_point_interferes(  living_units, new_x, new_y  ):
-                        break
-                    valid_movement_positions.append((int(new_x), int(new_y)),)
+                    line_points = bresenham_line(center_x, center_y, new_x, new_y)
+                    line_pixel_colors=  get_pixel_colors(line_points, background_screen)
+                    movement_cost = calculate_movement_cost(line_pixel_colors)  
+                    print(self.base_movement, movement_cost[-1][0], center_x, center_y,new_x, new_y, distance,
+                             )
+                    print(angle)
                     
+                    # # Check for obstacles (river, enemy units, black)
+                    # if pixel_color in [RIVER_BLUE]:
+                    #     distance -= iteration//2
+                    #     iteration -= iteration//2 -1
+                    # elif self.new_point_interferes(living_units, new_x, new_y):
+                    #     distance -= iteration//2
+                    #     iteration -= iteration//2 -1
+           
+                    if movement_cost[-1][0] == self.base_movement:
+                        self.valid_movement_positions.append(line_points)
+                        
+                        print("found the right spot", line_points[-1])
+                        break
+                    elif movement_cost[-1][0] < self.base_movement:
+                         
+                        distance += iteration
+                        print("incrementing", distance, iteration)
+                    elif movement_cost[-1][0] > self.base_movement:
+                        print("before devrementing", distance, iteration)
+                        distance -= iteration//2
+                        iteration -= iteration//2 +1
+                        print("devrementing", distance, iteration)
+                    else:
+                        print("distance not a real number or what?!")
 
-                # Calculate movement cost
-                line_pixel_colors=  get_pixel_colors(valid_movement_positions, background_screen)
-                movement_cost  = calculate_movement_cost([pixel_color])
-                
-                current_cost += movement_cost[-1][0]
-                 
-                
+                    print(iteration, iteration//2  )
+                else:
+                    distance -= iteration//2
+                    iteration -= iteration//2  
+
+                current_cost = movement_cost[-1][0]
+                tries += 1
+
                 # Check if total cost exceeds base movement
-                if current_cost  >= self.base_movement:
+                
+        print( self.valid_movement_positions)
+               
+        # for angle in range(0, 360, 360 // num_samples):
+        #     # Convert angle to radians
+        #     radians = math.radians(angle)
+
+        #     valid_movement_positions = []
+        #     current_cost = 0
+        #     distance = 0
+        #     while current_cost  < self.base_movement:
+        #         new_x = center_x + distance * math.cos(radians)
+        #         new_y = center_y + distance * math.sin(radians)
+        #         distance += 1
+        #         # Check if the new position is within the screen boundaries
+        #         if 0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT:
+        #             pixel_color = screen.get_at((int(new_x), int(new_y)))
+
+        #             # Check for obstacles (river, enemy units, black)
+        #             if pixel_color in [RIVER_BLUE ]:                      
+        #                 break
+
+        #             if self.new_point_interferes(  living_units, new_x, new_y  ):
+        #                 break
+        #             valid_movement_positions.append((int(new_x), int(new_y)),)
                     
-                    break
+
+        #         # Calculate movement cost
+        #         line_pixel_colors=  get_pixel_colors(valid_movement_positions, background_screen)
+        #         movement_cost  = calculate_movement_cost([pixel_color])
+                
+        #         current_cost += movement_cost[-1][0]
+                 
+                
+        #         # Check if total cost exceeds base movement
+        #         if current_cost  >= self.base_movement:
+                    
+        #             break
                  
 
-            self.valid_movement_positions.append(valid_movement_positions)
+    
             
     def draw_possible_movement_area(self, screen):
     # Find the common valid movement positions for all angles

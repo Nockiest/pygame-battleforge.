@@ -110,7 +110,7 @@ class Player:
     def handle_input(self):
         #  # Check if there is hidden content below the visible are  
         keys = pygame.key.get_pressed()
-        print( self.scroll_position,  self.max_scroll)
+        
         if keys[pygame.K_UP]:
             self.scroll_position -= 5
             self.scroll_position = max(self.scroll_position,   self.max_scroll )  # Ensure scroll position doesn't go below 0

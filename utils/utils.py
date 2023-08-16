@@ -16,15 +16,22 @@ def sum_values(obj):
         total_sum += value
     return total_sum
 
-
-def bresenham_line(x0, y0, x1, y1, max_iterations=1000):
+def bresenham_line(x0, y0, x1, y1):
     points = []
+
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
-    sx = 1 if x0 < x1 else -1
-    sy = 1 if y0 < y1 else -1
+
+    if x0 < x1:
+        sx = 1
+    else:
+        sx = -1
+    if y0 < y1:
+        sy = 1
+    else:
+        sy = -1
+
     err = dx - dy
-    iterations = 0
 
     while True:
         points.append((x0, y0))
@@ -40,12 +47,37 @@ def bresenham_line(x0, y0, x1, y1, max_iterations=1000):
             err += dx
             y0 += sy
 
-        iterations += 1
-        if iterations >= max_iterations:
-            print("Maximum iterations exceeded. Terminating.")
-            break
-
     return points
+
+# def bresenham_line(x0, y0, x1, y1, max_iterations=1000):
+#     points = []
+#     dx = abs(x1 - x0)
+#     dy = abs(y1 - y0)
+#     sx = 1 if x0 < x1 else -1
+#     sy = 1 if y0 < y1 else -1
+#     err = dx - dy
+#     iterations = 0
+
+#     while True:
+#         points.append((x0, y0))
+
+#         if x0 == x1 and y0 == y1:
+#             break
+
+#         e2 = 2 * err
+#         if e2 > -dy:
+#             err -= dy
+#             x0 += sx
+#         if e2 < dx:
+#             err += dx
+#             y0 += sy
+
+#         iterations += 1
+#         if iterations >= max_iterations:
+#             print("Maximum iterations exceeded. Terminating.")
+#             break
+
+#     return points
 
 
 def check_square_line_interference(attacked_unit, line_start_x, line_start_y, line_end_x, line_end_y):
@@ -83,6 +115,7 @@ def draw_bezier_curve(self, screen, points):
                 curve_points.append((x, y))
            
             pygame.draw.lines(screen, (128, 128, 128), False, curve_points, 2)
+            
 def move_unit_along_line(line_points, intersecting_point, unit, screen):
     # Find the index of the intersecting point in the line_points list
     intersecting_index = line_points.index(intersecting_point)
