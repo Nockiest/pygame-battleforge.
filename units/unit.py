@@ -15,7 +15,6 @@ def render_attack_cross(screen, x, y):
                      (x + cross_length, y), cross_thickness)
     pygame.draw.line(screen, cross_color, (x, y - cross_length),
                      (x, y + cross_length), cross_thickness)
-
  
 class Unit:
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
@@ -42,23 +41,14 @@ class Unit:
         self.selected = False
         self.able_to_move = self.remain_actions > 0
         self.color = color
-        
-       
-        # if self.color == BLUE:
-        #     self.outline_color = BLUE_OUTLINE_COLOR
-        # else:
-        #     self.outline_color = RED_OUTLINE_COLOR
-            
+ 
         self.valid_movement_positions = []
-        self.valid_movement_positions_edges = []
-        
+        self.valid_movement_positions_edges = []      
 
     def move_in_game_field(self, click_pos, living_units):
         point1 = shapely.geometry.Point(click_pos[0], click_pos[1])
         movement_polygon = shapely.geometry.Polygon(self.valid_movement_positions_edges)
         new_center_x, new_center_y = click_pos
-        print(self.valid_movement_positions_edges)
-
         # Check if the clicked position is a valid movement position
         if  point1.within(movement_polygon):
             self.x = new_center_x - self.size // 2
@@ -69,12 +59,16 @@ class Unit:
             movement_line = bresenham_line( new_center_x, new_center_y, self.start_turn_position[0], self.start_turn_position[1]  )
 
             # Find the first valid movement position along the line
-            for pos in movement_line:
-               
-                if any(pos in valid_pos for valid_pos in self.valid_movement_positions):
+            for pos in  movement_line :
+                point = shapely.geometry.Point(pos[0], pos[1])
+                if point.within(movement_polygon):             
                     self.x, self.y = pos[0] - self.size // 2, pos[1] - self.size // 2
                     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
                     break
+                # if any(pos in valid_pos for valid_pos in self.valid_movement_positions):
+                #     self.x, self.y = pos[0] - self.size // 2, pos[1] - self.size // 2
+                #     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+                #     break
 
     def new_point_interferes(self, living_units, point_x, point_y  ):   
         # Create a new rectangle for the unit's position
@@ -198,11 +192,7 @@ class Unit:
 
                  # problém nastane když narazí nna řeku
         # iterace je vždy v té fázi jedna
- 
           
-
-    
-            
     def draw_possible_movement_area(self, screen):
     # Find the common valid movement positions for all angles
         # print(self.valid_movement_positions)
