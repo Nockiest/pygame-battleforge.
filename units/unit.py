@@ -3,6 +3,7 @@ from config import *
 from utils.utils import *
 import math
 import random
+import shapely.geometry
 # from game_state import *
  
 def render_attack_cross(screen, x, y):
@@ -49,12 +50,17 @@ class Unit:
         #     self.outline_color = RED_OUTLINE_COLOR
             
         self.valid_movement_positions = []
+        self.valid_movement_positions_edges = []
+        
 
     def move_in_game_field(self, click_pos, living_units):
+        point1 = shapely.geometry.Point(click_pos[0], click_pos[1])
+        movement_polygon = shapely.geometry.Polygon(self.valid_movement_positions_edges)
         new_center_x, new_center_y = click_pos
+        print(self.valid_movement_positions_edges)
 
         # Check if the clicked position is a valid movement position
-        if any((new_center_x, new_center_y) in valid_pos for valid_pos in self.valid_movement_positions):
+        if  point1.within(movement_polygon):
             self.x = new_center_x - self.size // 2
             self.y = new_center_y - self.size // 2
             self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
@@ -82,43 +88,53 @@ class Unit:
                 return True              
         return False
       
-# # Check for obstacles (river, enemy units, black)
-                    # if pixel_color in [RIVER_BLUE]:
-                    #     distance -= iteration//2
-                    #     iteration -= iteration//2 -1
-                    # elif self.new_point_interferes(living_units, new_x, new_y):
-                    #     distance -= iteration//2
-                    #     iteration -= iteration//2 -1
-
-
-
-
-# zkus vytvořit linii vzdálenou 100 pixelů po směru úhlu
-    # je vyšší než má být => odečti polovinu iterace (50)
-        #(50) + (25) ´=> 75 
-
-    # je menší než má být => přičti iteraci
     def get_units_movement_area(self, screen,living_units):
         
         num_samples = 360  # Number of samples (angles) around the unit's center
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
  
-        for angle in range(0, 360, 360 // num_samples  ): 
+        for angle in range(0, 360, 360   // num_samples   ):   
             # Convert angle to radians
             radians = math.radians(angle)
+            current_line = []
             current_cost = 0
-            distance = 100
-            iteration = 100
-            tries = 0
-            while iteration > 0 and tries < 50 and  current_cost !=  self.base_movement :
-                # distance += iteration
+            base_chunk = WIDTH//2
+            distance = base_chunk
+
+            iteration = 2
+             
+            while base_chunk//iteration >= 1 and  current_cost !=  self.base_movement :
+
                 new_x = min(WIDTH, max( center_x + distance * math.cos(radians), 0)) 
-                new_y =  min( HEIGHT - BUTTON_BAR_HEIGHT, max( center_y + distance * math.sin(radians), UPPER_BAR_HEIGHT))   
-                print(new_x, new_y)
+                new_y = min( HEIGHT - BUTTON_BAR_HEIGHT, max( center_y + distance * math.sin(radians), UPPER_BAR_HEIGHT))   
+                # print(new_x, new_y)
                 line_points = bresenham_line(center_x, center_y, int(new_x), int(new_y))
-                self.valid_movement_positions.append(line_points)
-                break
+                line_pixel_colors = get_pixel_colors(line_points, background_screen)
+                movement_cost = calculate_movement_cost(line_pixel_colors)  
+                current_cost = movement_cost[-1][0]
+               
+                if current_cost > self.base_movement:
+                    # print(distance, iteration, "decrementing",  512//iteration)
+                    distance -= base_chunk//iteration
+                elif current_cost < self.base_movement: 
+                    # print(distance, iteration, "incrementing")
+                    distance += base_chunk//iteration          
+                current_line = line_points
+      
+                iteration*=2
+
+
+            new_line_points = []
+            for point in line_points:
+                if not self.new_point_interferes(living_units, point[0], point[1]):
+                    new_line_points.append(point)
+                else:
+                    break  # Stop adding points if interference is detected
+            line_points = new_line_points
+            self.valid_movement_positions.append(line_points)
+            self.valid_movement_positions_edges.append( line_points[len(line_points) - 1] )
+                 
                 # if (0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT ):     
                     
                 #     # print(center_x, center_y, new_x, new_y)
@@ -182,48 +198,7 @@ class Unit:
 
                  # problém nastane když narazí nna řeku
         # iterace je vždy v té fázi jedna
-###############################################################################xxxxxx
-        
-        
-                # Check if total cost exceeds base movement
-                
-        # print( self.valid_movement_positions)
-               
-        # for angle in range(0, 360, 360 // num_samples):
-        #     # Convert angle to radians
-        #     radians = math.radians(angle)
-
-        #     valid_movement_positions = []
-        #     current_cost = 0
-        #     distance = 0
-        #     while current_cost  < self.base_movement:
-        #         new_x = center_x + distance * math.cos(radians)
-        #         new_y = center_y + distance * math.sin(radians)
-        #         distance += 1
-        #         # Check if the new position is within the screen boundaries
-        #         if 0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT:
-        #             pixel_color = screen.get_at((int(new_x), int(new_y)))
-
-        #             # Check for obstacles (river, enemy units, black)
-        #             if pixel_color in [RIVER_BLUE ]:                      
-        #                 break
-
-        #             if self.new_point_interferes(  living_units, new_x, new_y  ):
-        #                 break
-        #             valid_movement_positions.append((int(new_x), int(new_y)),)
-                    
-
-        #         # Calculate movement cost
-        #         line_pixel_colors=  get_pixel_colors(valid_movement_positions, background_screen)
-        #         movement_cost  = calculate_movement_cost([pixel_color])
-                
-        #         current_cost += movement_cost[-1][0]
-                 
-                
-        #         # Check if total cost exceeds base movement
-        #         if current_cost  >= self.base_movement:
-                    
-        #             break
+ 
           
 
     
