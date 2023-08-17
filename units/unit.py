@@ -65,10 +65,6 @@ class Unit:
                     self.x, self.y = pos[0] - self.size // 2, pos[1] - self.size // 2
                     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
                     break
-                # if any(pos in valid_pos for valid_pos in self.valid_movement_positions):
-                #     self.x, self.y = pos[0] - self.size // 2, pos[1] - self.size // 2
-                #     self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-                #     break
 
     def new_point_interferes(self, living_units, point_x, point_y  ):   
         # Create a new rectangle for the unit's position
@@ -82,12 +78,12 @@ class Unit:
                 return True              
         return False
       
-    def get_units_movement_area(self, screen,living_units):
+    def get_units_movement_area(self, living_units):
         
         num_samples = 360  # Number of samples (angles) around the unit's center
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
- 
+        print("funtcion call")
         for angle in range(0, 360, 360   // num_samples   ):   
             # Convert angle to radians
             radians = math.radians(angle)
@@ -98,7 +94,7 @@ class Unit:
 
             iteration = 2
              
-            while base_chunk//iteration >= 1 and  current_cost !=  self.base_movement :
+            while base_chunk//iteration >= 1 and current_cost !=  self.base_movement :
 
                 new_x = min(WIDTH, max( center_x + distance * math.cos(radians), 0)) 
                 new_y = min( HEIGHT - BUTTON_BAR_HEIGHT, max( center_y + distance * math.sin(radians), UPPER_BAR_HEIGHT))   
@@ -128,70 +124,6 @@ class Unit:
             line_points = new_line_points
             self.valid_movement_positions.append(line_points)
             self.valid_movement_positions_edges.append( line_points[len(line_points) - 1] )
-                 
-                # if (0 <= new_x < WIDTH and UPPER_BAR_HEIGHT <= new_y < HEIGHT - BUTTON_BAR_HEIGHT ):     
-                    
-                #     # print(center_x, center_y, new_x, new_y)
-                #     line_points = bresenham_line(center_x, center_y, int(new_x), int(new_y))
-                #     line_pixel_colors=  get_pixel_colors(line_points, background_screen)
-                #     river_index = None
-                #     try:
-                #         river_index = line_pixel_colors.index(RIVER_BLUE)
-                #         print("Found RIVER_BLUE at index:", river_index, angle)
-                #     except ValueError:
-                #         pass
-                #         #  print("RIVER_BLUE color not found in line_pixel_colors")
-                    
-                #     movement_cost = calculate_movement_cost(line_pixel_colors)  
-                #     if movement_cost[-1][0] > self.base_movement:
-                #         # print("before devrementing", distance, iteration)
-                #         distance -= iteration//2
-                #         iteration = iteration//2  
-                #         print(distance, iteration)
-                #         continue                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-                #      # print("devrementing", distance, iteration)
-                   
-                #     if river_index is not None:
-                #         line_pixel_colors_up_to_river = line_pixel_colors[:river_index]  # Extract the portion of colors up to the river
-                #         movement_cost_up_to_river = calculate_movement_cost(line_pixel_colors_up_to_river)
-                        
-                #         distance = river_index - 1
-                #         iteration = 0
-                #         current_cost = movement_cost_up_to_river[-1][0]
-                #         self.valid_movement_positions.append(line_points[:river_index])
-                #         print(current_cost)
-                #         continue
-
-                   
-                #     # print(self.base_movement, movement_cost[-1][0], center_x, center_y,new_x, new_y, distance,) 
-                              
-                #     # print(angle, tries)                  
-           
-                #     if movement_cost[-1][0] == self.base_movement:
-                #         self.valid_movement_positions.append(line_points)
-                        
-                #         # print("found the right spot", line_points[-1])
-                         
-                #     elif movement_cost[-1][0] < self.base_movement:
-                         
-                #         distance += iteration
-                #         # print("incrementing", distance, iteration)
-                  
-                #     else:
-                #         print("distance not a real number or what?!")
-
-                     
-                # else:
-                #     distance -= iteration//2
-                #     iteration -= iteration//2  
-
-                # current_cost = movement_cost[-1][0]
-                # tries += 1
-                # if tries >= 50:
-                #     print("to many tries", iteration, distance, current_cost, angle)
-
-                 # problém nastane když narazí nna řeku
-        # iterace je vždy v té fázi jedna
           
     def draw_possible_movement_area(self, screen):
     # Find the common valid movement positions for all angles
@@ -206,7 +138,9 @@ class Unit:
         if len(farthest_points) > 1:
             pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
 
-    def render_attack_circle(self, screen):
+    def calculate_attack_circle(self, battelground, living_units):
+        pass
+    def render_attack_circle(self, screen   ):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 

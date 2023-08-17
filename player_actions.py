@@ -1,6 +1,6 @@
 import pygame
 from config import *
-from game_state import *
+# from game_state import *
 from utils.image_utils import render_image
 from utils.utils import *
 SCROLL_SPEED = 5

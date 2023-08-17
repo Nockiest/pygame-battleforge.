@@ -1,9 +1,9 @@
 import pygame
 from config import * 
 from game_state import *
-
+ 
 class Button:
-    def __init__(self, description, x, y, width, height, callback):
+    def __init__(self, description, x, y, width, height, callback    ):
         self.description = description
         self.rect = pygame.Rect(x, y, width, height)
         self.width = width
@@ -12,7 +12,7 @@ class Button:
         self.button_surface.fill((255, 255, 255))  # Fill with white color
         self.callback = callback
         self.hovered = False  # Track whether the button is currently being hovered over
-        all_buttons.append(self)
+        # game.all_buttons.append(self)
 
     def draw(self, screen):
         # Draw the outline of the button
