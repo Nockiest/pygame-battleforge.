@@ -28,7 +28,7 @@ class Game:
         pygame.init()
         self.state = "game-is-running"
         self.selected_for_movement_unit = None
-        self.render_attack_screen_for_unit = False
+        self.selected_attacking_unit = False
      # self.render_units_attack_screen = False
         self.unit_placement_mode = None
         self.game_won = False
@@ -118,9 +118,9 @@ class Game:
                 if button.rect.collidepoint(event.pos):
                     button.callback()
                     return
-            if self.render_attack_screen_for_unit:
+            if self.selected_attacking_unit:
                 self.process_attack(
-                    self.render_attack_screen_for_unit, event.pos)
+                    self.selected_attacking_unit, event.pos)
             else:
                 # self.select_unit(event.pos)
                 self.activate_attack_mode(event.pos)
@@ -161,22 +161,22 @@ class Game:
                 # self.selected_for_movement_unit.draw_as_active(screen)
                 self.selected_for_movement_unit.draw_possible_movement_area(
                     screen)
-            elif unit == self.render_attack_screen_for_unit:
-                self.render_attack_screen_for_unit.draw_as_active(screen)
+            elif unit == self.selected_attacking_unit:
+                self.selected_attacking_unit.draw_as_active(screen)
 
         if hasattr(self.selected_for_movement_unit, 'attack_cross_position'):
             self.selected_for_movement_unit.render_attack_cross(screen)
-        if self.render_attack_screen_for_unit:
+        if self.selected_attacking_unit:
             attack_range_provided = False
             for unit in self.living_units:
 
-                if isinstance(unit, Observer) and unit.color == self.render_attack_screen_for_unit.color:
+                if isinstance(unit, Observer) and unit.color == self.selected_attacking_unit.color:
                     attack_range_provided = unit.provide_attack_range(
                         self.selected_for_movement_unit)
             if attack_range_provided is False:
-                self.render_attack_screen_for_unit.attack_range_modifiers["in_observer_range"] = 0
+                self.selected_attacking_unit.attack_range_modifiers["in_observer_range"] = 0
 
-            self.render_attack_screen_for_unit.render_attack_circle(screen)
+            self.selected_attacking_unit.render_attack_circle(screen)
         if self.unit_placement_mode:
 
             self.players[self.cur_player].show_unit_to_be_placed(
@@ -236,17 +236,17 @@ class Game:
         print("unit disabled for turn")
         if self.selected_for_movement_unit:
          self.selected_for_movement_unit.able_to_move = False
-        elif self.render_attack_screen_for_unit:
-         self.render_attack_screen_for_unit.able_to_move = False
+        elif self.selected_attacking_unit:
+         self.selected_attacking_unit.able_to_move = False
 
     def deselect_unit(self):
         self.selected_for_movement_unit = None
         # Set render_units_attack_screen to False
-        self.render_attack_screen_for_unit = None
+        self.selected_attacking_unit = None
 
     def select_unit(self, clicked_pos):
         print("selecting unit", self.selected_for_movement_unit)
-        if self.render_attack_screen_for_unit != None:
+        if self.selected_attacking_unit != None:
             return
         if self.selected_for_movement_unit != None:
             self.deselect_unit()
@@ -261,7 +261,7 @@ class Game:
             if unit.rect.collidepoint(clicked_pos):
                 self.selected_for_movement_unit = unit
                 unit.get_units_movement_area(self.living_units)
-                self.render_attack_screen_for_unit = None
+                self.selected_attacking_unit = None
                 break
         print(self.selected_for_movement_unit, " is selected")
 
@@ -279,13 +279,14 @@ class Game:
             if unit.rect.collidepoint(click_pos):
 
                 self.deselect_unit()
-                self.render_attack_screen_for_unit = unit
+                self.selected_attacking_unit = unit
+                self.selected_attacking_unit.get_attackable_units(self.living_units) 
 
                 break
 
     def process_attack(self, attacker, attacked_pos):
 
-        attack_result = attacker.try_attack(
+        attack_result = self.selected_attacking_unit.try_attack(
             attacked_pos, self.living_units)
         print(attack_result)
         if attack_result[0] == "UNIT ATTACKS":
@@ -311,7 +312,7 @@ class Game:
             self.deselect_unit()
         if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
             self.deselect_unit()
-            self.render_attack_screen_for_unit = None
+            self.selected_attacking_unit = None
 
     def check_in_range(itself, other_object):
         pass
