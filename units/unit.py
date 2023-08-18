@@ -254,34 +254,20 @@ class Unit:
                 del self.attack_cross_time
 
     def try_attack(self, click_pos, living_units):
-        # Check if the click position is within the attack range of the unit
-        dx = click_pos[0] - (self.x + self.size // 2)
-        dy = click_pos[1] - (self.y + self.size // 2)
-        distance = math.sqrt(dx ** 2 + dy ** 2)
-
-        if distance <= self.attack_range:
-            # Check if the click position does not collide with the unit's rectangle
-            if self.rect.collidepoint(click_pos):
-                return ("CANT ATTACK SELF", click_pos, [])
-
-            # Calculate the line between unit's center and click position
-            line_points = bresenham_line(
-                self.start_turn_position[0], self.start_turn_position[1], click_pos[0], click_pos[1]
-            )
-            print(line_points)
-            # points_on_line = []
-            # for point in line_points:
-            #     points_on_line.append(point)
-
-            for unit in living_units:
-                if unit.rect.collidepoint(click_pos):
-                    if unit.color == self.color:
-                        return ("YOU CANT DO FRIENDLY FIRE", click_pos, line_points)
-                        break
-
-                    return ("UNIT ATTACKS", click_pos, unit, line_points)
-
-        return ("Attack not possible", click_pos, [])
+        for unit in living_units:
+            if unit.rect.collidepoint(click_pos):
+                if unit.color == self.color:
+                    return ("YOU CANT DO FRIENDLY FIRE", click_pos,  )
+                     
+                elif unit == self:
+                    return ("YOU CANT DO FRIENDLY FIRE", click_pos,  )
+                         
+                elif unit in self.enemies_in_range:
+                    
+                    return ("UNIT ATTACKS", click_pos, unit,  )
+                else:
+                    print("you cant attack here")
+                    return ("Attack not possible", click_pos, [])
 
     def check_if_hit(self, base_hit_chance):
 

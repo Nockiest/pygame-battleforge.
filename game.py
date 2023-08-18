@@ -308,11 +308,10 @@ class Game:
                         self.game_won = True
             self.disable_unit_for_turn()
             self.deselect_unit()
-        elif attack_result == "SUPPORTS DONT ATTACK":
-            self.deselect_unit()
+        # elif attack_result == "SUPPORTS DONT ATTACK":
+        #     self.deselect_unit()
         if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
             self.deselect_unit()
-            self.selected_attacking_unit = None
 
     def check_in_range(itself, other_object):
         pass
