@@ -40,7 +40,7 @@ class Unit:
         self.cost = cost
         self.icon = icon
         self.rect = pygame.Rect(x, y, size, size)
-        self.selected = False
+        # self.selected = False
         self.able_to_move = self.remain_actions > 0
         self.color = color
         self.attack_circle = []
@@ -145,6 +145,7 @@ class Unit:
     def get_attack_circle(self, living_units):
         pass
     def render_attack_circle(self, screen   ):
+        print("function call")
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 

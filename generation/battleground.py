@@ -3,8 +3,6 @@ import pygame
 import math
 from config import *
 from utils.utils import *
-# from generation.town_generation import *
-# from generation.road_generation import *
 from buildings.supply_depo import SupplyDepo
 from buildings.bridge import Bridge
 from buildings.town import Town, is_far_enough, get_town_distances
@@ -136,7 +134,7 @@ class BattleGround:
         return rivers
     def place_towns(self  ):
         towns = []
-        min_distance = 200
+        min_distance = 300
         max_attempts = 10
 
 
