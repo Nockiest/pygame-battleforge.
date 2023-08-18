@@ -13,7 +13,7 @@ class Button:
         self.callback = callback
         self.hovered = False  # Track whether the button is currently being hovered over
         # game.all_buttons.append(self)
-
+        all_buttons.append(self)
     def draw(self, screen):
         # Draw the outline of the button
         pygame.draw.rect(screen, BLACK, self.rect, 2)

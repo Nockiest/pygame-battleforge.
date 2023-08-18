@@ -18,39 +18,34 @@ from units.support.observer import Observer
 from units.support.supply_cart import SupplyCart
 from units.support.template import Support
 
- 
+from game_state import *
 from utils.utils import *
-from buy_bar import *
- 
- 
+from buy_bar import * 
+
  
 class Game:
     def __init__(self):
         pygame.init()
-        button_instances = [
-            BuyButton(knight_buy_img, Knight, "Buy Knight", 40, self.enter_buy_mode, 60),
-            BuyButton(shield_buy_img, Shield, "Buy Shield", 80, self.enter_buy_mode, 60),
-            BuyButton(canon_buy_img, Canon, "Buy Canon", 120, self.enter_buy_mode, 60),
-            BuyButton(medic_buy_img, Medic, "Buy Medic", 160, self.enter_buy_mode, 60),
-            BuyButton(pike_buy_img, Pikeman, "Buy Pike", 200, self.enter_buy_mode, 60),
-            BuyButton(musket_buy_img, Musketeer, "Buy Musket", 240, self.enter_buy_mode, 60)
-        ]
+       
+        # problém s button rectanglem který jje jende než je zobrazen
         self.state = "game-is-running"
         self.selected_unit = None
+        self.attack_mode = False
         self.render_units_attack_screen = False
         self.unit_placement_mode = None
         self.game_won = False
         self.living_units = []
+        self.all_units = pygame.sprite.Group()
         self.sorted_living_units = {}
         self.unit_to_be_placed = None
         self.red_player = Player(RED, 0)
         self.blue_player = Player(BLUE, WIDTH - TENDER_WIDTH)
         self.players = [self.red_player, self.blue_player]
         self.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
-        self.button_bar = ButtonBar(button_instances)
+        self.button_bar = ButtonBar(self.enter_buy_mode )
         self.cur_player = 0
         self.unit_to_be_placed = None
-        self.all_buttons = []
+         
         self.next_turn_button = Button("Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn)
         self.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                            HEIGHT//2-50, 100, 100, self.start_game)
@@ -78,6 +73,7 @@ class Game:
                 print("this game screen doesnt exist")
             # Add more game states and handling logic here
         pygame.quit()
+
     def handle_start_screen(self):
         start_screen.fill(BRIDGE_COLOR)
         self.start_game_button.draw(start_screen)
@@ -85,57 +81,77 @@ class Game:
         pygame.display.update()
         clock.tick(fps)
 
-         
-
+       
     def handle_game_running_state(self):
-         
+        def handle_left_mouse_clk(click_pos):
+            global all_buttons
+            # Check if any button in the button bar is clicked
+           
+            for button in all_buttons:
+                print(button, button.rect, button.rect.collidepoint(click_pos), click_pos)
+                if button.rect.collidepoint(click_pos):
+               
+                 button.callback()
+            # clicked_button = self.button_bar.get_clicked_button(event.pos)
+            # if clicked_button and not self.selected_unit:
+            #     print(f"Clicked {clicked_button.unit_type} button.")
+            #     self.unit_placement_mode = clicked_button.unit_type
+
+            if self.unit_placement_mode:
+                self.buy_unit(click_pos)
+            elif self.selected_unit == None:
+                self.select_unit(click_pos)
+            else:
+                self.select_unit(click_pos)
+                
+        def handle_right_mouse_clk():
+            global all_buttons
+            for button in all_buttons:
+                print(button,  button.rect.collidepoint(event.pos))
+                if button.rect.collidepoint(event.pos):
+                 
+                 button.callback()
+                 return
+            if self.render_units_attack_screen:
+                    self.process_attack(self.selected_unit, event.pos)
+            else:
+                self.select_unit(event.pos)
+                self.activate_attack_mode( )
+        def handle_mouse_motion():         
+                if self.selected_unit:
+                    self.selected_unit.move_in_game_field(event.pos, self.living_units)
+
         for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
                 print(event)
                 lets_continue = False
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                # Check if any button in the button bar is clicked
-                clicked_button = self.button_bar.get_clicked_button(event.pos)
-                if clicked_button and not self.selected_unit:
-                    print(f"Clicked {clicked_button.unit_type} button.")
-                    unit_placement_mode = clicked_button.unit_type
-
-                elif self.unit_placement_mode:
-                    self.buy_unit(event.pos)
-                else:
-                    if self.next_turn_button.is_clicked(event.pos):
-                        self.next_turn_button.callback()  # Call the callback function when the button is clicked
-                    else:
-                        self.select_unit(event.pos)
-
+                print("x")
+                handle_left_mouse_clk(event.pos)
+              
             if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
-                if self.render_units_attack_screen:
-                    self.process_attack(self.selected_unit, event.pos)
-
-                else:
-                    self.select_unit(event.pos)
-
+                handle_right_mouse_clk() 
+           
             if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
-                if self.selected_unit:
-                    self.selected_unit.move_in_game_field(event.pos, self.living_units)
-
+                handle_mouse_motion() 
+                
         for player in self.players:
             player.handle_input()
-        self.check_button_hover(self.all_buttons, pygame.mouse.get_pos())
+        self.check_button_hover( all_buttons, pygame.mouse.get_pos())
         screen.fill(GREEN)
 
         # RENDER ELEMENTS ON THE MAIN SCREENKs
         # render the game state information
         self.draw_ui(screen)
 
-        if self.selected_unit:
-            self.selected_unit.draw_as_active(screen)
-            self.selected_unit.draw_possible_movement_area(screen)
         for unit in self.living_units:
-            if unit == self.selected_unit:
-                continue
             unit.render_on_screen(screen)
+            if unit == self.selected_unit:
+                self.selected_unit.draw_as_active(screen)
+                self.selected_unit.draw_possible_movement_area(screen)
+            
         if hasattr(self.selected_unit, 'attack_cross_position'):
             self.selected_unit.render_attack_cross(screen)
         if self.render_units_attack_screen:
@@ -154,7 +170,7 @@ class Game:
         if self.unit_placement_mode:
 
             self.players[self.cur_player].show_unit_to_be_placed(
-                (unit_to_be_placed, 0, 0))
+                (self.unit_to_be_placed, 0, 0))
 
         text = my_font.render(
             "game" + (" ended  " if self.game_won else "  is running "), True, (255, 255, 255))
@@ -179,6 +195,7 @@ class Game:
 
         pygame.display.update(self)
 
+   
     def start_game(self):
      
         print("click")
@@ -219,10 +236,9 @@ class Game:
 
     def deselct_unit(self):
     
-        global render_units_attack_screen
-
+       
         self.selected_unit = None
-        render_units_attack_screen = None  # Set render_units_attack_screen to False
+        self.render_units_attack_screen = None  # Set render_units_attack_screen to False
         # for unit in living_units:
         #  if unit.color == players[cur_player].color:
         #     unit.get_units_movement_area(living_units)
@@ -248,6 +264,11 @@ class Game:
                 break
         print(self.selected_unit, " is selected")
 
+    def activate_attack_mode(self  ):
+        print("attack mode activated")
+            # Check if any living unit has been clicked
+        self.attack_mode = True
+       
     def process_attack(self,attacker, attacked_pos  ):
        
         attack_result = attacker.try_attack(
@@ -268,7 +289,7 @@ class Game:
                     if isinstance(attacked_enemy, Commander):
                         self.players[self.cur_player].announce_defeat()
 
-                        game_won = self.players[self.cur_player].end_game(game_won)
+                        self.game_won = True #self.players[self.cur_player].end_game(self.game_won)
             self.disable_unit_for_turn()
             self.deselct_unit()
         elif attack_result == "SUPPORTS DONT ATTACK":
@@ -280,13 +301,9 @@ class Game:
     def check_in_range(itself, other_object):
         pass
 
-
-    def buy_unit(click_pos,self):
-        global unit_to_be_placed
-        global unit_placement_mode
-
-        if unit_to_be_placed:
-            dummy = unit_to_be_placed(100, 100, BLACK)
+    def buy_unit(self,click_pos ):
+        if self.unit_to_be_placed:
+            dummy = self.unit_to_be_placed(100, 100, BLACK)
             x = click_pos[0] - dummy.size // 2
             y = click_pos[1] - dummy.size // 2
 
@@ -296,23 +313,23 @@ class Game:
                 # Check if the unit is being placed within the valid Y coordinate range
             if HEIGHT - BUTTON_BAR_HEIGHT < y:
                 return print("Cannot place unit in this Y coordinate range.")
-            self.players[cur_player].create_unit(
-                (unit_to_be_placed, x, y), self.living_units)
-            unit_placement_mode = False
-            unit_to_be_placed = None
+            self.players[self.cur_player].create_unit(
+                (self.unit_to_be_placed, x, y), self.living_units)
+            self.unit_to_be_placed = False
+            self.unit_placement_mode = None
 
             del dummy
         else:
-            print(f"Error: Unit type {unit_to_be_placed} not found.")
+            print(f"Error: Unit type {self.unit_to_be_placed} not found.")
 
 
     def enter_buy_mode(self, unit_type):
-        global unit_to_be_placed
-        unit_to_be_placed = unit_type
-        print(unit_to_be_placed)
-        print(f"{self.players[self.cur_player].color} is going to buy {unit_to_be_placed}")
+        print(unit_type, "XXXX")
+        self.unit_to_be_placed = unit_type
+        print(self.unit_to_be_placed)
+        print(f"{self.players[self.cur_player].color} is going to buy {self.unit_to_be_placed}")
         # players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0), unit_to_be_placed)
-
+        self.unit_placement_mode = unit_type
 
     def try_select_unit(self, click_pos, unit):
 

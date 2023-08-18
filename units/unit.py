@@ -18,6 +18,7 @@ def render_attack_cross(screen, x, y):
  
 class Unit:
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
+        pygame.sprite.Sprite.__init__(self)
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range
@@ -26,6 +27,7 @@ class Unit:
         self.base_actions = base_actions
         self.base_movement = base_movement
         self.atttack_resistance = attack_resistance
+        
         self.x = x
         self.y = y
         
@@ -41,7 +43,7 @@ class Unit:
         self.selected = False
         self.able_to_move = self.remain_actions > 0
         self.color = color
- 
+        self.attack_circle = []
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []      
 
@@ -139,6 +141,8 @@ class Unit:
             pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
 
     def calculate_attack_circle(self, battelground, living_units):
+        pass
+    def get_attack_circle(self, living_units):
         pass
     def render_attack_circle(self, screen   ):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())

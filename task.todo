@@ -11,10 +11,11 @@ vytvořit bojovou jednotku
     --dát kanonu area damage
     **dovolit kavalerii útočit po zabití
      
-    dát všechny classy do jiných souborů
-    uložit si všecchny jednotky do rozřazeného objektu
-    
-     
+     vytvořit attack mode
+        zapnout ho po druhém kliku na jednotku nebo right clicku
+        -zařídit aby vykreslil atttack circle
+        -zabránit  pohybu v attack mode
+    propočítqt ktreré jednotky může vybraná jednotka napadnout    
 musika
     najít 5 písniček
     

@@ -14,3 +14,6 @@ class Support(Unit):
         
     def try_attack(self, click_pos, living_units):
         return  ("SUPPORTS DONT ATTACK") 
+    
+    def get_attack_circle(self):
+        return super().get_attack_circle()

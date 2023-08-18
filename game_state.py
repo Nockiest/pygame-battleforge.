@@ -16,3 +16,4 @@
 # cur_player = 0
 # unit_to_be_placed = None
 # all_buttons = []
+all_buttons = []

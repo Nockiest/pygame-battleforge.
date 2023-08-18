@@ -129,9 +129,9 @@ class Player:
         print("Player ", self.color, " has been defeated")
 
 
-    def end_game(self, game):
-        game = True
-        return game
+    # def end_game(self, game):
+    #     game = True
+    #     return game
 
     def remove_from_game(self, living_units, unit):
     # Find the unit in the living_units list and remove it
