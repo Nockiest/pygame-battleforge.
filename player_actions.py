@@ -1,8 +1,10 @@
 import pygame
+import random
 from config import *
 # from game_state import *
 from utils.image_utils import render_image
 from utils.utils import *
+from units.support.observer import Observer
 SCROLL_SPEED = 5
 class Player:
     def __init__(self, color, tender_x  ):
@@ -147,4 +149,26 @@ class Player:
         unit.y = None
         unit.rect = None
             
-     
+    def place_starting_units(self, living_units, unit_class_list):
+            for unit_class in unit_class_list:
+                if self.color == (0, 0, 255):  # Blue player condition
+                    while True:
+                        x = random.randint(0, WIDTH // 2)  # Random x on the left side
+                        y = random.randint(0, HEIGHT)  # Random y anywhere on screen
+                        pixel_color = get_pixel_colors([(x,y)], background_screen)  # Replace with your actual pixel color fetching function
+                        
+                        # Check if the position is valid (not on river and not occupied)
+                        if pixel_color[0] != RIVER_BLUE and not self.is_position_occupied(x, y, living_units):
+                            break
+                else:
+                    x = random.randint(WIDTH//2, WIDTH)  # Random x anywhere on screen
+                    y = random.randint(UPPER_BAR_HEIGHT, HEIGHT-BUTTON_BAR_HEIGHT)  # Random y anywhere on screen
+                
+                unit_params = (unit_class, x, y)
+                self.create_starting_unit(unit_params, living_units)
+
+    def is_position_occupied(self, x, y, living_units):
+        for unit in living_units:
+            if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:
+                return True
+        return False

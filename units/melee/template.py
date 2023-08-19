@@ -27,3 +27,21 @@ class Melee(Unit):
                 res = ("MELEE UNIT CAN'T ATTACK THROUGH RIVERS ", click_pos, None)
 
         return res
+    
+    def get_attackable_units(self,  living_units):
+        super().get_attackable_units(living_units)
+        units_to_remove = []  # Create a list to store units to be removed
+
+        for unit in self.enemies_in_range:
+            center_x, center_y = self.x, self.y
+            enemy_center_x, enemy_center_y = unit.start_turn_position[0], unit.start_turn_position[1]
+            line_points = bresenham_line(center_x, center_y, enemy_center_x, enemy_center_y)
+            line_pixel_colors = get_pixel_colors(line_points, background_screen)
+            
+            # Check if any point in the line has the color RIVER_BLUE
+            if any(color == RIVER_BLUE for color in line_pixel_colors):
+                units_to_remove.append(unit)  # Add the unit to the removal list
+                
+        # Remove units that need to be removed from enemies_in_range
+        for unit in units_to_remove:
+            self.enemies_in_range.remove(unit)

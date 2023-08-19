@@ -28,7 +28,7 @@ class Game:
         pygame.init()
         self.state = "game-is-running"
         self.selected_for_movement_unit = None
-        self.selected_attacking_unit = False
+        self.selected_attacking_unit = None
      # self.render_units_attack_screen = False
         self.unit_placement_mode = None
         self.game_won = False
@@ -44,33 +44,28 @@ class Game:
         self.button_bar = ButtonBar(self.enter_buy_mode)
         self.cur_player = 0
         self.unit_to_be_placed = None
+        self.unit_params_list = [
+           [  Observer ,
+             Medic ,
+             Pikeman,
+             Pikeman,
+             Pikeman,
+             Pikeman]
+            ,
+               [  Knight ,
+             Canon,
+              SupplyCart,
+               Canon,
+                Canon ]
+            # Add more unit configurations as needed
+        ]
 
         self.next_turn_button = Button(
             "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn)
         self.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                         HEIGHT//2-50, 100, 100, self.start_game)
-        self.blue_player.create_starting_unit(
-            (Musketeer, 0, 100), self.living_units)
-        self.blue_player.create_starting_unit(
-            (Musketeer, 200, 200), self.living_units)
-        self.red_player.create_starting_unit(
-            (Canon, 250, 250), self.living_units)
-        self.red_player.create_starting_unit(
-            (Shield, 400, 300), self.living_units)
-        self.blue_player.create_starting_unit(
-            (Medic, 500, 400), self.living_units)
-        self.blue_player.create_starting_unit(
-            (Commander, 550, 100), self.living_units)
-        self.red_player.create_starting_unit(
-            (Commander, 500, 70), self.living_units)
-        self.red_player.create_starting_unit(
-            (Pikeman, 700, 100), self.living_units)
-        self.blue_player.create_starting_unit(
-            (SupplyCart, 800, 300), self.living_units)
-        self.blue_player.create_starting_unit(
-            (Observer, 200, 150), self.living_units)
-        self.blue_player.create_starting_unit(
-            (Observer, 250, 150), self.living_units)
+        for i, player in enumerate(self.players):
+            player.place_starting_units(self.living_units, self.unit_params_list[i])
 
     def run(self):
         while self.lets_continue:
@@ -126,6 +121,7 @@ class Game:
                 self.activate_attack_mode(event.pos)
 
         def handle_mouse_motion():
+            print(self.selected_for_movement_unit)
             if self.selected_for_movement_unit:
                 self.selected_for_movement_unit.move_in_game_field(
                     event.pos, self.living_units)
@@ -136,6 +132,8 @@ class Game:
                 print(event)
                 self.lets_continue = False
 
+            if event.type == pygame.MOUSEMOTION  :
+                handle_mouse_motion()
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 print("x")
                 handle_left_mouse_clk(event.pos)
@@ -143,15 +141,14 @@ class Game:
             if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
                 handle_right_mouse_clk()
 
-            if event.type == pygame.MOUSEMOTION or  (event.type == pygame.MOUSEMOTION and event.buttons[0] == 1):  # and event.buttons[0] == 1:
-                handle_mouse_motion()
+          
 
         for player in self.players:
             player.handle_input()
         self.check_button_hover(all_buttons, pygame.mouse.get_pos())
         screen.fill(GREEN)
 
-        # RENDER ELEMENTS ON THE MAIN SCREENKs
+        # RENDER ELEMENTS ON THE MAIN SCREEN 
         # render the game state information
         self.draw_ui(screen)
 
@@ -162,7 +159,11 @@ class Game:
                 self.selected_for_movement_unit.draw_possible_movement_area(
                     screen)
             elif unit == self.selected_attacking_unit:
-                self.selected_attacking_unit.draw_as_active(screen)
+                self.selected_attacking_unit.draw_as_active( )
+
+            if self.selected_attacking_unit != None:
+                if unit in self.selected_attacking_unit.enemies_in_range:
+                    unit.draw_as_active()
 
         if hasattr(self.selected_for_movement_unit, 'attack_cross_position'):
             self.selected_for_movement_unit.render_attack_cross(screen)
@@ -214,6 +215,13 @@ class Game:
         self.cur_player = (self.cur_player + 1) % len(self.players)
 
     def next_turn(self):
+        update_sorted_units(self.living_units)
+        self.switch_player()
+        self.deselect_unit()
+        loading_message = default_font.render("Loading Next Turn...", True, (255, 255, 255))
+        screen.blit(loading_message, ( WIDTH // 2 - 100,  HEIGHT // 2))
+
+        pygame.display.flip()  # Update the screen
 
         for unit in self.living_units:
             unit.center = unit.start_turn_position
@@ -224,13 +232,15 @@ class Game:
 
             if isinstance(unit, Medic):
                 unit.heal(self.living_units)
+
+            if unit.color == self.players[self.cur_player].color:
+                unit.get_units_movement_area(self.living_units)
             # tohle musím přepsart abych nemusel používat tenhle divnžý elif
         for depo in self.battle_ground.supply_depots:
             depo.dispense_ammo(self.living_units)
-
-        update_sorted_units(self.living_units)
-        self.switch_player()
-        self.deselect_unit()
+        screen.fill((0, 0, 0))
+        pygame.display.flip()  # Update the screen again
+  
 
     def disable_unit_for_turn(self):
         print("unit disabled for turn")
@@ -260,13 +270,12 @@ class Game:
                 continue
             if unit.rect.collidepoint(clicked_pos):
                 self.selected_for_movement_unit = unit
-                unit.get_units_movement_area(self.living_units)
+                # unit.get_units_movement_area(self.living_units)
                 self.selected_attacking_unit = None
                 break
         print(self.selected_for_movement_unit, " is selected")
 
-    def activate_attack_mode(self, click_pos):
-        print("attack mode activated")
+    def activate_attack_mode(self, click_pos):       
         for unit in self.living_units:
             if not unit.able_to_move:
                 continue
@@ -281,11 +290,10 @@ class Game:
                 self.deselect_unit()
                 self.selected_attacking_unit = unit
                 self.selected_attacking_unit.get_attackable_units(self.living_units) 
-
+                print("attack mode activated")
                 break
 
-    def process_attack(self, attacker, attacked_pos):
-
+    def process_attack(self, attacker, attacked_pos):        
         attack_result = self.selected_attacking_unit.try_attack(
             attacked_pos, self.living_units)
         print(attack_result)
@@ -310,7 +318,7 @@ class Game:
             self.deselect_unit()
         # elif attack_result == "SUPPORTS DONT ATTACK":
         #     self.deselect_unit()
-        if attack_result[0] == "CANT ATTACK SELF" or attack_result[0] == "YOU CANT DO FRIENDLY FIRE":
+        elif attack_result[0] == "Attack not possible":
             self.deselect_unit()
 
     def check_in_range(itself, other_object):
@@ -368,6 +376,31 @@ class Game:
         self.red_player.render_tender(screen)
         self.blue_player.render_tender(screen)
         self.next_turn_button.draw(screen)
+
+    def place_starting_units(self):
+        self.blue_player.create_starting_unit(
+            (Musketeer, 0, 100), self.living_units)
+        self.blue_player.create_starting_unit(
+            (Musketeer, 200, 200), self.living_units)
+        self.red_player.create_starting_unit(
+            (Canon, 250, 250), self.living_units)
+        self.red_player.create_starting_unit(
+            (Shield, 400, 300), self.living_units)
+        self.blue_player.create_starting_unit(
+            (Medic, 500, 400), self.living_units)
+        self.blue_player.create_starting_unit(
+            (Commander, 550, 100), self.living_units)
+        self.red_player.create_starting_unit(
+            (Commander, 500, 70), self.living_units)
+        self.red_player.create_starting_unit(
+            (Pikeman, 700, 100), self.living_units)
+        self.blue_player.create_starting_unit(
+            (SupplyCart, 800, 300), self.living_units)
+        self.blue_player.create_starting_unit(
+            (Observer, 200, 150), self.living_units)
+        self.blue_player.create_starting_unit(
+            (Observer, 250, 150), self.living_units)
+        # napsat funkci která je položí automaticky
 
 
 if __name__ == "__main__":

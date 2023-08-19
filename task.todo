@@ -1,10 +1,11 @@
 vytvořit bojovou jednotku      
     zobrazit informace na hover
         zobtazit munici životy útoky
+        zformátovat je
     přidat útočnou animaci
-    přepsat propočet pohybu, aby konroloval každý pixel kolem sebe
      
-    rozestavit jednotky na začítku do formace
+     
+     
     přidat movement soundfile
     vykreslit přesný attack circle
    
@@ -14,8 +15,20 @@ vytvořit bojovou jednotku
      vytvořit attack mode
         zapnout ho po druhém kliku na jednotku nebo right clicku
         -zařídit aby vykreslil atttack circle
-        -zabránit  pohybu v attack mode
-    propočítqt ktreré jednotky může vybraná jednotka napadnout    
+       
+        opravit tu nepřesnost ve zvýraznování jednotek
+
+    
+    pohybovat s jednotkou se se stisklým mouse 1
+
+
+     rozestavit jednotky na začítku do formace
+        vytvořit place default units funkci
+        zařídit aby pokůádala jednotky modrého na levou a červeného na druhou
+        nepokládat je na řeky
+        nepokládat je přes sebe a alespoň s odtupem unit.size //2
+        
+   
 musika
     najít 5 písniček
     
@@ -32,11 +45,17 @@ prostředí
 ui
     přidat ukliádání
     přidat načítání
-    scrollovat unit bar, jen když jsou v ěm skryté jednotky
+    přidat start screen
     opravit obrázek mušketýra    
     zvýraznit jednotky co může enpřítel zasáhnout
     přidat úvodní nastavení hry
-
+    zprovoznit start screen
+        přidat nastavení
+            nastavení prostředí
+            nastavení počtu jednotek
+    zprovozni endgame screen
+        vytvořit newgame button
+    vytvořit game_event/information window
  ** = můj rozmar
 
  

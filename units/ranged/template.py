@@ -12,7 +12,7 @@ class Ranged(Unit):
  
     def try_attack(self, click_pos, living_units    ):
         res = super().try_attack(click_pos, living_units)
-        
+        print(res, "res")
         if res[0] == "UNIT ATTACKS":
             # Calculate the line between unit's center and click position
             attaacked_unit = res[2]
@@ -31,6 +31,24 @@ class Ranged(Unit):
                 res = ("RANGED UNIT CAN'T ATTACK THROUGH FORESTS", click_pos, None )
 
         return res
+    
+    def get_attackable_units(self,  living_units):
+        super().get_attackable_units(living_units)
+        units_to_remove = []  # Create a list to store units to be removed
+
+        for unit in self.enemies_in_range:
+            center_x, center_y = self.x, self.y
+            enemy_center_x, enemy_center_y = unit.start_turn_position[0], unit.start_turn_position[1]
+            line_points = bresenham_line(center_x, center_y, enemy_center_x, enemy_center_y)
+            line_pixel_colors = get_pixel_colors(line_points, background_screen)
+            
+            # Check if any point in the line has the color RIVER_BLUE
+            if any(color == FORREST_GREEN for color in line_pixel_colors):
+                units_to_remove.append(unit)  # Add the unit to the removal list
+                
+        # Remove units that need to be removed from enemies_in_range
+        for unit in units_to_remove:
+            self.enemies_in_range.remove(unit)
 
      
     def calculate_attack_circle(self, living_units):

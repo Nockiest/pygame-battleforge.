@@ -42,7 +42,6 @@ class Unit:
         self.cost = cost
         self.icon = icon
         self.rect = pygame.Rect(x, y, size, size)
-        # self.selected = False
         self.able_to_move = self.remain_actions > 0
         self.color = color
         self.attack_circle = []
@@ -50,11 +49,13 @@ class Unit:
         self.valid_movement_positions_edges = []
 
     def move_in_game_field(self, click_pos, living_units):
-        point1 = shapely.geometry.Point(click_pos[0], click_pos[1])
+        new_center_x, new_center_y = click_pos
+        point1 = shapely.geometry.Point(new_center_x, new_center_y)
         movement_polygon = shapely.geometry.Polygon(
             self.valid_movement_positions_edges)
-        new_center_x, new_center_y = click_pos
+        
         # Check if the clicked position is a valid movement position
+        print(click_pos, point1.within(movement_polygon) )
         if point1.within(movement_polygon):
             self.x = new_center_x - self.size // 2
             self.y = new_center_y - self.size // 2
@@ -159,7 +160,7 @@ class Unit:
             if unit.color == self.color:
                 continue
              
-            center_x, center_y = self.x  +self.size // 2, self.y + self.size//2
+            center_x, center_y = self.x, self.y    # nevím proč to nemám centrovat, abd to fungovalo
             enemy_center_x, enemy_center_y = unit.start_turn_position[0], unit.start_turn_position[1]
             line_points = bresenham_line(
                     center_x, center_y, enemy_center_x, enemy_center_y)
@@ -169,59 +170,7 @@ class Unit:
 
         print("in attack range are", self.enemies_in_range)
     
-
-
-
-
-        # self.enemies_in_range = []
-        # attack_boundary_polygon_points = []
-        # print("hello",  living_units)
-        # # Number of samples (angles) around the unit's center
-        # num_samples = 360
-        # center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
-        # for angle in range(0, 360, 360 // num_samples):
-        #     # Convert angle to radians
-        #     radians = math.radians(angle)
-        #     current_line = []
-        #     found_correct_distance = False
-            
-            
-        #     while  not found_correct_distance:
-        #         new_x = min(WIDTH, max(
-        #             center_x + self.attack_range * math.cos(radians), 0))
-        #         new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
-        #                      self.attack_range  * math.sin(radians), UPPER_BAR_HEIGHT))
-        #         line_points = bresenham_line(
-        #             center_x, center_y, int(new_x), int(new_y))
-        #         # line_pixel_colors = get_pixel_colors(
-        #         #     line_points, background_screen)               
-        #         current_line = line_points
-        #         found_correct_distance = True
  
-
-        #     # new_line_points = []
-        #     # for point in line_points:
-        #     #     pixel_color = get_pixel_colors(
-        #     #         [point], background_screen)
-        #     #     if  pixel_color == FORREST_GREEN:
-        #     #         new_line_points.append(line_points[:point])
-        #     #     else:
-        #     #         break  # Stop adding points if interference is detected
-        #     # line_points = new_line_points     
-        #     attack_boundary_polygon_points.append(current_line[-1])
-        # for unit in living_units:
-        #     if unit.color == self.color:
-        #         continue
-        #     else:
-        #         point1 = shapely.geometry.Point(unit.start_turn_position[0],unit.start_turn_position[1])
-        #         movement_polygon = shapely.geometry.Polygon(
-        #             attack_boundary_polygon_points)    
-        #         if point1.within(movement_polygon):
-        #             print(unit, "is in the range of the attaceker")
-        #             self.enemies_in_range.append(unit)
-        # # checks for the centers of the rectangles
-        # print("attack boundary", attack_boundary_polygon_points)
-
     def calculate_attack_circle(self, battelground, living_units):
         pass
 
@@ -254,20 +203,11 @@ class Unit:
                 del self.attack_cross_time
 
     def try_attack(self, click_pos, living_units):
-        for unit in living_units:
+        for unit in self.enemies_in_range:
             if unit.rect.collidepoint(click_pos):
-                if unit.color == self.color:
-                    return ("YOU CANT DO FRIENDLY FIRE", click_pos,  )
-                     
-                elif unit == self:
-                    return ("YOU CANT DO FRIENDLY FIRE", click_pos,  )
-                         
-                elif unit in self.enemies_in_range:
-                    
-                    return ("UNIT ATTACKS", click_pos, unit,  )
-                else:
-                    print("you cant attack here")
-                    return ("Attack not possible", click_pos, [])
+                return  ("UNIT ATTACKS", click_pos, unit,  )
+        return ("Attack not possible", click_pos, [])
+   
 
     def check_if_hit(self, base_hit_chance):
 
@@ -353,7 +293,7 @@ class Unit:
             f"Attacks: {self.remain_actions}   Ammo: {self.ammo} Hp: {self.hp}", True, text_color)
         screen.blit(text_surface, text_pos)
 
-    def draw_as_active(self, screen):
+    def draw_as_active(self  ):
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
         pygame.draw.rect(screen,  BLACK, outline_rect, 2)
