@@ -35,7 +35,7 @@ def check_river_collision(new_house, rivers, screen):
             segment_rect = pygame.Rect(segment_start, (segment_end[0] - segment_start[0], segment_end[1] - segment_start[1]))
            
             if pygame.draw.line(screen, (0, 0, 0, 0), segment_start, segment_end).colliderect(new_house):
-                # print("TOWN COLLIDES", new_house, segment_rect)
+            
                 return True  # House collides with river segment
     return False  # No collision with any river segment
 

@@ -58,7 +58,7 @@ class Ranged(Unit):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 
-        print("funtcion call")
+       
         for angle in range(0, 360, 360   // num_samples   ):   
             # Convert angle to radians
             radians = math.radians(angle)

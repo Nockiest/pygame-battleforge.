@@ -110,7 +110,7 @@ class ButtonBar:
         for button in  self.button_instances:
             button.set_position(x_position, BUTTON_BAR_Y)
             x_position += self.button_width + self.button_spacing + TENDER_WIDTH
-            print(x_position)
+            
 
     def draw(self, screen, y, current_player_color):
         # Draw the background rectangle for the button bar

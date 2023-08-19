@@ -4,7 +4,7 @@ vytvořit bojovou jednotku
         zformátovat je
     přidat útočnou animaci
      
-     
+    
      
     přidat movement soundfile
     vykreslit přesný attack circle
@@ -18,17 +18,6 @@ vytvořit bojovou jednotku
        
         opravit tu nepřesnost ve zvýraznování jednotek
 
-    
-    pohybovat s jednotkou se se stisklým mouse 1
-
-
-     rozestavit jednotky na začítku do formace
-        vytvořit place default units funkci
-        zařídit aby pokůádala jednotky modrého na levou a červeného na druhou
-        nepokládat je na řeky
-        nepokládat je přes sebe a alespoň s odtupem unit.size //2
-        
-   
 musika
     najít 5 písniček
     
@@ -59,3 +48,8 @@ ui
  ** = můj rozmar
 
  
+outreach
+    najít stránku, kde mohu sdílet svůj game dev s ostatními
+    oznámit na medium vývoj mé hry
+    zjistit jak zkompliovat pygame
+    zjisti jak vydat demo verzi

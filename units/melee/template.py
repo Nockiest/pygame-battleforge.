@@ -20,7 +20,7 @@ class Melee(Unit):
 
             # Get the pixel colors along the line
             line_pixel_colors = get_pixel_colors(line_points, background_screen)
-            print(line_pixel_colors)
+           
             # Check if FORREST_GREEN is present in pixel colors
             if RIVER_BLUE   in line_pixel_colors:
                 print("Ranged unit can't attack through forests")

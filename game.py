@@ -26,7 +26,7 @@ from buy_bar import *
 class Game:
     def __init__(self):
         pygame.init()
-        self.state = "game-is-running"
+        self.state = "game_is_running"
         self.selected_for_movement_unit = None
         self.selected_attacking_unit = None
      # self.render_units_attack_screen = False
@@ -44,36 +44,40 @@ class Game:
         self.button_bar = ButtonBar(self.enter_buy_mode)
         self.cur_player = 0
         self.unit_to_be_placed = None
+        self.hovered_unit = None
         self.unit_params_list = [
-           [  Observer ,
+           [  Commander,
+            Observer ,
              Medic ,
              Pikeman,
              Pikeman,
              Pikeman,
              Pikeman]
             ,
-               [  Knight ,
+               [  Commander,
+                Knight ,
              Canon,
               SupplyCart,
                Canon,
                 Canon ]
             # Add more unit configurations as needed
         ]
-
+        self.place_starting_units( )
         self.next_turn_button = Button(
             "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn)
         self.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                         HEIGHT//2-50, 100, 100, self.start_game)
-        for i, player in enumerate(self.players):
-            player.place_starting_units(self.living_units, self.unit_params_list[i])
+        # for i, player in enumerate(self.players):
+        #     player.place_starting_units(self.living_units, self.unit_params_list[i])
 
     def run(self):
         while self.lets_continue:
-            if self.state == "game-is-running":
+            if self.state == "game_is_running":
                 self.handle_game_running_state()
-            elif self.state == "start-scrreen":
+            elif self.state == "start_scrreen":
                 print("rendering start screen")
-            elif self.state == "end-screen":
+                self.handle_start_screen( )
+            elif self.state == "end_screen":
                 print("rendering end screen")
             else:
                 print("this game screen doesnt exist")
@@ -84,7 +88,12 @@ class Game:
         start_screen.fill(BRIDGE_COLOR)
         self.start_game_button.draw(start_screen)
 
+          # Render everything on the display
         pygame.display.update()
+
+        # RENDER ELEMENTS ON THE BACKGROUND SCREEN
+        self.draw_ui(background_screen)
+
         clock.tick(fps)
 
     def handle_game_running_state(self):
@@ -93,8 +102,7 @@ class Game:
             # Check if any button in the button bar is clicked
 
             for button in all_buttons:
-                print(button, button.rect, button.rect.collidepoint(
-                    click_pos), click_pos)
+                
                 if button.rect.collidepoint(click_pos):
 
                     button.callback()
@@ -107,9 +115,9 @@ class Game:
                 self.select_unit(click_pos)
 
         def handle_right_mouse_clk():
-            global all_buttons
+            # global all_buttons
             for button in all_buttons:
-                print(button,  button.rect.collidepoint(event.pos))
+                
                 if button.rect.collidepoint(event.pos):
                     button.callback()
                     return
@@ -121,25 +129,40 @@ class Game:
                 self.activate_attack_mode(event.pos)
 
         def handle_mouse_motion():
-            print(self.selected_for_movement_unit)
+            
             if self.selected_for_movement_unit:
                 self.selected_for_movement_unit.move_in_game_field(
                     event.pos, self.living_units)
 
+        
+
+        cursor_x, cursor_y = pygame.mouse.get_pos()
+        cursor_hovers_over_unit = False
+        for unit in self.living_units:
+            if unit.rect.collidepoint(( cursor_x, cursor_y )):
+                # The cursor is over the unit
+                self.hovered_unit = unit
+                cursor_hovers_over_unit = True
+                print(f"Cursor over unit: {unit}")
+        if not cursor_hovers_over_unit :
+            self.hovered_unit = None
+        print(f"Cursor over unit: { self.hovered_unit}")
+        
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 print(event)
                 self.lets_continue = False
 
-            if event.type == pygame.MOUSEMOTION  :
-                handle_mouse_motion()
+             
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                print("x")
+                
                 handle_left_mouse_clk(event.pos)
 
             if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
                 handle_right_mouse_clk()
+            if event.type == pygame.MOUSEMOTION  :
+                handle_mouse_motion()
 
           
 
@@ -215,6 +238,7 @@ class Game:
         self.cur_player = (self.cur_player + 1) % len(self.players)
 
     def next_turn(self):
+        
         update_sorted_units(self.living_units)
         self.switch_player()
         self.deselect_unit()
@@ -234,13 +258,14 @@ class Game:
                 unit.heal(self.living_units)
 
             if unit.color == self.players[self.cur_player].color:
+                
                 unit.get_units_movement_area(self.living_units)
             # tohle musím přepsart abych nemusel používat tenhle divnžý elif
         for depo in self.battle_ground.supply_depots:
             depo.dispense_ammo(self.living_units)
         screen.fill((0, 0, 0))
         pygame.display.flip()  # Update the screen again
-  
+      
 
     def disable_unit_for_turn(self):
         print("unit disabled for turn")

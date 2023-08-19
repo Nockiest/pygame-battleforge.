@@ -94,7 +94,7 @@ class Unit:
         num_samples = 360
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
-        print("funtcion call")
+        self.valid_movement_positions_edges = []
         for angle in range(0, 360, 360 // num_samples):
             # Convert angle to radians
             radians = math.radians(angle)
@@ -131,15 +131,18 @@ class Unit:
 
             new_line_points = []
             for point in line_points:
-                if not self.new_point_interferes(living_units, point[0], point[1]):
+                other_units = [unit for unit in living_units if unit.color != self.color]
+                if not self.new_point_interferes(other_units, point[0], point[1]):
                     new_line_points.append(point)
                 else:
                     break  # Stop adding points if interference is detected
             line_points = new_line_points
             self.valid_movement_positions.append(line_points)
-            self.valid_movement_positions_edges.append(
-                line_points[len(line_points) - 1])
-
+            
+            if line_points:
+                self.valid_movement_positions_edges.append(line_points[len(line_points) - 1])
+        print("points", self.valid_movement_positions_edges[-1])
+  
     def draw_possible_movement_area(self, screen):
         # Find the common valid movement positions for all angles
         # print(self.valid_movement_positions)
@@ -161,6 +164,7 @@ class Unit:
                 continue
              
             center_x, center_y = self.x, self.y    # nevím proč to nemám centrovat, abd to fungovalo
+            print(center_x, center_y, unit.start_turn_position)
             enemy_center_x, enemy_center_y = unit.start_turn_position[0], unit.start_turn_position[1]
             line_points = bresenham_line(
                     center_x, center_y, enemy_center_x, enemy_center_y)
@@ -239,7 +243,7 @@ class Unit:
     def remove_from_game(self, living_units, player):
         # Remove the unit from the 'units' list of the player
 
-        print(player.color, self.color, player.units, self)
+        print(player.color, self.color, player.units, self, "removing unit")
         # Remove the unit from the 'cur_players' array
         player.units.remove(self)
         player.update_sorted_units()
@@ -256,7 +260,6 @@ class Unit:
             self.x + self.size//2, self.y + self.size//2)
 
         self.remain_actions = 1
-
         self.able_to_move = True
         self.remain_actions = self.base_actions
 

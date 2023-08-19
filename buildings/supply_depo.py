@@ -20,7 +20,7 @@ class SupplyDepo(Structure):
     def dispense_ammo(self,   living_units):
          
         for unit in living_units:
-            print(isinstance(unit, Ranged), isinstance(unit, SupplyCart)) ,  distance(self.center, unit.center)
+           
             if (isinstance(unit, Ranged) or isinstance(unit, SupplyCart)) and  distance(self.center, unit.center) < RESUPPLY_RANGE:
                 unit.ammo +=  self.ammo_per_unit
                 self.ammo_count -=  self.ammo_per_unit

@@ -150,23 +150,27 @@ class Player:
         unit.rect = None
             
     def place_starting_units(self, living_units, unit_class_list):
+            spawn_width = 200
+            sides = {
+                "(255, 0, 0)": WIDTH  ,
+                "(0, 0, 255)": spawn_width #WIDTH //2
+            }
             for unit_class in unit_class_list:
-                if self.color == (0, 0, 255):  # Blue player condition
-                    while True:
-                        x = random.randint(0, WIDTH // 2)  # Random x on the left side
-                        y = random.randint(0, HEIGHT)  # Random y anywhere on screen
-                        pixel_color = get_pixel_colors([(x,y)], background_screen)  # Replace with your actual pixel color fetching function
-                        
-                        # Check if the position is valid (not on river and not occupied)
-                        if pixel_color[0] != RIVER_BLUE and not self.is_position_occupied(x, y, living_units):
-                            break
-                else:
-                    x = random.randint(WIDTH//2, WIDTH)  # Random x anywhere on screen
-                    y = random.randint(UPPER_BAR_HEIGHT, HEIGHT-BUTTON_BAR_HEIGHT)  # Random y anywhere on screen
+                 
+                print(self.color, unit_class.size, unit_class, "hello")
+                while True:
+                    x = random.randint(sides[str(self.color)] -spawn_width,sides[str(self.color)]-30)  # Random x on the left side
+                    y = random.randint(UPPER_BAR_HEIGHT, HEIGHT - BUTTON_BAR_HEIGHT -50)  # Random y anywhere on screen
+                    pixel_color = get_pixel_colors([(x+unit_class.size//2,y+unit_class.size//2)], background_screen)  # Replace with your actual pixel color fetching function
+                    
+                    # Check if the position is valid (not on river and not occupied)
+                    if pixel_color[0] != RIVER_BLUE and not self.is_position_occupied(x, y, living_units):
+                        break
+               
                 
                 unit_params = (unit_class, x, y)
                 self.create_starting_unit(unit_params, living_units)
-
+                 
     def is_position_occupied(self, x, y, living_units):
         for unit in living_units:
             if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:

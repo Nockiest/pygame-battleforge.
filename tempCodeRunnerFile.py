@@ -1,1 +1,1 @@
-(
+ self.draw_ui(background_screen)
