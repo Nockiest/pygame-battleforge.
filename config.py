@@ -35,6 +35,7 @@ TOWN_RED = (200, 0, 0, 100)
 HOUSE_PURPLE = (255, 0, 255)
 BRIDGE_COLOR = (139, 69, 19)  # Saddle Brown
 TERMINATE_COLOR = (3,3,3)
+DARK_RED = (139, 0, 0)  # Dark red color
 
 RESUPPLY_RANGE = 100
  

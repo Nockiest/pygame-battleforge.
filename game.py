@@ -188,12 +188,13 @@ class Game:
                     screen)
             elif unit == self.selected_attacking_unit:
                 self.selected_attacking_unit.draw_as_active()
-
-            if self.selected_attacking_unit != None:
-                if unit in self.selected_attacking_unit.enemies_in_range:
-                    unit.draw_as_active()
+           
+                # if unit in self.selected_attacking_unit.enemies_in_range:
+                #     unit.draw_as_active()
             if unit == self.hovered_unit:
                 unit.render_hovered_state() 
+        if self.selected_attacking_unit != None:
+                self.selected_attacking_unit.highlight_attackable_units()
 
 
         if hasattr(self.selected_for_movement_unit, 'attack_cross_position'):
@@ -312,6 +313,8 @@ class Game:
 
     def activate_attack_mode(self, click_pos):
         # for unit in self.living_units:
+        if not self.hovered_unit:
+            return
         if not self.hovered_unit.able_to_move:
             return
 
@@ -407,6 +410,8 @@ class Game:
             (Musketeer, 200, 200), self.living_units)
         self.red_player.create_starting_unit(
             (Canon, 250, 250), self.living_units)
+        self.red_player.create_starting_unit(
+            (Canon, 150,150), self.living_units)
         self.red_player.create_starting_unit(
             (Shield, 400, 300), self.living_units)
         self.blue_player.create_starting_unit(

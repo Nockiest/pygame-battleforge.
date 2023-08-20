@@ -265,6 +265,17 @@ class Unit:
         self.able_to_move = True
         self.remain_actions = self.base_actions
 
+    def highlight_attackable_units(self):
+        
+        print(self.enemies_in_range)
+        for unit in self.enemies_in_range:
+            # Calculate the center coordinates of self and the target unit
+            self_center =  self.center 
+            target_center =  unit.center 
+
+            # Draw a line from self's center to the target unit's center
+            unit.draw_as_active()
+            pygame.draw.line(screen, DARK_RED, self_center, target_center, 2)
     def render_hovered_state(self):
         padding = 2  # Adjust the padding size as needed
         font = pygame.font.Font(None, 20)
@@ -319,7 +330,7 @@ class Unit:
         # Draw the unit image
         screen.blit(warrior_img, warrior_img_rect)
 
-       
+     
 
     def draw_as_active(self):
         outline_rect = pygame.Rect(

@@ -1,7 +1,7 @@
 vytvořit bojovou jednotku      
     
 zabránit úzoku přes jednotky
-    vykreslit čáru od útočníka na nepřítele
+    za\bránit aby jakákoliv část ednotky byla v řece
 
     přidat útočnou animaci
         přidat pro ranged jednotky vykreslení projektilu
