@@ -17,6 +17,7 @@ class Player:
         self.max_scroll = 0
         self.tender_x = tender_x  # X position for the tender rectangle
         self.scroll_position = 0
+     
 
     def update_sorted_units(self):
         self.sorted_by_class_units = {}

@@ -265,6 +265,36 @@ class Unit:
         self.able_to_move = True
         self.remain_actions = self.base_actions
 
+    def render_hovered_state(self):
+        padding = 2  # Adjust the padding size as needed
+        font = pygame.font.Font(None, 20)
+        text_color = (255, 255, 255)  # White color
+
+        # Determine the width of the rectangle based on the longest text line
+        text_lines = [
+            f"Attacks: {self.remain_actions}",
+            f"Ammo: {self.ammo}",
+            f"Hp: {self.hp}"
+        ]
+        max_line_width = max(font.size(line)[0] for line in text_lines)
+        rect_width = max_line_width + 2 * padding
+
+        # Create a transparent background for the text with the adjusted width
+        text_surface = pygame.Surface((rect_width, 80), pygame.SRCALPHA)
+        pygame.draw.rect(text_surface, (0, 0, 0, 100), (0, 0, text_surface.get_width(), text_surface.get_height()))
+
+        # Render remaining attacks, ammo, and HP in the formatted rectangle
+        for i, line in enumerate(text_lines):
+            text_rendered = font.render(line, True, text_color)
+            text_surface.blit(text_rendered, (padding, i * 20 + padding))
+
+        # Position the rectangle below the unit
+        text_pos = (self.x, self.y + self.size + padding)
+
+        # Blit the formatted rectangle onto the screen
+        screen.blit(text_surface, text_pos)
+
+ 
     def render_on_screen(self):
         padding = 2  # Adjust the padding size as needed
 
@@ -289,14 +319,7 @@ class Unit:
         # Draw the unit image
         screen.blit(warrior_img, warrior_img_rect)
 
-        # Render remaining attacks and ammo below the unit
-        font = pygame.font.Font(None, 20)
-        text_color = (255, 255, 255)  # White color
-        # Adjust the tpext position with padding
-        text_pos = (self.x, self.y + self.size + padding)
-        text_surface = font.render(
-            f"Attacks: {self.remain_actions}   Ammo: {self.ammo} Hp: {self.hp}", True, text_color)
-        screen.blit(text_surface, text_pos)
+       
 
     def draw_as_active(self):
         outline_rect = pygame.Rect(

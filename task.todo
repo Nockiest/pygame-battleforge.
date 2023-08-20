@@ -1,8 +1,12 @@
 vytvořit bojovou jednotku      
-    zobrazit informace na hover
-        zobrazit munici životy útoky
-        zformátovat je
+    
+zabránit úzoku přes jednotky
+    vykreslit čáru od útočníka na nepřítele
+
     přidat útočnou animaci
+        přidat pro ranged jednotky vykreslení projektilu
+        přidat pro melee slashing animaci
+        přidat pro supports aura animaci
    
     přidat movement soundfile
     vykreslit přesný attack circle
@@ -15,7 +19,7 @@ vytvořit bojovou jednotku
         -zařídit aby vykreslil atttack circle
        
         opravit tu nepřesnost ve zvýraznování jednotek
-    
+    opravit jitter v movement propočtech
 musika
     najít 5 písniček
     
