@@ -7,10 +7,11 @@ from .template import Support
 from units.ranged.template import Ranged
 class Observer(Support):
     size = 20
+    cost = 500
     def __init__(self, x, y,  color):
        
         super().__init__(hp=1, attack_range=0,attack_resistance=0.05, base_actions=1,  base_movement=50,
-                         icon="observer.png", size=self.size, x=x, y=y,  color=color, cost=500)
+                         icon="observer.png", size=self.size, x=x, y=y,  color=color, cost=self.cost)
         
     def provide_attack_range(self, selected_unit):
         

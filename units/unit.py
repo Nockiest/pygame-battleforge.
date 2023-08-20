@@ -53,13 +53,13 @@ class Unit:
         point1 = shapely.geometry.Point(new_center_x, new_center_y)
         movement_polygon = shapely.geometry.Polygon(
             self.valid_movement_positions_edges)
-        
+
         # Check if the clicked position is a valid movement position
-        print(click_pos, point1.within(movement_polygon) )
+        print(click_pos, point1.within(movement_polygon))
         if point1.within(movement_polygon):
             self.x = new_center_x - self.size // 2
             self.y = new_center_y - self.size // 2
-            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+
         else:
             # Create a line between the click position and starting position
             movement_line = bresenham_line(
@@ -71,9 +71,10 @@ class Unit:
                 if point.within(movement_polygon):
                     self.x, self.y = pos[0] - \
                         self.size // 2, pos[1] - self.size // 2
-                    self.rect = pygame.Rect(
-                        self.x, self.y, self.size, self.size)
                     break
+        self.rect = pygame.Rect(
+            self.x, self.y, self.size, self.size)
+        self.center = (self.x + self.size//2, self.y+self.size//2)
 
     def new_point_interferes(self, living_units, point_x, point_y):
         # Create a new rectangle for the unit's position
@@ -131,18 +132,20 @@ class Unit:
 
             new_line_points = []
             for point in line_points:
-                other_units = [unit for unit in living_units if unit.color != self.color]
+                other_units = [
+                    unit for unit in living_units if unit.color != self.color]
                 if not self.new_point_interferes(other_units, point[0], point[1]):
                     new_line_points.append(point)
                 else:
                     break  # Stop adding points if interference is detected
             line_points = new_line_points
             self.valid_movement_positions.append(line_points)
-            
+
             if line_points:
-                self.valid_movement_positions_edges.append(line_points[len(line_points) - 1])
+                self.valid_movement_positions_edges.append(
+                    line_points[len(line_points) - 1])
         print("points", self.valid_movement_positions_edges[-1])
-  
+
     def draw_possible_movement_area(self, screen):
         # Find the common valid movement positions for all angles
         # print(self.valid_movement_positions)
@@ -158,23 +161,23 @@ class Unit:
 
     def get_attackable_units(self,  living_units):
         self.enemies_in_range = []
-        #for every living unit
+        # for every living unit
         for unit in living_units:
             if unit.color == self.color:
                 continue
-             
-            center_x, center_y = self.x, self.y    # nevím proč to nemám centrovat, abd to fungovalo
+
+            # nevím proč to nemám centrovat, abd to fungovalo
+        
+            center_x, center_y = self.center
             print(center_x, center_y, unit.start_turn_position)
-            enemy_center_x, enemy_center_y = unit.start_turn_position[0], unit.start_turn_position[1]
-            line_points = bresenham_line(
-                    center_x, center_y, enemy_center_x, enemy_center_y)
-            print( len(line_points), unit, unit.size//2)
-            if len(line_points) - unit.size// 2 < self.attack_range:
-                self.enemies_in_range.append(unit) 
+            enemy_center_x, enemy_center_y = unit.center
+            distance = math.sqrt((enemy_center_x - center_x)**2 + (enemy_center_y - center_y)**2)
+            print(distance, unit, unit.size//2, self.attack_range)
+            if distance - unit.size//2 < self.attack_range:
+                self.enemies_in_range.append(unit)
 
         print("in attack range are", self.enemies_in_range)
-    
- 
+
     def calculate_attack_circle(self, battelground, living_units):
         pass
 
@@ -206,12 +209,11 @@ class Unit:
                 del self.attack_cross_position
                 del self.attack_cross_time
 
-    def try_attack(self, click_pos, living_units):
-        for unit in self.enemies_in_range:
-            if unit.rect.collidepoint(click_pos):
-                return  ("UNIT ATTACKS", click_pos, unit,  )
+    def try_attack(self, click_pos, attacked_unit):
+        if attacked_unit in self.enemies_in_range:
+            # if attacked_unit.rect.collidepoint(click_pos):
+            return ("UNIT ATTACKS", click_pos, attacked_unit)
         return ("Attack not possible", click_pos, [])
-   
 
     def check_if_hit(self, base_hit_chance):
 
@@ -263,7 +265,7 @@ class Unit:
         self.able_to_move = True
         self.remain_actions = self.base_actions
 
-    def render_on_screen(self, screen):
+    def render_on_screen(self):
         padding = 2  # Adjust the padding size as needed
 
         warrior_img = pygame.image.load(f"img/{self.icon}")
@@ -290,13 +292,13 @@ class Unit:
         # Render remaining attacks and ammo below the unit
         font = pygame.font.Font(None, 20)
         text_color = (255, 255, 255)  # White color
-        # Adjust the text position with padding
+        # Adjust the tpext position with padding
         text_pos = (self.x, self.y + self.size + padding)
         text_surface = font.render(
             f"Attacks: {self.remain_actions}   Ammo: {self.ammo} Hp: {self.hp}", True, text_color)
         screen.blit(text_surface, text_pos)
 
-    def draw_as_active(self  ):
+    def draw_as_active(self):
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)
         pygame.draw.rect(screen,  BLACK, outline_rect, 2)

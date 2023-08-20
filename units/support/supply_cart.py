@@ -9,10 +9,11 @@ from units.ranged.template import Ranged
 
 class SupplyCart(Support):
     size = 30
+    cost = 500
     def __init__(self,   x, y,  color):
         
         super().__init__(hp=1, attack_range=50,attack_resistance=0.05, base_actions=1, base_movement=150,
-                         size=self.size, x=x, y=y, icon="supplycart.png", color=color, cost=500, custom_ammo=20)
+                         size=self.size, x=x, y=y, icon="supplycart.png", color=color, cost=self.cost, custom_ammo=20)
         self.size = 30
     def dispense_ammo(self, amount, living_units):
         

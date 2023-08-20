@@ -1,11 +1,9 @@
 vytvořit bojovou jednotku      
     zobrazit informace na hover
-        zobtazit munici životy útoky
+        zobrazit munici životy útoky
         zformátovat je
     přidat útočnou animaci
-     
-    
-     
+   
     přidat movement soundfile
     vykreslit přesný attack circle
    
@@ -17,7 +15,7 @@ vytvořit bojovou jednotku
         -zařídit aby vykreslil atttack circle
        
         opravit tu nepřesnost ve zvýraznování jednotek
-
+    
 musika
     najít 5 písniček
     
@@ -35,8 +33,8 @@ ui
     přidat ukliádání
     přidat načítání
     přidat start screen
-    opravit obrázek mušketýra    
-    zvýraznit jednotky co může enpřítel zasáhnout
+   
+    
     přidat úvodní nastavení hry
     zprovoznit start screen
         přidat nastavení
@@ -45,6 +43,7 @@ ui
     zprovozni endgame screen
         vytvořit newgame button
     vytvořit game_event/information window
+   
  ** = můj rozmar
 
  
