@@ -2,7 +2,7 @@ vytvořit bojovou jednotku
     
 zabránit úzoku přes jednotky
     za\bránit aby jakákoliv část ednotky byla v řece
-
+    zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
     přidat útočnou animaci
         přidat pro ranged jednotky vykreslení projektilu
         přidat pro melee slashing animaci

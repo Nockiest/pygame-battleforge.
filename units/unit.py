@@ -98,8 +98,13 @@ class Unit:
         self.valid_movement_positions_edges = []
         for angle in range(0, 360, 360 // num_samples):
             # Convert angle to radians
+
+            # create line from start to the edge of the screen
+            # get the costs of every pixel on the line
+            # find river or enemy unit at the first index
+
             radians = math.radians(angle)
-            current_line = []
+            line_points = []
             current_cost = 0
             base_chunk = WIDTH//2
             distance = base_chunk
@@ -112,7 +117,8 @@ class Unit:
                     center_x + distance * math.cos(radians), 0))
                 new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
                             distance * math.sin(radians), UPPER_BAR_HEIGHT))
-                # print(new_x, new_y)
+                 
+                
                 line_points = bresenham_line(
                     center_x, center_y, int(new_x), int(new_y))
                 line_pixel_colors = get_pixel_colors(
@@ -129,7 +135,52 @@ class Unit:
                 current_line = line_points
 
                 iteration *= 2
+            if current_cost < self.base_movement:
+                while current_cost < self.base_movement:
+                    new_x = min(WIDTH, max(
+                        len(line_points)  +1 * math.cos(radians), 0))
+                    new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
+                                len(line_points)    +1 * math.sin(radians), UPPER_BAR_HEIGHT))
 
+                    # line_points = bresenham_line(
+                    #     center_x, center_y, int(new_x), int(new_y))
+                    new_pixel_color = get_pixel_colors(
+                        [(int(new_x), int(new_y))], background_screen)
+                    pixel_cost = calculate_movement_cost([new_pixel_color])
+                    current_cost += movement_cost[-1][0]
+
+                    if current_cost >= self.base_movement:
+                        break
+            else:
+                while current_cost > self.base_movement and line_points:
+                    last_x, last_y = line_points[-1]
+                    last_pixel_color =  line_pixel_colors[-1]
+                    pixel_cost = calculate_movement_cost([last_pixel_color])
+                    current_cost -= pixel_cost[-1][0]
+                    line_points.pop()
+                    
+
+                   
+
+                    # Append pixels until total movement cost is at least one point from the base_movement
+                #     while current_cost > self.base_movement:
+                #         new_point = line_points.pop()
+                #         line_pixel_colors = get_pixel_colors(
+                #             [new_point], background_screen)
+                #         movement_cost = calculate_movement_cost(line_pixel_colors)
+                #         current_cost = movement_cost[0][0]
+                    
+                #     # Round up the remaining movement cost to the base_movement
+                #     distance += (self.base_movement - current_cost) / math.hypot(new_x - center_x, new_y - center_y)
+                #     current_cost = self.base_movement
+                # else:
+                #     # Increment distance and iteration for next loop
+                #     distance += base_chunk // iteration
+                #     iteration *= 2
+
+                current_line = line_points
+
+            line_points = line_points[:-self.size//2]
             new_line_points = []
             for point in line_points:
                 other_units = [
@@ -144,7 +195,8 @@ class Unit:
             if line_points:
                 self.valid_movement_positions_edges.append(
                     line_points[len(line_points) - 1])
-        print("points", self.valid_movement_positions_edges[-1])
+        if self.valid_movement_positions_edges:
+         print("points", self.valid_movement_positions_edges[-1])
 
     def draw_possible_movement_area(self, screen):
         # Find the common valid movement positions for all angles
