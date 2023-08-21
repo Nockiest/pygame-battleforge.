@@ -31,3 +31,8 @@ class SupplyCart(Support):
                 unit.ammo += amount
                 self.ammo -= amount
                 print(f"Dispensing {amount} ammo. Remaining ammo: {self.ammo} to {unit}vv")
+
+    def reset_for_next_turn(self, living_units):
+        super().reset_for_next_turn(living_units)
+
+        self.dispense_ammo(1, living_units)

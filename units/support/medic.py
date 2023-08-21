@@ -25,3 +25,10 @@ class Medic(Support):
                     distance = get_two_units_center_distance(self,unit)
                     if distance <= self.base_movement and unit.base_hp > unit.hp:
                         unit.hp += 1  # Heal the target unit by 1 HP
+
+
+    def reset_for_next_turn(self, living_units):
+        super().reset_for_next_turn(living_units)
+
+        self.heal(  living_units)
+

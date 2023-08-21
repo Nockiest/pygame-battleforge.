@@ -34,7 +34,7 @@ class Game:
         self.game_won = False
         self.lets_continue = True
         self.living_units = []
-        self.all_units = pygame.sprite.Group()
+ 
         self.sorted_living_units = {}
         self.unit_to_be_placed = None
         self.red_player = Player(RED, 0) # when you change the positions here you have to change get_pixel_color function
@@ -43,6 +43,8 @@ class Game:
         self.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
         self.button_bar = ButtonBar(self.enter_buy_mode)
         self.cur_player = 0
+        self.rendered_animation = None
+        self.start_time = None
         self.unit_to_be_placed = None
         self.hovered_unit = None
         self.hovered_button = None
@@ -59,14 +61,17 @@ class Game:
                 Canon,
                 SupplyCart,
                 Canon,
-                Canon]
-            # Add more unit configurations as needed
+                Canon]  
         ]
         self.place_starting_units()
         self.next_turn_button = Button(
             "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn)
         self.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                         HEIGHT//2-50, 100, 100, self.start_game)
+        screen.fill(GREEN)
+        for unit in self.living_units:
+            if unit.color == self.players[self.cur_player].color:
+              unit.get_units_movement_area(self.living_units)
         # for i, player in enumerate(self.players):
         #     player.place_starting_units(self.living_units, self.unit_params_list[i])
 
@@ -95,12 +100,25 @@ class Game:
         self.draw_ui(background_screen)
 
         clock.tick(fps)
+    
+    def render_animation(self):
+        animation_duration = 50
+        if self.start_time == None:
+            self.start_time =  pygame.time.get_ticks()
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - self.start_time
+        current_frame = elapsed_time // animation_duration
+
+        if current_frame < len(self.rendered_animation):
+                frame = self.rendered_animation[current_frame]
+                screen.blit(frame, (100, 100))
+        else:
+            self.rendered_animation = None
 
     def handle_game_running_state(self):
         def handle_left_mouse_clk(click_pos):
             global all_buttons
             # Check if any button in the button bar is clicked
-
             for button in all_buttons:
 
                 if button.rect.collidepoint(click_pos):
@@ -109,13 +127,10 @@ class Game:
                     return
             if self.unit_placement_mode:
                 self.buy_unit(click_pos)
-            # elif self.selected_for_movement_unit == None:
-            #     self.select_unit(click_pos)
             else:
                 self.select_unit(click_pos)
 
         def handle_right_mouse_clk():
-            # global all_buttons
             for button in all_buttons:
 
                 if button.rect.collidepoint(event.pos):
@@ -125,8 +140,7 @@ class Game:
                 self.process_attack(
                     self.selected_attacking_unit, event.pos)
             else:
-                # self.select_unit(event.pos)
-                self.activate_attack_mode(event.pos)
+                self.activate_attack_mode(event.pos, self.living_units)
 
         def handle_mouse_motion():
 
@@ -186,6 +200,8 @@ class Game:
                 # self.selected_for_movement_unit.draw_as_active(screen)
                 self.selected_for_movement_unit.draw_possible_movement_area(
                     screen)
+                if hasattr(self.selected_for_movement_unit, 'attack_cross_position'):
+                    self.selected_for_movement_unit.render_attack_cross(screen)
             elif unit == self.selected_attacking_unit:
                 self.selected_attacking_unit.draw_as_active()
            
@@ -194,11 +210,7 @@ class Game:
             if unit == self.hovered_unit:
                 unit.render_hovered_state() 
         if self.selected_attacking_unit != None:
-                self.selected_attacking_unit.highlight_attackable_units()
-
-
-        if hasattr(self.selected_for_movement_unit, 'attack_cross_position'):
-            self.selected_for_movement_unit.render_attack_cross(screen)
+                self.selected_attacking_unit.highlight_attackable_units() 
         if self.selected_attacking_unit:
             attack_range_provided = False
             for unit in self.living_units:
@@ -209,12 +221,17 @@ class Game:
             if attack_range_provided is False:
                 self.selected_attacking_unit.attack_range_modifiers["in_observer_range"] = 0
 
-            self.selected_attacking_unit.render_attack_circle(screen)
+            self.selected_attacking_unit.render_attack_circle( )
         if self.unit_placement_mode:
 
             self.players[self.cur_player].show_unit_to_be_placed(
                 (self.unit_to_be_placed, 0, 0))
-
+       
+        if self.rendered_animation: #######################xxxxxxx
+            self.render_animation()  ######################
+      
+      
+      
         text = my_font.render(
             "game" + (" ended  " if self.game_won else "  is running "), True, (255, 255, 255))
         text_rect = text.get_rect(center=(WIDTH // 2, 10))
@@ -238,7 +255,6 @@ class Game:
         pygame.display.update(self)
 
     def start_game(self):
-
         print("click")
         self.game_state = "game is running"
 
@@ -252,24 +268,22 @@ class Game:
         loading_message = default_font.render(
             "Loading Next Turn...", True, (255, 255, 255))
         screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))
+        for unit in self.living_units:
+            unit.render_on_screen( )
+        pygame.display.update()
 
-        pygame.display.flip()  # Update the screen
         for player in self.players:
             player.update_sorted_units()
          
         for unit in self.living_units:
-            unit.center = unit.start_turn_position
-            unit.reset_for_next_turn()
-            # unit.render_on_screen( )
-
-            if isinstance(unit, SupplyCart):
-                unit.dispense_ammo(1, self.living_units)
-
-            if isinstance(unit, Medic):
-                unit.heal(self.living_units)
+            # unit.center = unit.start_turn_position
+            unit.reset_for_next_turn(self.living_units)
+            unit.render_on_screen( )
 
             if unit.color == self.players[self.cur_player].color:
                 unit.get_units_movement_area(self.living_units)
+            pygame.display.update()
+
 
         for depo in self.battle_ground.supply_depots:
             depo.dispense_ammo(self.living_units)
@@ -284,6 +298,9 @@ class Game:
             self.selected_attacking_unit.able_to_move = False
 
     def deselect_unit(self):
+        if self.selected_for_movement_unit:
+            index =self.living_units.index( self.selected_for_movement_unit)
+            print( self.selected_for_movement_unit.center, self.living_units[index].center  )
         self.selected_for_movement_unit = None
         # Set render_units_attack_screen to False
         self.selected_attacking_unit = None
@@ -311,7 +328,7 @@ class Game:
             self.selected_attacking_unit = None
             return
 
-    def activate_attack_mode(self, click_pos):
+    def activate_attack_mode(self, click_pos, living_units):
         # for unit in self.living_units:
         if not self.hovered_unit:
             return
@@ -327,6 +344,9 @@ class Game:
 
             self.deselect_unit()
             self.selected_attacking_unit = self.hovered_unit
+            for unit in self.living_units:
+              print(unit.center, type(unit), "x")
+
             self.selected_attacking_unit.get_attackable_units(
                 self.living_units)
             print("attack mode activated")
@@ -336,6 +356,9 @@ class Game:
             attacked_pos, self.hovered_unit)
         print(attack_result)
         if attack_result[0] == "UNIT ATTACKS":
+            if isinstance(attacker, Melee):
+             self.rendered_animation = attacker.load_attack_animation()
+             print(self.rendered_animation)
             attack_pos = attack_result[1]
             attacked_enemy = attack_result[2]
             attacker.attack_square(attacked_pos,)
@@ -404,16 +427,20 @@ class Game:
         self.next_turn_button.draw(screen)
 
     def place_starting_units(self):
-        self.blue_player.create_starting_unit(
-            (Musketeer, 0, 100), self.living_units)
+        # self.blue_player.create_starting_unit(
+        #     (Musketeer, 0, 100), self.living_units)
         self.blue_player.create_starting_unit(
             (Musketeer, 200, 200), self.living_units)
         self.red_player.create_starting_unit(
-            (Canon, 250, 250), self.living_units)
+            (Pikeman, 175, 175), self.living_units)
+        # self.red_player.create_starting_unit(
+        #     (Canon, 250, 250), self.living_units)
         self.red_player.create_starting_unit(
             (Canon, 150,150), self.living_units)
-        self.red_player.create_starting_unit(
-            (Shield, 400, 300), self.living_units)
+        # self.red_player.create_starting_unit(
+        #     (Shield, 400, 300), self.living_units)
+        # self.blue_player.create_starting_unit(
+        #     (Medic, 125, 160), self.living_units)
         self.blue_player.create_starting_unit(
             (Medic, 500, 400), self.living_units)
         self.blue_player.create_starting_unit(
@@ -422,14 +449,14 @@ class Game:
             (Commander, 500, 70), self.living_units)
         self.red_player.create_starting_unit(
             (Pikeman, 700, 100), self.living_units)
-        self.blue_player.create_starting_unit(
-            (SupplyCart, 800, 300), self.living_units)
-        self.blue_player.create_starting_unit(
-            (Observer, 200, 150), self.living_units)
+        # self.blue_player.create_starting_unit(
+        #     (SupplyCart, 300, 300), self.living_units)
+        # self.blue_player.create_starting_unit(
+        #     (Observer, 200, 150), self.living_units)
         self.blue_player.create_starting_unit(
             (Observer, 250, 150), self.living_units)
-        self.blue_player.create_starting_unit(
-            (Knight, 50, 500), self.living_units)
+        # self.blue_player.create_starting_unit(
+        #     (Knight, 50, 500), self.living_units)
         # napsat funkci která je položí automaticky
 
 

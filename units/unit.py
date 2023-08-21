@@ -25,7 +25,7 @@ class Unit:
         self.base_hp = hp
         self.attack_range = attack_range
         self.attack_range_modifiers = {"base_modifier": 1}
-        self.remain_actions = 0  # base_actions
+        self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
         self.atttack_resistance = attack_resistance
@@ -55,7 +55,7 @@ class Unit:
             self.valid_movement_positions_edges)
 
         # Check if the clicked position is a valid movement position
-        print(click_pos, point1.within(movement_polygon))
+       
         if point1.within(movement_polygon):
             self.x = new_center_x - self.size // 2
             self.y = new_center_y - self.size // 2
@@ -72,9 +72,20 @@ class Unit:
                     self.x, self.y = pos[0] - \
                         self.size // 2, pos[1] - self.size // 2
                     break
+
+        # Update the position of the unit in the living_units list
+        index = living_units.index(self)
+         
+
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
-        self.center = (self.x + self.size//2, self.y+self.size//2)
+        self.center = (self.x + self.size//2, self.y + self.size//2)
+        living_units[index].x = self.x
+        living_units[index].y = self.y
+        living_units[index].size = self.size
+        living_units[index].rect = self.rect
+
+
 
     def new_point_interferes(self, living_units, point_x, point_y):
         # Create a new rectangle for the unit's position
@@ -158,27 +169,6 @@ class Unit:
                     pixel_cost = calculate_movement_cost([last_pixel_color])
                     current_cost -= pixel_cost[-1][0]
                     line_points.pop()
-                    
-
-                   
-
-                    # Append pixels until total movement cost is at least one point from the base_movement
-                #     while current_cost > self.base_movement:
-                #         new_point = line_points.pop()
-                #         line_pixel_colors = get_pixel_colors(
-                #             [new_point], background_screen)
-                #         movement_cost = calculate_movement_cost(line_pixel_colors)
-                #         current_cost = movement_cost[0][0]
-                    
-                #     # Round up the remaining movement cost to the base_movement
-                #     distance += (self.base_movement - current_cost) / math.hypot(new_x - center_x, new_y - center_y)
-                #     current_cost = self.base_movement
-                # else:
-                #     # Increment distance and iteration for next loop
-                #     distance += base_chunk // iteration
-                #     iteration *= 2
-
-                current_line = line_points
 
             line_points = line_points[:-self.size//2]
             new_line_points = []
@@ -199,8 +189,6 @@ class Unit:
          print("points", self.valid_movement_positions_edges[-1])
 
     def draw_possible_movement_area(self, screen):
-        # Find the common valid movement positions for all angles
-        # print(self.valid_movement_positions)
         farthest_points = []
         for angle in self.valid_movement_positions:
             if len(angle) >= 2:
@@ -211,7 +199,7 @@ class Unit:
         if len(farthest_points) > 1:
             pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
 
-    def get_attackable_units(self,  living_units):
+    def get_attackable_units(self, living_units):
         self.enemies_in_range = []
         # for every living unit
         for unit in living_units:
@@ -221,8 +209,9 @@ class Unit:
             # nevím proč to nemám centrovat, abd to fungovalo
         
             center_x, center_y = self.center
-            print(center_x, center_y, unit.start_turn_position)
+          
             enemy_center_x, enemy_center_y = unit.center
+            print(   enemy_center_x, enemy_center_y , center_x, center_y, unit.start_turn_position)
             distance = math.sqrt((enemy_center_x - center_x)**2 + (enemy_center_y - center_y)**2)
             print(distance, unit, unit.size//2, self.attack_range)
             if distance - unit.size//2 < self.attack_range:
@@ -236,7 +225,7 @@ class Unit:
     def get_attack_circle(self, living_units):
         pass
 
-    def render_attack_circle(self, screen):
+    def render_attack_circle(self ):
 
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
@@ -251,7 +240,7 @@ class Unit:
         if self.ammo != None:
             self.ammo -= 1
 
-    def render_attack_cross(self, screen):
+    def render_attack_cross(self ):
         if hasattr(self, 'attack_cross_position') and hasattr(self, 'attack_cross_time'):
             time_elapsed = pygame.time.get_ticks() - self.attack_cross_time
             # Render the cross for 1 second (1000 milliseconds)
@@ -309,7 +298,7 @@ class Unit:
 
         print("Unit is dead")
 
-    def reset_for_next_turn(self):
+    def reset_for_next_turn(self, living_units):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
 
@@ -318,16 +307,26 @@ class Unit:
         self.remain_actions = self.base_actions
 
     def highlight_attackable_units(self):
-        
-        print(self.enemies_in_range)
         for unit in self.enemies_in_range:
             # Calculate the center coordinates of self and the target unit
-            self_center =  self.center 
-            target_center =  unit.center 
+            self_center = self.center
+            target_center = unit.center
+
+            # Calculate the midpoint of the line
+            midpoint = ((self_center[0] + target_center[0]) // 2, (self_center[1] + target_center[1]) // 2)
+
+            # Calculate the distance between self and the target unit
+            distance = math.sqrt((self_center[0] - target_center[0]) ** 2 + (self_center[1] - target_center[1]) ** 2)
 
             # Draw a line from self's center to the target unit's center
             unit.draw_as_active()
             pygame.draw.line(screen, DARK_RED, self_center, target_center, 2)
+
+            # Render the distance as text at the midpoint
+            font = pygame.font.Font(None, 20)
+            text_surface = font.render(f"{int(distance)}/{self.attack_range} units", True, WHITE)
+            text_rect = text_surface.get_rect(center=midpoint)
+            screen.blit(text_surface, text_rect)
     def render_hovered_state(self):
         padding = 2  # Adjust the padding size as needed
         font = pygame.font.Font(None, 20)

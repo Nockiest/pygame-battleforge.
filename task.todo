@@ -1,7 +1,7 @@
 vytvořit bojovou jednotku      
     
 zabránit úzoku přes jednotky
-    za\bránit aby jakákoliv část ednotky byla v řece
+    
     zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
     přidat útočnou animaci
         přidat pro ranged jednotky vykreslení projektilu
@@ -9,7 +9,7 @@ zabránit úzoku přes jednotky
         přidat pro supports aura animaci
    
     přidat movement soundfile
-    vykreslit přesný attack circle
+   
    
     --dát kanonu area damage
     **dovolit kavalerii útočit po zabití
@@ -18,27 +18,22 @@ zabránit úzoku přes jednotky
         zapnout ho po druhém kliku na jednotku nebo right clicku
         -zařídit aby vykreslil atttack circle
        
-        opravit tu nepřesnost ve zvýraznování jednotek
-    opravit jitter v movement propočtech
+        
+     
 musika
     najít 5 písniček
     
 prostředí
     **vytvořit scrolling
     **přidat zdi
-  
         
     přidat mosty
         opravtz angle
 
-    
-
 ui
     přidat ukliádání
     přidat načítání
-    přidat start screen
-   
-    
+    přidat start screen   
     přidat úvodní nastavení hry
     zprovoznit start screen
         přidat nastavení
@@ -53,6 +48,8 @@ ui
  
 outreach
     najít stránku, kde mohu sdílet svůj game dev s ostatními
-    oznámit na medium vývoj mé hry
-    zjistit jak zkompliovat pygame
+    vy dat druhý článek
+        2.par
+        3.par
+        4.par
     zjisti jak vydat demo verzi
