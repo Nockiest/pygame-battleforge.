@@ -6,7 +6,7 @@ from units.unit import Unit
 from utils.utils import *
 from config import *
 from game_state import *
- 
+from animations.slash_animation import SlashAnimation
 class Melee(Unit):
     def __init__(self, hp, attack_range,attack_resistance,   base_actions,  base_movement, size, x, y, icon, color, cost):
         super().__init__(hp, attack_range,attack_resistance, base_actions,
@@ -24,6 +24,7 @@ class Melee(Unit):
 
             # Get the pixel colors along the line
             line_pixel_colors = get_pixel_colors(line_points, background_screen)
+            self.running_animations.append(SlashAnimation(self.x,self.y,  100))
             # self.play_attack_animation( self.x, self.y)
             # Check if FORREST_GREEN is present in pixel colors
             if RIVER_BLUE   in line_pixel_colors:
@@ -59,29 +60,29 @@ class Melee(Unit):
                 images.append(img)
         return images
     
-    def play_attack_animation(self, x, y):
-        animation_duration = 50  # Duration of each frame in milliseconds
-        start_time = pygame.time.get_ticks()
-        current_frame = 0
+    # def play_attack_animation(self, x, y):
+    #     animation_duration = 50  # Duration of each frame in milliseconds
+    #     start_time = pygame.time.get_ticks()
+    #     current_frame = 0
         
-        current_frame = 0
+    #     current_frame = 0
 
-        while current_frame < len(self.slash_animation):
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+    #     while current_frame < len(self.slash_animation):
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 pygame.quit()
+    #                 sys.exit()
 
-            current_time = pygame.time.get_ticks()
-            elapsed_time = current_time - start_time
-            current_frame = elapsed_time // animation_duration
+    #         current_time = pygame.time.get_ticks()
+    #         elapsed_time = current_time - start_time
+    #         current_frame = elapsed_time // animation_duration
 
-            # screen.fill((0, 0, 0))  # Clear the screen
+    #         # screen.fill((0, 0, 0))  # Clear the screen
 
-            if current_frame < len(self.slash_animation):
-                frame = self.slash_animation[current_frame]
-                screen.blit(frame, (x, y))
+    #         if current_frame < len(self.slash_animation):
+    #             frame = self.slash_animation[current_frame]
+    #             screen.blit(frame, (x, y))
             
 
-            pygame.display.flip()
-            clock.tick(60)  # Frame rate
+    #         pygame.display.flip()
+    #         clock.tick(60)  # Frame rate

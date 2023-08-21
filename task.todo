@@ -5,7 +5,6 @@ zabránit úzoku přes jednotky
     zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
     přidat útočnou animaci
         přidat pro ranged jednotky vykreslení projektilu
-        přidat pro melee slashing animaci
         přidat pro supports aura animaci
    
     přidat movement soundfile
@@ -18,6 +17,7 @@ zabránit úzoku přes jednotky
         zapnout ho po druhém kliku na jednotku nebo right clicku
         -zařídit aby vykreslil atttack circle
        
+    v main loopu přesunout obsah ve for loop unit in units do samotných objektů
         
      
 musika

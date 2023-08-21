@@ -210,14 +210,17 @@ class Game:
             if unit == self.hovered_unit:
                 unit.render_hovered_state() 
 
-            # if unit.rendered_animation != None:
-            #     unit.play_attack_animation(unit.x,unit.y)
+            for animation in unit.running_animations:
+                res = animation.render()
+                print(res)
+                if res == "ENDED":
+                    unit.running_animations.remove(animation)
+ 
         if self.selected_attacking_unit != None:
                 self.selected_attacking_unit.highlight_attackable_units() 
         if self.selected_attacking_unit:
             attack_range_provided = False
             for unit in self.living_units:
-
                 if isinstance(unit, Observer) and unit.color == self.selected_attacking_unit.color:
                     attack_range_provided = unit.provide_attack_range(
                         self.selected_for_movement_unit)

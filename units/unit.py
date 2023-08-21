@@ -47,6 +47,8 @@ class Unit:
         self.attack_circle = []
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
+        
+        self.running_animations = []
 
         
 
