@@ -43,7 +43,7 @@ class Game:
         self.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
         self.button_bar = ButtonBar(self.enter_buy_mode)
         self.cur_player = 0
-        self.rendered_animation = None
+        # self.rendered_animation = None
         self.start_time = None
         self.unit_to_be_placed = None
         self.hovered_unit = None
@@ -101,19 +101,19 @@ class Game:
 
         clock.tick(fps)
     
-    def render_animation(self):
-        animation_duration = 50
-        if self.start_time == None:
-            self.start_time =  pygame.time.get_ticks()
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - self.start_time
-        current_frame = elapsed_time // animation_duration
+    # def render_animation(self):
+    #     animation_duration = 50
+    #     if self.start_time == None:
+    #         self.start_time =  pygame.time.get_ticks()
+    #     current_time = pygame.time.get_ticks()
+    #     elapsed_time = current_time - self.start_time
+    #     current_frame = elapsed_time // animation_duration
 
-        if current_frame < len(self.rendered_animation):
-                frame = self.rendered_animation[current_frame]
-                screen.blit(frame, (100, 100))
-        else:
-            self.rendered_animation = None
+    #     if current_frame < len(self.rendered_animation):
+    #             frame = self.rendered_animation[current_frame]
+    #             screen.blit(frame, (100, 100))
+    #     else:
+    #         self.rendered_animation = None
 
     def handle_game_running_state(self):
         def handle_left_mouse_clk(click_pos):
@@ -201,7 +201,7 @@ class Game:
                 self.selected_for_movement_unit.draw_possible_movement_area(
                     screen)
                 if hasattr(self.selected_for_movement_unit, 'attack_cross_position'):
-                    self.selected_for_movement_unit.render_attack_cross(screen)
+                    self.selected_for_movement_unit.render_attack_cross( )
             elif unit == self.selected_attacking_unit:
                 self.selected_attacking_unit.draw_as_active()
            
@@ -209,6 +209,9 @@ class Game:
                 #     unit.draw_as_active()
             if unit == self.hovered_unit:
                 unit.render_hovered_state() 
+
+            # if unit.rendered_animation != None:
+            #     unit.play_attack_animation(unit.x,unit.y)
         if self.selected_attacking_unit != None:
                 self.selected_attacking_unit.highlight_attackable_units() 
         if self.selected_attacking_unit:
@@ -227,8 +230,7 @@ class Game:
             self.players[self.cur_player].show_unit_to_be_placed(
                 (self.unit_to_be_placed, 0, 0))
        
-        if self.rendered_animation: #######################xxxxxxx
-            self.render_animation()  ######################
+        
       
       
       
@@ -356,9 +358,9 @@ class Game:
             attacked_pos, self.hovered_unit)
         print(attack_result)
         if attack_result[0] == "UNIT ATTACKS":
-            if isinstance(attacker, Melee):
-             self.rendered_animation = attacker.load_attack_animation()
-             print(self.rendered_animation)
+            # if isinstance(attacker, Melee):
+            # #  self.rendered_animation = attacker.load_attack_animation()
+             
             attack_pos = attack_result[1]
             attacked_enemy = attack_result[2]
             attacker.attack_square(attacked_pos,)

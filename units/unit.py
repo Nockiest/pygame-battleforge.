@@ -48,6 +48,9 @@ class Unit:
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
 
+        self.rendered_animation = None
+        self.animation_start_time = None
+
     def move_in_game_field(self, click_pos, living_units):
         new_center_x, new_center_y = click_pos
         point1 = shapely.geometry.Point(new_center_x, new_center_y)
