@@ -43,7 +43,7 @@ class Game:
         self.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
         self.button_bar = ButtonBar(self.enter_buy_mode)
         self.cur_player = 0
-        # self.rendered_animation = None
+        
         self.start_time = None
         self.unit_to_be_placed = None
         self.hovered_unit = None

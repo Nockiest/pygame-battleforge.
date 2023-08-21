@@ -24,7 +24,7 @@ class Melee(Unit):
 
             # Get the pixel colors along the line
             line_pixel_colors = get_pixel_colors(line_points, background_screen)
-            self.rendered_animation = self.load_attack_animation( )
+            # self.play_attack_animation( self.x, self.y)
             # Check if FORREST_GREEN is present in pixel colors
             if RIVER_BLUE   in line_pixel_colors:
                 print("Ranged unit can't attack through forests")
@@ -60,26 +60,28 @@ class Melee(Unit):
         return images
     
     def play_attack_animation(self, x, y):
-        if self.animation_start_time == None:
-            self.animation_start_time = pygame.time.get_ticks()
-            
         animation_duration = 50  # Duration of each frame in milliseconds
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - self.animation_start_time
-        current_frame = elapsed_time // animation_duration
-
-        # screen.fill((0, 0, 0))  # Clear the screen
-
-        if current_frame < len(self.slash_animation):
-            print(current_frame)
-            frame = self.slash_animation[current_frame]
-            screen.blit(frame, (x, y))
-        else:
-            self.rendered_animation = None
-            self.animation_start_time = None
-            print("rendering animation", self.rendered_animation, "animation start", self.animation_start_time, "both should be false")
-
-        pygame.display.flip()
+        start_time = pygame.time.get_ticks()
+        current_frame = 0
         
+        current_frame = 0
 
-           
+        while current_frame < len(self.slash_animation):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - start_time
+            current_frame = elapsed_time // animation_duration
+
+            # screen.fill((0, 0, 0))  # Clear the screen
+
+            if current_frame < len(self.slash_animation):
+                frame = self.slash_animation[current_frame]
+                screen.blit(frame, (x, y))
+            
+
+            pygame.display.flip()
+            clock.tick(60)  # Frame rate
