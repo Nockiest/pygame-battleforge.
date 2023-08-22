@@ -1,6 +1,6 @@
 import math
 from config import *
-
+from global_variables import *
 
 def get_two_units_center_distance(unit1, unit2):
     # Calculate the distance between the center points of the units, considering their sizes
@@ -190,8 +190,10 @@ def get_pixel_colors(points, surface):
 def calculate_movement_cost(color_list):
     movement_costs = []
     total_cost = 0
+
     
     for i, color in enumerate(color_list):
+        # print(color)
         if color == FORREST_GREEN:
             total_cost += 2
         elif color == ROAD_GRAY:
@@ -213,7 +215,7 @@ def calculate_movement_cost(color_list):
     
     return movement_costs
 
-def update_sorted_units(  living_units) :
+def update_sorted_units(   ) :
         global sorted_living_units
         sorted_living_units = {}
         for unit in living_units:

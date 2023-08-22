@@ -4,6 +4,7 @@ from utils.utils import *
 import math
 import random
 import shapely.geometry
+from global_variables import *
 # from game_state import *
 
 
@@ -52,7 +53,7 @@ class Unit:
 
         
 
-    def move_in_game_field(self, click_pos, living_units):
+    def move_in_game_field(self, click_pos):
         new_center_x, new_center_y = click_pos
         point1 = shapely.geometry.Point(new_center_x, new_center_y)
         movement_polygon = shapely.geometry.Polygon(
@@ -84,14 +85,14 @@ class Unit:
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
         self.center = (self.x + self.size//2, self.y + self.size//2)
-        living_units[index].x = self.x
-        living_units[index].y = self.y
-        living_units[index].size = self.size
-        living_units[index].rect = self.rect
+        # living_units[index].x = self.x
+        # living_units[index].y = self.y
+        # living_units[index].size = self.size
+        # living_units[index].rect = self.rect
 
 
 
-    def new_point_interferes(self, living_units, point_x, point_y):
+    def new_point_interferes(self,  point_x, point_y, living_units=living_units):
         # Create a new rectangle for the unit's position
         new_rect = pygame.Rect(point_x - self.size // 2,
                                point_y - self.size // 2, self.size, self.size)
@@ -104,9 +105,7 @@ class Unit:
                 return True
         return False
 
-    def get_units_movement_area(self, living_units):
-
-        # Number of samples (angles) around the unit's center
+    def get_units_movement_area(self):
         num_samples = 360
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
@@ -140,7 +139,7 @@ class Unit:
                     line_points, background_screen)
                 movement_cost = calculate_movement_cost(line_pixel_colors)
                 current_cost = movement_cost[-1][0]
-
+               
                 if current_cost > self.base_movement:
                     # print(distance, iteration, "decrementing",  512//iteration)
                     distance -= base_chunk//iteration
@@ -156,9 +155,6 @@ class Unit:
                         len(line_points)  +1 * math.cos(radians), 0))
                     new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
                                 len(line_points)    +1 * math.sin(radians), UPPER_BAR_HEIGHT))
-
-                    # line_points = bresenham_line(
-                    #     center_x, center_y, int(new_x), int(new_y))
                     new_pixel_color = get_pixel_colors(
                         [(int(new_x), int(new_y))], background_screen)
                     pixel_cost = calculate_movement_cost([new_pixel_color])
@@ -179,7 +175,7 @@ class Unit:
             for point in line_points:
                 other_units = [
                     unit for unit in living_units if unit.color != self.color]
-                if not self.new_point_interferes(other_units, point[0], point[1]):
+                if not self.new_point_interferes(  point[0], point[1], other_units,):
                     new_line_points.append(point)
                 else:
                     break  # Stop adding points if interference is detected
@@ -203,7 +199,7 @@ class Unit:
         if len(farthest_points) > 1:
             pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
 
-    def get_attackable_units(self, living_units):
+    def get_attackable_units(self):
         self.enemies_in_range = []
         # for every living unit
         for unit in living_units:
@@ -223,10 +219,10 @@ class Unit:
 
         print("in attack range are", self.enemies_in_range)
 
-    def calculate_attack_circle(self, battelground, living_units):
+    def calculate_attack_circle(self, battelground):
         pass
 
-    def get_attack_circle(self, living_units):
+    def get_attack_circle(self):
         pass
 
     def render_attack_circle(self ):
@@ -260,10 +256,10 @@ class Unit:
             return ("UNIT ATTACKS", click_pos, attacked_unit)
         return ("Attack not possible", click_pos, [])
 
-    def check_if_hit(self, base_hit_chance):
+    def check_if_hit(self):
 
         # i will augment base_hit_chance by some variables
-        final_hit_probability = base_hit_chance - self.atttack_resistance
+        final_hit_probability = 1 - self.atttack_resistance
         print(final_hit_probability, "final hit probability")
         # Generate a random float between 0 and 1
         hit_treshold_value = random.random()
@@ -287,7 +283,7 @@ class Unit:
         # Check if the target_building is within the capture range of the unit
         # Reduce the capture progress of the building until it is captured
 
-    def remove_from_game(self, living_units, player):
+    def remove_from_game(self, player):
         # Remove the unit from the 'units' list of the player
 
         print(player.color, self.color, player.units, self, "removing unit")
@@ -302,11 +298,11 @@ class Unit:
 
         print("Unit is dead")
 
-    def reset_for_next_turn(self, living_units):
+    def reset_for_next_turn(self):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
 
-        self.remain_actions = 1
+        
         self.able_to_move = True
         self.remain_actions = self.base_actions
 
@@ -390,7 +386,8 @@ class Unit:
             if res == "ENDED":
                 self.running_animations.remove(animation)
      
-
+    def get_boost_for_destroying_unit(self):
+        print("unit killed an enemy, and could get a boost now")
     def draw_as_active(self):
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)

@@ -7,13 +7,14 @@ from utils.utils import *
 from config import *
 from game_state import *
 from animations.slash_animation import SlashAnimation
+from global_variables import *
 class Melee(Unit):
     def __init__(self, hp, attack_range,attack_resistance,   base_actions,  base_movement, size, x, y, icon, color, cost):
         super().__init__(hp, attack_range,attack_resistance, base_actions,
                          base_movement, size, x, y, None, icon, color, cost)
         self.slash_animation = self.load_attack_animation()
-    def try_attack(self, click_pos, living_units   ):
-        res = super().try_attack(click_pos, living_units)
+    def try_attack(self, click_pos, attacked_unit    ):
+        res = super().try_attack(click_pos, attacked_unit   )
 
         if res[0] == "UNIT ATTACKS":
             # Calculate the line between unit's center and click position
@@ -33,8 +34,8 @@ class Melee(Unit):
 
         return res
     
-    def get_attackable_units(self,  living_units):
-        super().get_attackable_units(living_units)
+    def get_attackable_units(self   ):
+        super().get_attackable_units( )
         units_to_remove = []  # Create a list to store units to be removed
 
         for unit in self.enemies_in_range:

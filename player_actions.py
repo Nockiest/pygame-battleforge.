@@ -5,6 +5,7 @@ from config import *
 from utils.image_utils import render_image
 from utils.utils import *
 from units.support.observer import Observer
+from global_variables import *
 SCROLL_SPEED = 5
 
 
@@ -26,7 +27,7 @@ class Player:
             self.sorted_by_class_units[unit_type] = self.sorted_by_class_units.get(
                 unit_type, 0) + 1
 
-    def create_unit(self, unit_params, living_units):
+    def create_unit(self, unit_params  ):
         # Create the unit object
         unit_class, x, y = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
@@ -43,11 +44,11 @@ class Player:
             del unit  # Remove the unit from memory since it won't be added to the lists
             return None
         self.update_sorted_units()
-        update_sorted_units(living_units)
+        update_sorted_units( )
 
         return unit
 
-    def create_starting_unit(self, unit_params, living_units):
+    def create_starting_unit(self, unit_params   ):
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
         living_units.append(unit)
@@ -143,7 +144,7 @@ class Player:
     #     game = True
     #     return game
 
-    def remove_from_game(self, living_units, unit):
+    def remove_from_game(self,  unit):
         # Find the unit in the living_units list and remove it
         if unit in living_units:
             living_units.remove(unit)

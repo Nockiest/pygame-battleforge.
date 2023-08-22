@@ -39,16 +39,12 @@ DARK_RED = (139, 0, 0)  # Dark red color
 
 RESUPPLY_RANGE = 100
  
- 
-
 knight_buy_img = pygame.image.load("img/knight.png")
 shield_buy_img = pygame.image.load("img/shield.png")
 canon_buy_img = pygame.image.load("img/canon.png")
 medic_buy_img = pygame.image.load("img/medic.png")
 pike_buy_img = pygame.image.load("img/pikeman.png")
 musket_buy_img = pygame.image.load("img/musketeer.png")
-
- 
 
 default_font =  pygame.font.Font(None, 20)
 my_font = pygame.font.Font(MAIN_FONT_URL, 15)

@@ -12,7 +12,7 @@ class Support(Unit):
                          base_movement, size, x, y, ammo, icon, color, cost)
         
         
-    def try_attack(self, click_pos, living_units):
+    def try_attack(self, click_pos   ):
         return  ("SUPPORTS DONT ATTACK") 
     
     def get_attack_circle(self):

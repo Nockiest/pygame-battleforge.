@@ -5,7 +5,7 @@ from config import *
 from game_state import *
 from .template import Support
 from units.ranged.template import Ranged
- 
+from global_variables import *
 
 class SupplyCart(Support):
     size = 30
@@ -15,7 +15,7 @@ class SupplyCart(Support):
         super().__init__(hp=1, attack_range=50,attack_resistance=0.05, base_actions=1, base_movement=150,
                          size=self.size, x=x, y=y, icon="supplycart.png", color=color, cost=self.cost, custom_ammo=20)
         self.size = 30
-    def dispense_ammo(self, amount, living_units):
+    def dispense_ammo(self, amount ):
         
         for unit in living_units:
             if self.ammo <= 0:
@@ -32,7 +32,7 @@ class SupplyCart(Support):
                 self.ammo -= amount
                 print(f"Dispensing {amount} ammo. Remaining ammo: {self.ammo} to {unit}vv")
 
-    def reset_for_next_turn(self, living_units):
-        super().reset_for_next_turn(living_units)
+    def reset_for_next_turn(self,  ):
+        super().reset_for_next_turn( )
 
-        self.dispense_ammo(1, living_units)
+        self.dispense_ammo(1   )
