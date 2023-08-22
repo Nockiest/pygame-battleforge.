@@ -5,8 +5,10 @@ zabránit úzoku přes jednotky
     zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
     přidat útočnou animaci
         přidat pro ranged jednotky vykreslení projektilu
-        přidat pro supports aura animaci
-   
+        přidat pro medica heal animaci
+        přidat pro supply cart resupply animaci
+        vytovřit hlavní animation object ze kterého budu derivovat všechny animace
+       
     přidat movement soundfile
    
    

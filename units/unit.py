@@ -37,7 +37,7 @@ class Unit:
         self.center = (self.x + self.size//2, self.y + self.size//2)
         self.start_turn_position = (
             self.x + self.size // 2, self.y + self.size // 2)
-
+    
         self.ammo = ammo
         self.cost = cost
         self.icon = icon
@@ -192,7 +192,7 @@ class Unit:
         if self.valid_movement_positions_edges:
          print("points", self.valid_movement_positions_edges[-1])
 
-    def draw_possible_movement_area(self, screen):
+    def draw_possible_movement_area(self ):
         farthest_points = []
         for angle in self.valid_movement_positions:
             if len(angle) >= 2:
@@ -361,7 +361,7 @@ class Unit:
         screen.blit(text_surface, text_pos)
 
  
-    def render_on_screen(self):
+    def render(self):
         padding = 2  # Adjust the padding size as needed
 
         warrior_img = pygame.image.load(f"img/{self.icon}")
@@ -384,7 +384,11 @@ class Unit:
 
         # Draw the unit image
         screen.blit(warrior_img, warrior_img_rect)
-
+        for animation in self.running_animations:
+            res = animation.render()
+            print(res)
+            if res == "ENDED":
+                self.running_animations.remove(animation)
      
 
     def draw_as_active(self):

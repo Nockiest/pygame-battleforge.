@@ -176,3 +176,19 @@ main_folder_path = 'units'
 
 # Import all modules from the folder and its subfolders
 import_from_folder(main_folder_path)
+
+
+
+    # def render_animation(self):
+    #     animation_duration = 50
+    #     if self.start_time == None:
+    #         self.start_time =  pygame.time.get_ticks()
+    #     current_time = pygame.time.get_ticks()
+    #     elapsed_time = current_time - self.start_time
+    #     current_frame = elapsed_time // animation_duration
+
+    #     if current_frame < len(self.rendered_animation):
+    #             frame = self.rendered_animation[current_frame]
+    #             screen.blit(frame, (100, 100))
+    #     else:
+    #         self.rendered_animation = None

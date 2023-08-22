@@ -64,7 +64,7 @@ class Player:
             unit_x = cursor_x - dummy_unit.size // 2
             unit_y = cursor_y - dummy_unit.size // 2
             unit = unit_class_name(x=unit_x, y=unit_y, color=self.color)
-            unit.render_on_screen()
+            unit.render()
         except Exception as e:
             print(f"An error occurred: {e}")
 
