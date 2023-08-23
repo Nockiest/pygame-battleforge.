@@ -5,18 +5,10 @@ import math
 import random
 import shapely.geometry
 from global_variables import *
+from game_state import *
 # from game_state import *
 
-
-def render_attack_cross(screen, x, y):
-    cross_color = (255, 165, 0)  # Orange color
-    cross_thickness = 2
-    cross_length = 20
-
-    pygame.draw.line(screen, cross_color, (x - cross_length, y),
-                     (x + cross_length, y), cross_thickness)
-    pygame.draw.line(screen, cross_color, (x, y - cross_length),
-                     (x, y + cross_length), cross_thickness)
+ 
 
 
 class Unit:
@@ -38,7 +30,7 @@ class Unit:
         self.center = (self.x + self.size//2, self.y + self.size//2)
         self.start_turn_position = (
             self.x + self.size // 2, self.y + self.size // 2)
-    
+
         self.ammo = ammo
         self.cost = cost
         self.icon = icon
@@ -48,10 +40,8 @@ class Unit:
         self.attack_circle = []
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
-        
-        self.running_animations = []
 
-        
+        self.running_animations = []
 
     def move_in_game_field(self, click_pos):
         new_center_x, new_center_y = click_pos
@@ -60,7 +50,7 @@ class Unit:
             self.valid_movement_positions_edges)
 
         # Check if the clicked position is a valid movement position
-       
+
         if point1.within(movement_polygon):
             self.x = new_center_x - self.size // 2
             self.y = new_center_y - self.size // 2
@@ -80,7 +70,6 @@ class Unit:
 
         # Update the position of the unit in the living_units list
         index = living_units.index(self)
-         
 
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
@@ -89,8 +78,6 @@ class Unit:
         # living_units[index].y = self.y
         # living_units[index].size = self.size
         # living_units[index].rect = self.rect
-
-
 
     def new_point_interferes(self,  point_x, point_y, living_units=living_units):
         # Create a new rectangle for the unit's position
@@ -131,15 +118,14 @@ class Unit:
                     center_x + distance * math.cos(radians), 0))
                 new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
                             distance * math.sin(radians), UPPER_BAR_HEIGHT))
-                 
-                
+
                 line_points = bresenham_line(
                     center_x, center_y, int(new_x), int(new_y))
                 line_pixel_colors = get_pixel_colors(
                     line_points, background_screen)
                 movement_cost = calculate_movement_cost(line_pixel_colors)
                 current_cost = movement_cost[-1][0]
-               
+
                 if current_cost > self.base_movement:
                     # print(distance, iteration, "decrementing",  512//iteration)
                     distance -= base_chunk//iteration
@@ -152,9 +138,9 @@ class Unit:
             if current_cost < self.base_movement:
                 while current_cost < self.base_movement:
                     new_x = min(WIDTH, max(
-                        len(line_points)  +1 * math.cos(radians), 0))
+                        len(line_points) + 1 * math.cos(radians), 0))
                     new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
-                                len(line_points)    +1 * math.sin(radians), UPPER_BAR_HEIGHT))
+                                len(line_points) + 1 * math.sin(radians), UPPER_BAR_HEIGHT))
                     new_pixel_color = get_pixel_colors(
                         [(int(new_x), int(new_y))], background_screen)
                     pixel_cost = calculate_movement_cost([new_pixel_color])
@@ -165,7 +151,7 @@ class Unit:
             else:
                 while current_cost > self.base_movement and line_points:
                     last_x, last_y = line_points[-1]
-                    last_pixel_color =  line_pixel_colors[-1]
+                    last_pixel_color = line_pixel_colors[-1]
                     pixel_cost = calculate_movement_cost([last_pixel_color])
                     current_cost -= pixel_cost[-1][0]
                     line_points.pop()
@@ -175,7 +161,7 @@ class Unit:
             for point in line_points:
                 other_units = [
                     unit for unit in living_units if unit.color != self.color]
-                if not self.new_point_interferes(  point[0], point[1], other_units,):
+                if not self.new_point_interferes(point[0], point[1], other_units,):
                     new_line_points.append(point)
                 else:
                     break  # Stop adding points if interference is detected
@@ -186,9 +172,9 @@ class Unit:
                 self.valid_movement_positions_edges.append(
                     line_points[len(line_points) - 1])
         if self.valid_movement_positions_edges:
-         print("points", self.valid_movement_positions_edges[-1])
+            print("points", self.valid_movement_positions_edges[-1])
 
-    def draw_possible_movement_area(self ):
+    def draw_possible_movement_area(self):
         farthest_points = []
         for angle in self.valid_movement_positions:
             if len(angle) >= 2:
@@ -207,12 +193,14 @@ class Unit:
                 continue
 
             # nevím proč to nemám centrovat, abd to fungovalo
-        
+
             center_x, center_y = self.center
-          
+
             enemy_center_x, enemy_center_y = unit.center
-            print(   enemy_center_x, enemy_center_y , center_x, center_y, unit.start_turn_position)
-            distance = math.sqrt((enemy_center_x - center_x)**2 + (enemy_center_y - center_y)**2)
+            print(enemy_center_x, enemy_center_y, center_x,
+                  center_y, unit.start_turn_position)
+            distance = math.sqrt((enemy_center_x - center_x)
+                                 ** 2 + (enemy_center_y - center_y)**2)
             print(distance, unit, unit.size//2, self.attack_range)
             if distance - unit.size//2 < self.attack_range:
                 self.enemies_in_range.append(unit)
@@ -222,11 +210,7 @@ class Unit:
     def calculate_attack_circle(self, battelground):
         pass
 
-    def get_attack_circle(self):
-        pass
-
-    def render_attack_circle(self ):
-
+    def render_attack_circle(self):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 
@@ -240,24 +224,14 @@ class Unit:
         if self.ammo != None:
             self.ammo -= 1
 
-    def render_attack_cross(self ):
-        if hasattr(self, 'attack_cross_position') and hasattr(self, 'attack_cross_time'):
-            time_elapsed = pygame.time.get_ticks() - self.attack_cross_time
-            # Render the cross for 1 second (1000 milliseconds)
-            if time_elapsed <= 1000:
-                render_attack_cross(screen, *self.attack_cross_position)
-            else:
-                del self.attack_cross_position
-                del self.attack_cross_time
+    
 
     def try_attack(self, click_pos, attacked_unit):
         if attacked_unit in self.enemies_in_range:
-            # if attacked_unit.rect.collidepoint(click_pos):
             return ("UNIT ATTACKS", click_pos, attacked_unit)
         return ("Attack not possible", click_pos, [])
 
     def check_if_hit(self):
-
         # i will augment base_hit_chance by some variables
         final_hit_probability = 1 - self.atttack_resistance
         print(final_hit_probability, "final hit probability")
@@ -273,8 +247,13 @@ class Unit:
         else:
             return False  # Unit is not hi
 
-    def take_damage(self):
+    def take_damage(self, attacker):
         self.hp -= 1
+        if self.hp <= 0:
+            players[cur_player].remove_from_game(self)
+            attacker.get_boost_for_destroying_unit()
+            # living_units.remove(self)
+        # print(living_units.index(self))
         return self.hp
 
     def capture(self, target_building):
@@ -302,7 +281,6 @@ class Unit:
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
 
-        
         self.able_to_move = True
         self.remain_actions = self.base_actions
 
@@ -313,10 +291,12 @@ class Unit:
             target_center = unit.center
 
             # Calculate the midpoint of the line
-            midpoint = ((self_center[0] + target_center[0]) // 2, (self_center[1] + target_center[1]) // 2)
+            midpoint = ((self_center[0] + target_center[0]) //
+                        2, (self_center[1] + target_center[1]) // 2)
 
             # Calculate the distance between self and the target unit
-            distance = math.sqrt((self_center[0] - target_center[0]) ** 2 + (self_center[1] - target_center[1]) ** 2)
+            distance = math.sqrt(
+                (self_center[0] - target_center[0]) ** 2 + (self_center[1] - target_center[1]) ** 2)
 
             # Draw a line from self's center to the target unit's center
             unit.draw_as_active()
@@ -324,9 +304,11 @@ class Unit:
 
             # Render the distance as text at the midpoint
             font = pygame.font.Font(None, 20)
-            text_surface = font.render(f"{int(distance)}/{self.attack_range} units", True, WHITE)
+            text_surface = font.render(
+                f"{int(distance)}/{self.attack_range} units", True, WHITE)
             text_rect = text_surface.get_rect(center=midpoint)
             screen.blit(text_surface, text_rect)
+
     def render_hovered_state(self):
         padding = 2  # Adjust the padding size as needed
         font = pygame.font.Font(None, 20)
@@ -343,7 +325,8 @@ class Unit:
 
         # Create a transparent background for the text with the adjusted width
         text_surface = pygame.Surface((rect_width, 80), pygame.SRCALPHA)
-        pygame.draw.rect(text_surface, (0, 0, 0, 100), (0, 0, text_surface.get_width(), text_surface.get_height()))
+        pygame.draw.rect(text_surface, (0, 0, 0, 100), (0, 0,
+                         text_surface.get_width(), text_surface.get_height()))
 
         # Render remaining attacks, ammo, and HP in the formatted rectangle
         for i, line in enumerate(text_lines):
@@ -356,7 +339,6 @@ class Unit:
         # Blit the formatted rectangle onto the screen
         screen.blit(text_surface, text_pos)
 
- 
     def render(self):
         padding = 2  # Adjust the padding size as needed
 
@@ -382,12 +364,13 @@ class Unit:
         screen.blit(warrior_img, warrior_img_rect)
         for animation in self.running_animations:
             res = animation.render()
-            print(res)
+            # print(res)
             if res == "ENDED":
                 self.running_animations.remove(animation)
-     
+
     def get_boost_for_destroying_unit(self):
         print("unit killed an enemy, and could get a boost now")
+
     def draw_as_active(self):
         outline_rect = pygame.Rect(
             self.x - 2, self.y - 2, self.size + 4, self.size + 4)

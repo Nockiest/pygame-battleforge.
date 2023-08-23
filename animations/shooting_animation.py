@@ -6,8 +6,8 @@ from .def_animation import Animation
  
 # here I will add shared code between animation classes later on
 class ShootingAnimation(Animation):
-    def __init__(self, x, y, path, switch_speed=5000):
-        super().__init__(x, y, "img/anime/bullet_shot")
+    def __init__(self, x, y, path, switch_speed=50 ):
+        super().__init__(x, y, "img/anime/bullet_shot", switch_speed)
         self.path = path
         self.current_pos_index = 0
 
@@ -23,8 +23,8 @@ class ShootingAnimation(Animation):
         screen.blit(frame, (self.x, self.y))
 
         if self.current_frame == len(self.images) - 1:
-            if self.current_pos_index < len(self.path) - 1:
-                self.current_pos_index += 1
+            if self.current_pos_index < len(self.path) - 4:
+                self.current_pos_index += 4
             else:
                 self.animation_ended = True  # Set the flag when animation ends
                 return "ENDED"
