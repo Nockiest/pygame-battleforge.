@@ -4,16 +4,16 @@ zabránit úzoku přes jednotky
     
     zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
     přidat útočnou animaci
-        přidat pro ranged jednotky vykreslení projektilu
+     
         přidat pro medica heal animaci
         přidat pro supply cart resupply animaci
-        vytovřit hlavní animation object ze kterého budu derivovat všechny animace
+      
        
     přidat movement soundfile
    
    
     --dát kanonu area damage
-    **dovolit kavalerii útočit po zabití
+  
      
      vytvořit attack mode
         zapnout ho po druhém kliku na jednotku nebo right clicku
@@ -50,8 +50,6 @@ ui
  
 outreach
     najít stránku, kde mohu sdílet svůj game dev s ostatními
-    vy dat druhý článek
-        2.par
-        3.par
-        4.par
+  
     zjisti jak vydat demo verzi
+    vydat třetí článek
