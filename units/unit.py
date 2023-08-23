@@ -6,8 +6,7 @@ import random
 import shapely.geometry
 from global_variables import *
 from game_state import *
-# from game_state import *
-
+ 
  
 
 
@@ -217,8 +216,8 @@ class Unit:
         pygame.draw.circle(screen, RED, (self.x + self.size // 2,
                            self.y + self.size // 2), int(attack_range_with_modifiers), 1)
 
-    def attack_square(self, click_pos):
-        self.attack_cross_position = click_pos
+    def attack(self,  ):
+        # self.attack_cross_position = click_pos
         self.attack_cross_time = pygame.time.get_ticks()
         self.remain_actions -= 1
         if self.ammo != None:
@@ -228,8 +227,17 @@ class Unit:
 
     def try_attack(self, click_pos, attacked_unit):
         if attacked_unit in self.enemies_in_range:
-            return ("UNIT ATTACKS", click_pos, attacked_unit)
-        return ("Attack not possible", click_pos, [])
+            self.attack()
+            hit_result = attacked_unit.check_if_hit()  # 80% hit chance
+            if hit_result:
+                remaining_hp = attacked_unit.take_damage(self)
+                print(remaining_hp, "remaining ")
+                if remaining_hp < 0:
+                    players[cur_player].remove_from_game(
+                        attacked_unit)
+         
+            return  "UNIT ATTACKS" 
+        return  "Attack not possible" 
 
     def check_if_hit(self):
         # i will augment base_hit_chance by some variables
@@ -249,6 +257,7 @@ class Unit:
 
     def take_damage(self, attacker):
         self.hp -= 1
+        print(self.hp)
         if self.hp <= 0:
             players[cur_player].remove_from_game(self)
             attacker.get_boost_for_destroying_unit()
@@ -256,7 +265,7 @@ class Unit:
         # print(living_units.index(self))
         return self.hp
 
-    def capture(self, target_building):
+    def capture(self, target_building): 
         pass
         # Implement the logic for the unit to capture the target_building
         # Check if the target_building is within the capture range of the unit
@@ -281,7 +290,7 @@ class Unit:
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
 
-        self.able_to_move = True
+        # self.able_to_move = True
         self.remain_actions = self.base_actions
 
     def highlight_attackable_units(self):

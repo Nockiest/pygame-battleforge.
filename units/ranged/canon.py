@@ -23,7 +23,6 @@ class Canon(Ranged):
         dx = click_x - unit_center_x
         dy = click_y - unit_center_y
         distance = math.sqrt(dx ** 2 + dy ** 2)  # Calculate the distance between the unit and the click position
-        print("checkpoint")
          
         if distance < self.attack_range:
             # Extend the line by setting the new endpoint to the attack range distance from the unit center
@@ -33,7 +32,6 @@ class Canon(Ranged):
             new_end_y = unit_center_y + line_length * math.sin(angle)
         print(unit_center_x, unit_center_y, new_end_x, new_end_y)
         line_points = bresenham_line(unit_center_x, unit_center_y, int(new_end_x), int(new_end_y))
-        print("checkpoint")
         for unit in living_units:
             if unit.color == self.color:
                 continue
@@ -41,9 +39,9 @@ class Canon(Ranged):
                 continue
             
             res = check_precalculated_line_square_interference(unit, line_points)
-            print(res)
+            print(res[0], res[1], unit.rect, unit)
             if res[0] != None:
-                print(unit, unit.rect, res, "interferes at" ,res[0], res[1])
+                print(unit, unit.rect,  "interferes at" ,res[0], res[1])
                 unit.take_damage(self)
       
         res = super().try_attack(click_pos, attacked_unit)

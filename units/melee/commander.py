@@ -20,3 +20,4 @@ class Commander(Melee):
         if hp <= 0:
             players[cur_player].announce_defeat()
             game_won = True
+        return hp

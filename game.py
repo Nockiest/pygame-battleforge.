@@ -24,7 +24,7 @@ class Game:
         self.selected_for_movement_unit = None
         self.selected_attacking_unit = None
         self.unit_placement_mode = None
-         
+
         self.lets_continue = True
         # self.living_units = []
 
@@ -36,6 +36,7 @@ class Game:
         self.blue_player = Player(BLUE, WIDTH - TENDER_WIDTH)
         players.append(self.red_player)
         players.append(self.blue_player)
+        print(players)
         self.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
         self.button_bar = ButtonBar(self.enter_buy_mode)
         # self.cur_player = 0
@@ -201,7 +202,7 @@ class Game:
             players[cur_player].show_unit_to_be_placed(
                 (self.unit_to_be_placed, 0, 0))
 
-        render_text(screen, "game" + (" ended  " if  game_won else "  is running "),
+        render_text(screen, "game" + (" ended  " if game_won else "  is running "),
                     WIDTH // 2, 10, color=(255, 255, 255), font=None, font_size=24)
 
         # Render everything on the display
@@ -225,7 +226,7 @@ class Game:
         print("click")
         self.game_state = "game is running"
 
-    def switch_player(self): 
+    def switch_player(self):
         global cur_player
         cur_player = (cur_player + 1) % len(players)
 
@@ -260,9 +261,9 @@ class Game:
     def disable_unit_for_turn(self):
         print("unit disabled for turn")
         if self.selected_for_movement_unit:
-            self.selected_for_movement_unit.able_to_move = False
+            self.selected_for_movement_unit.remain_actions = 0
         elif self.selected_attacking_unit:
-            self.selected_attacking_unit.able_to_move = False
+            self.selected_attacking_unit.remain_actions = 0
 
     def deselect_unit(self):
         if self.selected_for_movement_unit:
@@ -294,6 +295,7 @@ class Game:
         if not self.hovered_unit:
             return
         if not self.hovered_unit.able_to_move:
+            print( self.hovered_unit.able_to_move, self.hovered_unit)
             return
 
         if isinstance(self.hovered_unit, Support):
@@ -315,27 +317,11 @@ class Game:
     def process_attack(self, attacker, attacked_pos):
         attack_result = self.selected_attacking_unit.try_attack(
             attacked_pos, self.hovered_unit)
-        print(attack_result)
-        if attack_result[0] == "UNIT ATTACKS":
-            attack_pos = attack_result[1]
-            attacked_enemy = attack_result[2]
-            attacker.attack_square(attacked_pos,)
-            hit_result = attacked_enemy.check_if_hit()  # 80% hit chance
+        if attack_result == "UNIT ATTACKS":
             self.disable_unit_for_turn()
             self.deselect_unit()
-            print(f"{attacker} hit {attacked_enemy}?", hit_result)
-            if hit_result:
-                remaining_hp = attacked_enemy.take_damage(attacker)
-                if remaining_hp < 0:
-                    players[cur_player].remove_from_game(
-                        attacked_enemy)
- 
-
-                    
-
-        elif attack_result[0] == "Attack not possible":
+        elif attack_result  == "Attack not possible":
             self.deselect_unit()
-
 
     def buy_unit(self, click_pos):
         if self.hovered_unit != None:
@@ -372,7 +358,7 @@ class Game:
         self.unit_placement_mode = unit_type
 
     def draw_ui(self, screen):
-      
+
         if len(players) == 0:
             return
         self.battle_ground.draw(screen)

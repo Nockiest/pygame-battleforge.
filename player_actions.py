@@ -6,6 +6,7 @@ from utils.image_utils import render_image
 from utils.utils import *
 from units.support.observer import Observer
 from global_variables import *
+from game_state import *
 SCROLL_SPEED = 5
 
 
@@ -145,6 +146,7 @@ class Player:
     #     return game
 
     def remove_from_game(self,  unit):
+        print(unit, living_units, unit in living_units)
         # Find the unit in the living_units list and remove it
         if unit in living_units:
             living_units.remove(unit)
@@ -157,6 +159,8 @@ class Player:
         unit.x = None
         unit.y = None
         unit.rect = None
+        self.update_sorted_units()
+        update_sorted_units()
 
     def place_starting_units(self, living_units, unit_class_list):
         spawn_width = 200
