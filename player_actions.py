@@ -5,8 +5,8 @@ from config import *
 from utils.image_utils import render_image
 from utils.utils import *
 from units.support.observer import Observer
-from global_variables import *
-from game_state import *
+ 
+import game_state
 SCROLL_SPEED = 5
 
 
@@ -35,7 +35,7 @@ class Player:
         print(unit.color)
         if self.supplies >= unit.cost:
 
-            living_units.append(unit)
+            game_state.living_units.append(unit)
             self.units.append(unit)
             print("hello", unit)
             self.supplies -= unit.cost
@@ -52,7 +52,7 @@ class Player:
     def create_starting_unit(self, unit_params   ):
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
-        living_units.append(unit)
+        game_state.living_units.append(unit)
         self.units.append(unit)
         self.update_sorted_units()
 
@@ -146,23 +146,20 @@ class Player:
     #     return game
 
     def remove_from_game(self,  unit):
-        print(unit, living_units, unit in living_units)
-        # Find the unit in the living_units list and remove it
-        if unit in living_units:
-            living_units.remove(unit)
+        print(unit, game_state.living_units, unit in game_state.living_units)
+        # Find the unit in the game_state.living_units list and remove it
+        if unit in game_state.living_units:
+            game_state.living_units.remove(unit)
 
         # Find the unit in the player's units list and remove it
         if unit in self.units:
             self.units.remove(unit)
 
-        # Reset the unit's position and rect to None to indicate it's no longer in the game
-        unit.x = None
-        unit.y = None
-        unit.rect = None
+       
         self.update_sorted_units()
         update_sorted_units()
 
-    def place_starting_units(self, living_units, unit_class_list):
+    def place_starting_units(self,  unit_class_list):
         spawn_width = 200
         sides = {
             "(255, 0, 0)": WIDTH,
@@ -183,14 +180,14 @@ class Player:
                     [(x+unit_class.size//2, y+unit_class.size//2)], background_screen)
 
                 # Check if the position is valid (not on river and not occupied)
-                if pixel_color[0] != RIVER_BLUE and not self.is_position_occupied(x, y, living_units):
+                if pixel_color[0] != RIVER_BLUE and not self.is_position_occupied(x, y, ):
                     break
 
             unit_params = (unit_class, x, y)
-            self.create_starting_unit(unit_params, living_units)
+            self.create_starting_unit(unit_params )
 
-    def is_position_occupied(self, x, y, living_units):
-        for unit in living_units:
+    def is_position_occupied(self, x, y,  ):
+        for unit in game_state.living_units:
             if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:
                 return True
         return False

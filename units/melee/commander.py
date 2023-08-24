@@ -2,7 +2,7 @@ from units.unit import Unit
 import math
 from utils.utils import *
 from config import *
-from game_state import *
+import game_state
 from .template import Melee
 
 
@@ -15,9 +15,14 @@ class Commander(Melee):
                          size=self.size, x=x, y=y,    icon="commander.png", color=color, cost=self.cost)
 
     def take_damage(self, attacker):
+         
         hp = super().take_damage(attacker)
-
+       # print(hp,game_state.game_won = True, "game won is")
         if hp <= 0:
-            players[cur_player].announce_defeat()
-            game_won = True
+        #    players[cur_player].announce_defeat()
+            print(game_state.game_won)
+            game_state.game_won = True
+            print(game_state.game_won)
+            
+         #   print("now game won is", game_state.game_won = True)
         return hp

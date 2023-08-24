@@ -21,7 +21,7 @@ class Knight(Melee):
 
     def dash(self):
         self.remain_actions += 1
-        self.able_to_move = True
+       # self.able_to_move = True
         self.start_turn_position = (
             self.x + self.size // 2, self.y + self.size // 2)
         print(self.x, self.y, self.start_turn_position)

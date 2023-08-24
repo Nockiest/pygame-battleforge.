@@ -5,7 +5,7 @@ from utils.utils import *
 from config import *
 from game_state import *
 from .template import Support
-from global_variables import *
+ 
 
 
 class Medic(Support):

@@ -13,13 +13,14 @@ zabránit úzoku přes jednotky
    
    
     --dát kanonu area damage
-  
+      opravit že se občas damage nezobrazi
+
      
      vytvořit attack mode
         zapnout ho po druhém kliku na jednotku nebo right clicku
         -zařídit aby vykreslil atttack circle
        
-    v main loopu přesunout obsah ve for loop unit in units do samotných objektů
+    
         
      
 musika
@@ -39,8 +40,9 @@ ui
     přidat úvodní nastavení hry
     zprovoznit start screen
         přidat nastavení
-            nastavení prostředí
-            nastavení počtu jednotek
+   
+        nastavení prostředí
+        nastavení počtu jednotek
     zprovozni endgame screen
         vytvořit newgame button
     vytvořit game_event/information window

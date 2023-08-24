@@ -11,29 +11,51 @@ class Ranged(Unit):
         super().__init__(hp, attack_range, attack_resistance, base_actions,
                          base_movement, size, x, y, ammo, icon, color, cost)
 
-    def try_attack(self, click_pos, living_units):
-       
-        res = super().try_attack(click_pos, living_units)
-        print("the function was called")
-        if res[0] == "UNIT ATTACKS":
+    def create_shoot_animation(self, line_points):
+        print("creating animation")
+        self.running_animations.append(
+                ShootingAnimation(self.x, self.y, line_points, 10))
+
+    
+    def prevent_shhooting_through_forrest(self, line_pixel_colors, line_points):
+        if FORREST_GREEN in line_pixel_colors:
+            print("Ranged unit can't attack through forests")
+            print("Pixel with forest green color:",
+                  line_pixel_colors[line_pixel_colors.index(FORREST_GREEN)])
+            
+            return True
+        return False
+        # else:
+        #     self.running_animations.append(
+        #         ShootingAnimation(self.x, self.y, line_points, 10))
+
+    def calculate_self_enemy_center_line(self, attacked_unit_center):
+        defender_x = attacked_unit_center[0]
+        defender_y = attacked_unit_center[1]
+
+        line_points = bresenham_line(
+            self.center[0], self.center[1], defender_x,    defender_y
+        )
+        return line_points
+
+    def try_attack(self, click_pos, attacked_unit):
+
+        res = super().try_attack(click_pos, attacked_unit)
+
+        if res == "UNIT ATTACKS":
             # Calculate the line between unit's center and click position
-            attaacked_unit = res[2]
-            line_points = bresenham_line(
-                self.center[0], self.center[1], attaacked_unit.center[0], attaacked_unit.center[1]
-            )
+            line_points = self.calculate_self_enemy_center_line(
+                attacked_unit.center)
 
             line_pixel_colors = get_pixel_colors(
                 line_points, background_screen)
-
-            # Check if FORREST_GREEN is present in pixel colors
-            if FORREST_GREEN in line_pixel_colors:
-                print("Ranged unit can't attack through forests")
-                print("Pixel with forest green color:",
-                      line_pixel_colors[line_pixel_colors.index(FORREST_GREEN)])
-                res = ("RANGED UNIT CAN'T ATTACK THROUGH FORESTS", click_pos, None)
+            prevented = self.prevent_shhooting_through_forrest(
+                line_pixel_colors, line_points)
+            if not prevented:
+                self.create_shoot_animation(line_points)
             else:
-                self.running_animations.append(
-                    ShootingAnimation(self.x, self.y, line_points, 10))
+                res = "Attack not possible"
+            # Check if FORREST_GREEN is present in pixel colors
 
         return res
 

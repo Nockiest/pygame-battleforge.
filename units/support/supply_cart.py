@@ -5,8 +5,7 @@ from config import *
 from game_state import *
 from .template import Support
 from units.ranged.template import Ranged
-from global_variables import *
-
+ 
 class SupplyCart(Support):
     size = 30
     cost = 500

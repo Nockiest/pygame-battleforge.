@@ -1,6 +1,6 @@
 import math
 from config import *
-from global_variables import *
+import game_state
 
 def get_two_units_center_distance(unit1, unit2):
     # Calculate the distance between the center points of the units, considering their sizes
@@ -38,7 +38,9 @@ def bresenham_line(x0, y0, x1, y1):
 
         if x0 == x1 and y0 == y1:
             break
-
+        if 0> x0 or x0 > WIDTH or 0 > y0 or y0 > HEIGHT- BUTTON_BAR_HEIGHT:
+            print("point is now out of range")
+            return points 
         e2 = 2 * err
         if e2 > -dy:
             err -= dy
@@ -232,7 +234,7 @@ def calculate_movement_cost(color_list):
 def update_sorted_units(   ) :
         global sorted_living_units
         sorted_living_units = {}
-        for unit in living_units:
+        for unit in game_state.living_units:
             unit_type = unit.__class__.__name__
             sorted_living_units.setdefault(unit_type, []).append(unit)
 

@@ -4,8 +4,7 @@ from .structure import Structure
 from units.ranged.template import Ranged  # Import Ranged from units folder
 # Import SupplyCart from units folder
 from units.support.supply_cart import SupplyCart
-
-from global_variables import *
+import game_state
 from utils.utils import *
 from config import *
 
@@ -23,7 +22,7 @@ class SupplyDepo(Structure):
 
     def dispense_ammo(self):
 
-        for unit in living_units:
+        for unit in game_state.living_units:
 
             if (isinstance(unit, Ranged) or isinstance(unit, SupplyCart)) and distance(self.center, unit.center) < RESUPPLY_RANGE:
                 unit.ammo += self.ammo_per_unit

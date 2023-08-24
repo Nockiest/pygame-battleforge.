@@ -7,7 +7,7 @@ from utils.utils import *
 from config import *
 from game_state import *
 from animations.slash_animation import SlashAnimation
-from global_variables import *
+ 
 class Melee(Unit):
     def __init__(self, hp, attack_range,attack_resistance,   base_actions,  base_movement, size, x, y, icon, color, cost):
         super().__init__(hp, attack_range,attack_resistance, base_actions,
