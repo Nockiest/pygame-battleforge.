@@ -78,10 +78,11 @@ class Unit:
 
     def new_point_interferes(self,  point_x, point_y, living_units=game_state.living_units):
         # Create a new rectangle for the unit's position
+        
         new_rect = pygame.Rect(point_x - self.size // 2,
                                point_y - self.size // 2, self.size, self.size)
 
-        for unit in game_state.living_units:
+        for unit in  living_units:
             if unit is self:
                 continue
             res = unit.rect.colliderect(new_rect)
@@ -158,6 +159,7 @@ class Unit:
             for point in line_points:
                 other_units = [
                     unit for unit in game_state.living_units if unit.color != self.color]
+               
                 if not self.new_point_interferes(point[0], point[1], other_units,):
                     new_line_points.append(point)
                 else:

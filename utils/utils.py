@@ -57,7 +57,8 @@ def check_precalculated_line_square_interference(attacked_unit, line_points):
         # print(attacked_unit.rect, point_x,point_y, attacked_unit.rect.collidepoint((point_x, point_y)))
         if attacked_unit.rect.collidepoint((point_x, point_y)):
             print(f"Interfering point: ({point_x}, {point_y}  ) ")
-            return (point_x, point_y, True)
+            interferes = True
+            return (point_x, point_y,  interferes)
 
     
     return (None, None, False)
@@ -75,12 +76,10 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
         # print(attacked_unit.rect, point_x,point_y, attacked_unit.rect.collidepoint((point_x, point_y)))
         if attacked_unit.rect.collidepoint((point_x, point_y)):
             # print(f"Interfering point: ({point_x}, {point_y}  ) ")
-            return (point_x, point_y, line_points)
+            return (point_x, point_y, False)
 
-    point_x = None
-    point_y = None
-
-    return (point_x, point_y, line_points)
+  
+    return  (None, None, False)
 
 def draw_bezier_curve(self, screen, points):
             num_segments = 100
