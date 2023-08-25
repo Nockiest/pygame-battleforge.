@@ -278,7 +278,7 @@ class Game:
         if self.selected_for_movement_unit != None:
             self.deselect_unit()
             return
-        if not self.hovered_unit.able_to_move:
+        if   self.hovered_unit.remain_actions <=0 :
             return
         if self.hovered_unit.color != players[cur_player].color:
             return
@@ -387,14 +387,14 @@ class Game:
             (Commander, 550, 100))
         self.red_player.create_starting_unit(
             (Commander, 500, 70))
-        # self.red_player.create_starting_unit(
-        #     (Pikeman, 700, 100))
-        # # self.blue_player.create_starting_unit(
-        # #     (SupplyCart, 300, 300))
-        # # self.blue_player.create_starting_unit(
-        # #     (Observer, 200, 150))
-        # self.blue_player.create_starting_unit(
-        #     (Observer, 250, 150))
+        self.red_player.create_starting_unit(
+            (Pikeman, 700, 100))
+        self.blue_player.create_starting_unit(
+            (SupplyCart, 300, 300))
+        self.blue_player.create_starting_unit(
+            (Observer, 200, 150))
+        self.blue_player.create_starting_unit(
+            (Observer, 250, 150))
         self.blue_player.create_starting_unit(
             (Knight, 20, 100))
         self.blue_player.create_starting_unit(

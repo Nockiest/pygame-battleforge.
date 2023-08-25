@@ -3,7 +3,7 @@ import random
 from .structure import Structure
 from config import *
 from utils.utils import *
- 
+from .house import House
 def get_town_distances(all_towns, town_center, town_rect, town_index):
     distances = []  # Compare the center of the current town with the centers of other towns
     for i, other_town  in enumerate(all_towns):
@@ -40,13 +40,12 @@ def check_river_collision(new_house, rivers, screen):
     return False  # No collision with any river segment
 
 class Town(Structure):
-    def __init__(self, x, y, size, color, num_houses  ):
-        super().__init__(x, y, size,color)
+    def __init__(self, x, y, size, color, num_houses):
+        super().__init__(x, y, size, color)
         self.num_houses = num_houses
         self.houses = []
         self.rect = pygame.Rect(self.x, self.y, self.size[0], self.size[1])
-        self.center = (self.x + self.size[0] // 2, self.y +  self.size[1] // 2) 
-
+        self.center = (self.x + self.size[0] // 2, self.y +  self.size[1] // 2)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.size, self.size))
@@ -54,29 +53,29 @@ class Town(Structure):
 
     def place_houses(self, rivers):
         for _ in range(self.num_houses):
-                    placed_house = False
-                    for _ in range(50):  # Attempt at most 50 times to place a house
-                        house_x = random.randint(self.x, self.x + self.size[0] - square_size)
-                        house_y = random.randint(self.y, self.y + self.size[1] - square_size)
-                        new_house = pygame.Rect(house_x, house_y, square_size, square_size) # square size is the default size of a square
-                        
-                        # Check for interference with other town rectangles
-                        interferes_with_town = any(rect.colliderect(new_house) for rect in self.houses)
-                        
-                        if not interferes_with_town:
-                            interferes_with_river = check_river_collision(new_house,  rivers, screen)                      
-                            if not interferes_with_river:
-                                self.houses.append(new_house)
-                                placed_house = True
-                                break
-                    
-                    if not placed_house:
-                        break  # If failed to place a house 50 times or if it interferes with rivers, break the loop
-                   
+            placed_house = False
+            for _ in range(50):  # Attempt at most 50 times to place a house
+                house_x = random.randint(self.x, self.x + self.size[0] - square_size)
+                house_y = random.randint(self.y, self.y + self.size[1] - square_size)
+                new_house = House(house_x, house_y, 'img/house.png', square_size) # square size is the default size of a square
+
+                # Check for interference with other town rectangles
+                interferes_with_town = any(house.rect.colliderect(new_house.rect) for house in self.houses)
+
+                if not interferes_with_town:
+                    interferes_with_river = check_river_collision(new_house.rect, rivers, screen)
+                    if not interferes_with_river:
+                        self.houses.append(new_house)
+                        placed_house = True
+                        break
+
+            if not placed_house:
+                break  # If failed to place a house 50 times or if it interferes with rivers, break the loop
+
     def draw_self(self, screen):
-          pygame.draw.rect(screen, TOWN_RED  , self.rect)  # Red rectangle for town center with reduced opacity
+        pygame.draw.rect(screen, TOWN_RED , self.rect)  # Red rectangle for town center with reduced opacity
 
     def draw_houses(self, screen):
-        for house_rect in self.houses:
-            pygame.draw.rect(screen, HOUSE_PURPLE , house_rect, 2)  # Magenta rectangle for each house
+        for house in self.houses:
+            house.draw(screen)
          

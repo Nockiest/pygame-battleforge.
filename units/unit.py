@@ -33,7 +33,7 @@ class Unit:
         self.cost = cost
         self.icon = icon
         self.rect = pygame.Rect(x, y, size, size)
-        self.able_to_move = self.remain_actions > 0
+      
         self.color = color
         self.attack_circle = []
         self.valid_movement_positions = []
@@ -42,7 +42,7 @@ class Unit:
         self.running_animations = []
 
     def __repr__(self):
-        return f'{type(self).__name__}(hp={self.hp},x={self.x}, y={self.y}, ammo={self.ammo}, actions={ self.remain_actions } , able to move={self.able_to_move} color={self.color!r} )'
+        return f'{type(self).__name__}(hp={self.hp},x={self.x}, y={self.y}, ammo={self.ammo}, actions={ self.remain_actions } , '
 
     def move_in_game_field(self, click_pos):
         new_center_x, new_center_y = click_pos
@@ -185,21 +185,30 @@ class Unit:
     def get_attackable_units(self):
         self.enemies_in_range = []
         # for every living unit
-        for unit in game_state.living_units:
-            if unit.color == self.color:
+        for enemy in game_state.living_units:
+            if enemy.color == self.color:
                 continue
 
-            # nevím proč to nemám centrovat, abd to fungovalo
-
             center_x, center_y = self.center
-
-            enemy_center_x, enemy_center_y = unit.center
-            
+            enemy_center_x, enemy_center_y = enemy.center            
             distance = math.sqrt((enemy_center_x - center_x)
                                  ** 2 + (enemy_center_y - center_y)**2)
-            
-            if distance - unit.size//2 < self.attack_range:
-                self.enemies_in_range.append(unit)
+            line_points = bresenham_line( center_x, center_y,enemy_center_x, enemy_center_y)
+            if distance - enemy.size//2 < self.attack_range:
+                blocked = False
+                for unit in game_state.living_units:
+                    if unit == enemy:
+                        continue
+                    elif unit.color == self.color:
+                       continue
+                    point_x, point_y, interferes =check_precalculated_line_square_interference(unit, line_points)
+                    if interferes:
+                        print("this unit is blocking the way", unit, enemy)
+                        print(unit.rect, line_points)
+                        blocked = True
+                        break
+                if not blocked:
+                 self.enemies_in_range.append(enemy)
 
         print("in attack range are", self.enemies_in_range)
 

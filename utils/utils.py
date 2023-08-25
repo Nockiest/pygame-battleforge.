@@ -56,13 +56,11 @@ def check_precalculated_line_square_interference(attacked_unit, line_points):
 
         # print(attacked_unit.rect, point_x,point_y, attacked_unit.rect.collidepoint((point_x, point_y)))
         if attacked_unit.rect.collidepoint((point_x, point_y)):
-            # print(f"Interfering point: ({point_x}, {point_y}  ) ")
-            return (point_x, point_y, line_points)
+            print(f"Interfering point: ({point_x}, {point_y}  ) ")
+            return (point_x, point_y, True)
 
-    point_x = None
-    point_y = None
-
-    return (point_x, point_y, line_points)
+    
+    return (None, None, False)
 ################for when I already have the bersenham line
 
 def check_square_line_interference(attacked_unit, line_start_x, line_start_y, line_end_x, line_end_y):

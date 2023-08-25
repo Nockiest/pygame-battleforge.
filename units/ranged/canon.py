@@ -47,11 +47,11 @@ class Canon(Ranged):
         for unit in game_state.living_units.copy():
             if unit.color == self.color:
                 continue
-            result = check_precalculated_line_square_interference(
+            point_x, point_y, interferes = check_precalculated_line_square_interference(
                 unit, line_points)
             
-            if result[0] != None:
-                print(unit, unit.rect,  "interferes at", result[0], result[1])
+            if interferes != False:
+                print(unit, unit.rect,  "interferes at", point_x, point_y)
                 # self.try_attack( click_pos,unit)
                 remain_hp = unit.take_damage(self)
 

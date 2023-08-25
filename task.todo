@@ -1,28 +1,24 @@
 vytvořit bojovou jednotku      
     
-zabránit úzoku přes jednotky
-    
-    zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
-    přidat útočnou animaci
-     
-        přidat pro medica heal animaci
-        přidat pro supply cart resupply animaci
-      
-       
-    přidat movement soundfile
-   
-   
-    --dát kanonu area damage
-       nedovolit střele se dokutálet do lesea?
-
-     
-     vytvořit attack mode
-  
-        -zařídit aby vykreslil atttack circle
-       
-    
+    zabránit úzoku přes jednotky
         
-     
+        zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
+        přidat útočnou animaci
+         
+            přidat pro medica heal animaci
+            přidat pro supply cart resupply animaci
+          
+           
+        přidat movement soundfile
+       
+       
+        --dát kanonu area damage
+           nedovolit střele se dokutálet do lesea?
+    
+         
+         vytvořit attack mode
+            -zařídit aby vykreslil atttack circle
+       
 musika
     najít 5 písniček
     
@@ -55,3 +51,6 @@ outreach
   
     zjisti jak vydat demo verzi
     vydat třetí článek
+
+next uo:
+    vylepšit movement funkci
