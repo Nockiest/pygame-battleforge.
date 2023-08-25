@@ -13,11 +13,11 @@ zabránit úzoku přes jednotky
    
    
     --dát kanonu area damage
-      opravit že se občas damage nezobrazi
+       nedovolit střele se dokutálet do lesea?
 
      
      vytvořit attack mode
-        zapnout ho po druhém kliku na jednotku nebo right clicku
+  
         -zařídit aby vykreslil atttack circle
        
     

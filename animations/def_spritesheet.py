@@ -44,7 +44,7 @@ class Spritesheet:
             self.current_frame = (self.current_frame + 1) % len(self.animation)
             self.start_time = current_time
             frame = self.animation[self.current_frame]
-            print(frame, self.current_frame)
+            print("frame and cur frame",frame, self.current_frame)
             screen.blit(frame, (self.x, self.y))
             
         if self.current_frame == len(self.animation) - 1:

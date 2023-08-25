@@ -1,14 +1,12 @@
 import pygame
- 
+
 from config import *
 from utils.utils import *
 import math
 import random
 import shapely.geometry
- 
+
 import game_state
- 
- 
 
 
 class Unit:
@@ -21,7 +19,7 @@ class Unit:
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
-        self.atttack_resistance = attack_resistance
+        self.attack_resistance = attack_resistance
         self.enemies_in_range = []
         self.x = x
         self.y = y
@@ -42,6 +40,9 @@ class Unit:
         self.valid_movement_positions_edges = []
 
         self.running_animations = []
+
+    def __repr__(self):
+        return f'{type(self).__name__}(hp={self.hp},x={self.x}, y={self.y}, ammo={self.ammo}, actions={ self.remain_actions } , able to move={self.able_to_move} color={self.color!r} )'
 
     def move_in_game_field(self, click_pos):
         new_center_x, new_center_y = click_pos
@@ -74,7 +75,6 @@ class Unit:
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
         self.center = (self.x + self.size//2, self.y + self.size//2)
-        
 
     def new_point_interferes(self,  point_x, point_y, living_units=game_state.living_units):
         # Create a new rectangle for the unit's position
@@ -194,11 +194,10 @@ class Unit:
             center_x, center_y = self.center
 
             enemy_center_x, enemy_center_y = unit.center
-            print(enemy_center_x, enemy_center_y, center_x,
-                  center_y, unit.start_turn_position)
+            
             distance = math.sqrt((enemy_center_x - center_x)
                                  ** 2 + (enemy_center_y - center_y)**2)
-            print(distance, unit, unit.size//2, self.attack_range)
+            
             if distance - unit.size//2 < self.attack_range:
                 self.enemies_in_range.append(unit)
 
@@ -214,14 +213,11 @@ class Unit:
         pygame.draw.circle(screen, RED, (self.x + self.size // 2,
                            self.y + self.size // 2), int(attack_range_with_modifiers), 1)
 
-    def attack(self,  ):
-        # self.attack_cross_position = click_pos
-        self.attack_cross_time = pygame.time.get_ticks()
+    def attack(self ):
+    
         self.remain_actions -= 1
         if self.ammo != None:
             self.ammo -= 1
-
-    
 
     def try_attack(self, click_pos, attacked_unit):
         if attacked_unit in self.enemies_in_range:
@@ -229,24 +225,24 @@ class Unit:
             hit_result = attacked_unit.check_if_hit()  # 80% hit chance
             if hit_result:
                 remaining_hp = attacked_unit.take_damage(self)
-                print(remaining_hp, "remaining ")
+                print(  "remaining ", remaining_hp )
                 # if remaining_hp < 0:
                 #     game_state.players[ game_state.cur_player].remove_from_game(
                 #         attacked_unit)
-         
-            return  "UNIT ATTACKS" 
-        return  "Attack not possible" 
+
+            return "UNIT ATTACKS"
+        return "Attack not possible"
 
     def check_if_hit(self):
         # i will augment base_hit_chance by some variables
-        final_hit_probability = 1 - self.atttack_resistance
-        print(final_hit_probability, "final hit probability")
+        final_hit_probability = 1 - self.attack_resistance
+        print( "final hit probability", final_hit_probability, )
         # Generate a random float between 0 and 1
         hit_treshold_value = random.random()
 
         # Calculate the actual hit chance considering the base_hit_chance and random factor
 
-        print(final_hit_probability,  hit_treshold_value, "comparing")
+        print("comparing",final_hit_probability,  hit_treshold_value,  )
         # Check if the unit is hit based on the actual hit chance
         if final_hit_probability >= hit_treshold_value:
             return True  # Unit is hit
@@ -255,22 +251,24 @@ class Unit:
 
     def take_damage(self, attacker):
         self.hp -= 1
-         
+
         if self.hp <= 0:
-            game_state.players[ game_state.cur_player].remove_from_game(self)
+            game_state.living_units.remove(self)
+            # game_state.players[game_state.cur_player].remove_from_game(self)
             attacker.get_boost_for_destroying_unit()
+            update_players_unit()
             print("Removing unit:", self)
             print("Units in living_units:", game_state.living_units)
-            print(self is game_state.living_units[0])  # Check if it's the same instance
-            return  self.hp
+            # Check if it's the same instance
+             
+            return self.hp
 
             del self
-           
-          
+
         # print(game_state.living_units.index(self))
         return self.hp
 
-    def capture(self, target_building): 
+    def capture(self, target_building):
         pass
         # Implement the logic for the unit to capture the target_building
         # Check if the target_building is within the capture range of the unit
@@ -285,7 +283,6 @@ class Unit:
         player.update_sorted_units()
         game_state.living_units.remove(self)
         # Set the unit's x, y, and rect attributes to None to remove it from the game field
-       
 
         print("Unit is dead")
 
@@ -383,7 +380,7 @@ class Unit:
 
     def draw_as_active(self):
         try:
-            
+
             outline_rect = pygame.Rect(
                 int(self.x) - 2, int(self.y) - 2, self.size + 4, self.size + 4)
             pygame.draw.rect(screen, BLACK, outline_rect, 2)
@@ -392,6 +389,6 @@ class Unit:
             center_x = self.x + self.size // 2
             center_y = self.y + self.size // 2
             pygame.draw.line(screen, self.color, self.start_turn_position,
-                            (center_x, center_y), 2)
+                             (center_x, center_y), 2)
         except Exception as e:
             print("An error occurred:", e)

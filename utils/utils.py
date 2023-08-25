@@ -245,3 +245,9 @@ def is_inside_rectangle(x, y, left, top, width, height):
         return True
     else:
         return False
+
+def update_players_unit():
+    for player in game_state.players:
+        for unit in player.units:
+            if unit not in game_state.living_units:
+                player.remove_self_unit(  unit)

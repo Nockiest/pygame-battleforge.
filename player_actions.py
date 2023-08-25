@@ -32,14 +32,14 @@ class Player:
         # Create the unit object
         unit_class, x, y = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
-        print(unit.color)
+       
         if self.supplies >= unit.cost:
 
             game_state.living_units.append(unit)
             self.units.append(unit)
-            print("hello", unit)
+            print("created unit",unit, )
             self.supplies -= unit.cost
-            print("player has :", self.supplies)
+            print("player has :", self.supplies, "supplies")
         else:
             print("you cant buy this unit")
             del unit  # Remove the unit from memory since it won't be added to the lists
@@ -128,7 +128,7 @@ class Player:
             # Ensure scroll position doesn't go below 0
             self.scroll_position = max(self.scroll_position,   self.max_scroll)
         if keys[pygame.K_DOWN]:
-            # print(self.scroll_position)
+            
             self.scroll_position += 5
             # Ensure scroll position doesn't exceed max
             self.scroll_position = min(self.scroll_position, 0)
@@ -145,11 +145,11 @@ class Player:
     #     game = True
     #     return game
 
-    def remove_from_game(self,  unit):
-        print(unit, game_state.living_units, unit in game_state.living_units)
+    def remove_self_unit(self,  unit):
+        
         # Find the unit in the game_state.living_units list and remove it
-        if unit in game_state.living_units:
-            game_state.living_units.remove(unit)
+        # if unit in game_state.living_units:
+        #     game_state.living_units.remove(unit)
 
         # Find the unit in the player's units list and remove it
         if unit in self.units:

@@ -270,6 +270,7 @@ class Game:
         self.selected_attacking_unit = None
 
     def select_unit(self, clicked_pos):
+        print("hovered unit" ,self.hovered_unit)
         if self.hovered_unit == None:
             return
         if self.selected_attacking_unit != None:
@@ -289,8 +290,8 @@ class Game:
     def activate_attack_mode(self, click_pos):
         if not self.hovered_unit:
             return
-        if not self.hovered_unit.able_to_move:
-            print(self.hovered_unit.able_to_move, self.hovered_unit)
+        if self.hovered_unit.remain_actions <= 0:
+             
             return
 
         if isinstance(self.hovered_unit, Support):
@@ -298,16 +299,16 @@ class Game:
 
         if self.hovered_unit.color != players[cur_player].color:
             return
-        if self.hovered_unit.rect.collidepoint(click_pos):
+        # if self.hovered_unit.rect.collidepoint(click_pos):
 
-            self.deselect_unit()
-            self.selected_attacking_unit = self.hovered_unit
-            for unit in game_state.living_units:
-                print(unit.center, type(unit), "x")
+        self.deselect_unit()
+        self.selected_attacking_unit = self.hovered_unit
+        
+        print(self.hovered_unit, "unit to b eactivated")
 
-            self.selected_attacking_unit.get_attackable_units(
-            )
-            print("attack mode activated")
+        self.selected_attacking_unit.get_attackable_units(
+        )
+        print("attack mode activated")
 
     def process_attack(self, attacker, attacked_pos):
         attack_result = attacker.try_attack(
@@ -347,7 +348,7 @@ class Game:
         if unit_type.cost > players[cur_player].supplies:
             return print("Player doesnt have enough money")
         self.unit_to_be_placed = unit_type
-        print(self.unit_to_be_placed)
+        print("unit to be placed", self.unit_to_be_placed)
         print(
             f"{players[cur_player].color} is going to buy {self.unit_to_be_placed}")
         # players[cur_player].show_unit_to_be_placed((unit_to_be_placed, 0, 0), unit_to_be_placed)
