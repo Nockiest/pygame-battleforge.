@@ -33,7 +33,7 @@ class Unit:
         self.cost = cost
         self.icon = icon
         self.rect = pygame.Rect(x, y, size, size)
-      
+
         self.color = color
         self.attack_circle = []
         self.valid_movement_positions = []
@@ -78,11 +78,11 @@ class Unit:
 
     def new_point_interferes(self,  point_x, point_y, living_units=game_state.living_units):
         # Create a new rectangle for the unit's position
-        
+
         new_rect = pygame.Rect(point_x - self.size // 2,
                                point_y - self.size // 2, self.size, self.size)
 
-        for unit in  living_units:
+        for unit in living_units:
             if unit is self:
                 continue
             res = unit.rect.colliderect(new_rect)
@@ -91,7 +91,7 @@ class Unit:
         return False
 
     def get_units_movement_area(self):
-        num_samples = 360
+        num_samples = 180
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
@@ -159,7 +159,7 @@ class Unit:
             for point in line_points:
                 other_units = [
                     unit for unit in game_state.living_units if unit.color != self.color]
-               
+
                 if not self.new_point_interferes(point[0], point[1], other_units,):
                     new_line_points.append(point)
                 else:
@@ -192,25 +192,27 @@ class Unit:
                 continue
 
             center_x, center_y = self.center
-            enemy_center_x, enemy_center_y = enemy.center            
+            enemy_center_x, enemy_center_y = enemy.center
             distance = math.sqrt((enemy_center_x - center_x)
                                  ** 2 + (enemy_center_y - center_y)**2)
-            line_points = bresenham_line( center_x, center_y,enemy_center_x, enemy_center_y)
+            line_points = bresenham_line(
+                center_x, center_y, enemy_center_x, enemy_center_y)
             if distance - enemy.size//2 < self.attack_range:
                 blocked = False
                 for unit in game_state.living_units:
                     if unit == enemy:
                         continue
                     elif unit.color == self.color:
-                       continue
-                    point_x, point_y, interferes =check_precalculated_line_square_interference(unit, line_points)
+                        continue
+                    point_x, point_y, interferes = check_precalculated_line_square_interference(
+                        unit, line_points)
                     if interferes:
                         print("this unit is blocking the way", unit, enemy)
                         print(unit.rect, line_points)
                         blocked = True
                         break
                 if not blocked:
-                 self.enemies_in_range.append(enemy)
+                    self.enemies_in_range.append(enemy)
 
         print("in attack range are", self.enemies_in_range)
 
@@ -224,8 +226,8 @@ class Unit:
         pygame.draw.circle(screen, RED, (self.x + self.size // 2,
                            self.y + self.size // 2), int(attack_range_with_modifiers), 1)
 
-    def attack(self ):
-    
+    def attack(self):
+
         self.remain_actions -= 1
         if self.ammo != None:
             self.ammo -= 1
@@ -236,7 +238,7 @@ class Unit:
             hit_result = attacked_unit.check_if_hit()  # 80% hit chance
             if hit_result:
                 remaining_hp = attacked_unit.take_damage(self)
-                print(  "remaining ", remaining_hp )
+                print("remaining ", remaining_hp)
                 # if remaining_hp < 0:
                 #     game_state.players[ game_state.cur_player].remove_from_game(
                 #         attacked_unit)
@@ -247,13 +249,13 @@ class Unit:
     def check_if_hit(self):
         # i will augment base_hit_chance by some variables
         final_hit_probability = 1 - self.attack_resistance
-        print( "final hit probability", final_hit_probability, )
+        print("final hit probability", final_hit_probability, )
         # Generate a random float between 0 and 1
         hit_treshold_value = random.random()
 
         # Calculate the actual hit chance considering the base_hit_chance and random factor
 
-        print("comparing",final_hit_probability,  hit_treshold_value,  )
+        print("comparing", final_hit_probability,  hit_treshold_value,)
         # Check if the unit is hit based on the actual hit chance
         if final_hit_probability >= hit_treshold_value:
             return True  # Unit is hit
@@ -271,7 +273,7 @@ class Unit:
             print("Removing unit:", self)
             print("Units in living_units:", game_state.living_units)
             # Check if it's the same instance
-             
+
             return self.hp
 
             del self

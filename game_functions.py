@@ -5,7 +5,7 @@ from config import *
 from buy_bar import *
 from utils import *
 import game_state
-from global_functions import *
+from utils.render_utils import *
 from units import *
 from utils.text_utils import *
 import sys
@@ -172,18 +172,7 @@ def buy_unit(click_pos):
     else:
         print(f"Error: Unit type {game_state.unit_to_be_placed} not found.")
 
-
-# def draw_ui(screen,   ):
-#     if len(players) == 0:
-#         return
-#     game_state.battle_ground.draw(screen)
-#     game_state.button_bar.draw(screen, HEIGHT - BUTTON_BAR_HEIGHT,
-#                     players[cur_player].color)
-#     for player in players:
-#         player.render_tender()
-
-#     next_turn_button.draw(screen)
-
+ 
 
 def place_starting_units(red_player, blue_player):
     # blue_player.create_starting_unit(

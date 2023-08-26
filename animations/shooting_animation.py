@@ -4,7 +4,7 @@ from  config import *
 from .def_animation import Animation
 import game_state
 from utils.text_utils import *
-from global_functions import draw_ui
+from utils.render_utils import draw_ui
 # here I will add shared code between animation classes later on
 class ShootingAnimation(Animation):
     def __init__(self, x, y, path, switch_speed=50 ):
