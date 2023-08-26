@@ -177,7 +177,7 @@ class Player:
                     sides[str(self.color)] - spawn_width, sides[str(self.color)]-30)
                 # Random y anywhere on screen
                 y = random.randint(
-                    UPPER_BAR_HEIGHT, HEIGHT - BUTTON_BAR_HEIGHT - 50)
+                    UPPER_BAR_HEIGHT, HEIGHT -  TENDER_HEIGHT - unit_class.size) 
                 # Replace with your actual pixel color fetching function
                 pixel_color = get_pixel_colors(
                     [(x+unit_class.size//2, y+unit_class.size//2)], background_screen)

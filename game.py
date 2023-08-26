@@ -30,12 +30,7 @@ def enter_buy_mode(unit_type):
     # players[cur_player].show_unit_to_be_placed((game_state.unit_to_be_placed, 0, 0), game_state.unit_to_be_placed)
     game_state.unit_placement_mode = unit_type
 
-    # Handle other events here
-
-    # Update game logic here
-
-    # Draw game elements here
-
+    
 def start_game():
     print("click")
     game_state = "game is running"
@@ -80,13 +75,7 @@ def disable_unit_for_turn():
 
 
 def deselect_unit():
-    # if game_state.selected_for_movement_unit:
-        # index = game_state.living_units.index(
-        #     game_state.selected_for_movement_unit)
-        # print(game_state.selected_for_movement_unit.center,
-        #       game_state.living_units[index].center)
     game_state.selected_for_movement_unit = None
-    # Set render_units_attack_screen to False
     game_state.selected_attacking_unit = None
 
 
@@ -236,19 +225,19 @@ game_state.players.append(blue_player)
 
 game_state.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
 game_state.button_bar = ButtonBar(enter_buy_mode)
-place_starting_units(red_player, blue_player)
+# place_starting_units(red_player, blue_player)
 game_state.next_turn_button = Button(
     "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, next_turn)
 game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                            HEIGHT//2-50, 100, 100, start_game)
-draw_ui(screen,)
+draw_ui(screen )
+ 
+for i, player in enumerate(game_state.players):
+    player.place_starting_units(  unit_params_list[i])
 for unit in game_state.living_units:
     
     if unit.color == game_state.players[game_state.cur_player].color:
         unit.get_units_movement_area()
-# for i, player in enumerate(game_state.players):
-#     player.place_starting_units( game_state.living_units, unit_params_list[i])
-
 
 def handle_endgame_screen():
     pass
