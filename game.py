@@ -26,6 +26,7 @@ class Game:
         self.unit_placement_mode = None
         self.lets_continue = True
         self.unit_to_be_placed = None
+     
         # when you change the positions here you have to change get_pixel_color function
         self.red_player = Player(RED, 0)
         # when you change the positions here you have to change get_pixel_color function
@@ -161,7 +162,6 @@ class Game:
             player.handle_input()
 
         screen.fill(GREEN)
-
         # RENDER ELEMENTS ON THE MAIN SCREEN
         # render the game state information
         self.draw_ui(screen)
@@ -169,10 +169,7 @@ class Game:
         for unit in game_state.living_units:
             unit.render()
             if unit == self.selected_for_movement_unit:
-                # self.selected_for_movement_unit.draw_as_active(screen)
                 self.selected_for_movement_unit.draw_possible_movement_area()
-                # if hasattr(self.selected_for_movement_unit, 'attack_cross_position'):
-                #     self.selected_for_movement_unit.render_attack_cross()
             elif unit == self.selected_attacking_unit:
                 self.selected_attacking_unit.draw_as_active()
 
@@ -310,16 +307,16 @@ class Game:
         )
         print("attack mode activated")
 
-    def process_attack(self, attacker, attacked_pos):
+    def process_attack(self, attacker, attacked_pos):       
         attack_result = attacker.try_attack(
             attacked_pos, self.hovered_unit)
-        print(attack_result, 'attack result')
+        print("ATTACK result:", attack_result,  )
         if attack_result == "UNIT ATTACKS":
             self.disable_unit_for_turn()
             self.deselect_unit()
         elif attack_result == "Attack not possible":
             self.deselect_unit()
-
+     
     def buy_unit(self, click_pos):
         if self.hovered_unit != None:
             return
@@ -344,7 +341,7 @@ class Game:
             print(f"Error: Unit type {self.unit_to_be_placed} not found.")
 
     def enter_buy_mode(self, unit_type):
-        print(unit_type, "XXXX")
+        print("unit type to be bought",unit_type  )
         if unit_type.cost > players[cur_player].supplies:
             return print("Player doesnt have enough money")
         self.unit_to_be_placed = unit_type
@@ -355,7 +352,6 @@ class Game:
         self.unit_placement_mode = unit_type
 
     def draw_ui(self, screen):
-
         if len(players) == 0:
             return
         self.battle_ground.draw(screen)

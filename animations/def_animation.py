@@ -9,6 +9,7 @@ class Animation:
         self.current_frame = 0
         self.x = x
         self.y = y
+        self.animation_ended = False
 
     def load_animation(self,animation_folder  ):
         images= []
@@ -19,17 +20,18 @@ class Animation:
         return   images 
     
     def render(self):
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - self.start_time
-        
-        if elapsed_time >= self.switch_speed:
-            self.current_frame = (self.current_frame + 1) % len(self.images)
-            self.start_time = current_time
-            frame = self.images[self.current_frame]
-            screen.blit(frame, (self.x, self.y))
-            
-        if self.current_frame == len(self.images) - 1:
-            self.animation_ended = True  # Set the flag when animation ends
-            return "ENDED"
-        else:
-            return "STILL RUNNING"
+        while not self.animation_ended:
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - self.start_time
+
+            if elapsed_time >= self.switch_speed:
+                self.current_frame = (self.current_frame + 1) % len(self.images)
+                self.start_time = current_time
+                frame = self.images[self.current_frame]
+                screen.blit(frame, (self.x, self.y))
+
+            if self.current_frame == len(self.images) - 1:
+                self.animation_ended = True
+                return "ENDED"
+            else:
+                return "STILL RUNNING"

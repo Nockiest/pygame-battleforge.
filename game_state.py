@@ -4,6 +4,7 @@ players = []
 cur_player = 0
 game_won = False
 living_units = []
- 
+input_allowed = True  # This flag controls whether input is accepted
+
             
         

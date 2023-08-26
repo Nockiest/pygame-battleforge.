@@ -15,6 +15,8 @@ class Ranged(Unit):
         print("creating animation")
         self.running_animations.append(
                 ShootingAnimation(self.x, self.y, line_points, 10))
+        print( self.running_animations[-1])
+        self.running_animations[-1].render()
 
     
     def prevent_shhooting_through_forrest(self, line_pixel_colors, line_points):

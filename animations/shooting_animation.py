@@ -11,30 +11,49 @@ class ShootingAnimation(Animation):
         self.path = path
         self.current_pos_index = 0
 
-    def render(self):
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - self.start_time
+    def render(self  ):
+        animation_delay = 10   # Delay in milliseconds (adjust as needed)
 
-        if elapsed_time >= self.switch_speed:
-            self.current_frame = (self.current_frame + 1) % len(self.images)
-            self.start_time = current_time
+        # Store the initial position
+        prev_x, prev_y = self.path[0]
 
-        frame = self.images[self.current_frame]
-        screen.blit(frame, (self.x, self.y))
+        while self.current_pos_index < len(self.path) - 1:
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - self.start_time
 
-        if self.current_frame == len(self.images) - 1:
-            if self.current_pos_index < len(self.path) - 4:
-                self.current_pos_index += 4
-            else:
-                self.animation_ended = True  # Set the flag when animation ends
-                return "ENDED"
+            if elapsed_time >= self.switch_speed:
+                self.current_frame = (self.current_frame + 1) % len(self.images)
+                self.start_time = current_time
+                frame = self.images[self.current_frame]
 
-        # Update the sprite's position to the next position in the path
-        self.x, self.y = self.path[self.current_pos_index]
+            if self.current_frame == len(self.images) - 1:
+                if self.current_pos_index < len(self.path) - 1:
+                    self.current_pos_index += min(4, len(self.path) - self.current_pos_index - 1)
+                else:
+                    self.animation_ended = True
 
-        # Draw a red dot at the current position
-        dot_radius = 5
-        dot_color = (255, 0, 0)  # Red color
-        pygame.draw.circle(screen, dot_color, (self.x, self.y), dot_radius)
+            self.x, self.y = self.path[self.current_pos_index]
 
-        return "STILL RUNNING"
+            if not self.animation_ended:
+                # Erase previous position by drawing a black circle
+                # pygame.draw.circle(screen, (0, 0, 0), (prev_x, prev_y), 5)
+                screen.blit(background_screen, (prev_x, prev_y), pygame.Rect(prev_x, prev_y, 20, 20))
+                # frame = self.images[self.current_frame]  # Get the current frame
+                # screen.blit(frame, (self.x, self.y))  # Draw the current frame
+
+            prev_x, prev_y = self.x, self.y  # Update the previous position
+
+            pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), 5)  # Draw a red dot
+
+            pygame.display.flip()  # Update the display
+            pygame.time.delay(animation_delay)  # Introduce the delay
+
+        return "ENDED"
+                # return "STILL RUNNING"
+     
+      
+     
+
+       
+
+      

@@ -380,11 +380,11 @@ class Unit:
 
         # Draw the unit image
         screen.blit(warrior_img, warrior_img_rect)
-        for animation in self.running_animations:
-            res = animation.render()
-            # print(res)
-            if res == "ENDED":
-                self.running_animations.remove(animation)
+        # for animation in self.running_animations:
+        #     res = animation.render()
+        #     # print(res)
+        #     if res == "ENDED":
+        #         self.running_animations.remove(animation)
 
     def get_boost_for_destroying_unit(self):
         print("unit killed an enemy, and could get a boost now")
