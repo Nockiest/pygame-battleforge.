@@ -21,12 +21,12 @@ __all__ = [basename(f)[:-3] for f in modules if isfile(f)
 
 def enter_buy_mode(unit_type):
     print("unit type to be bought", unit_type)
-    if unit_type.cost > players[cur_player].supplies:
+    if unit_type.cost > game_state.players[game_state.cur_player].supplies:
         return print("Player doesnt have enough money")
     game_state.unit_to_be_placed = unit_type
     print("unit to be placed", game_state.unit_to_be_placed)
     print(
-        f"{players[cur_player].color} is going to buy {game_state.unit_to_be_placed}")
+        f"{game_state.players[game_state.cur_player].color} is going to buy {game_state.unit_to_be_placed}")
     # players[cur_player].show_unit_to_be_placed((game_state.unit_to_be_placed, 0, 0), game_state.unit_to_be_placed)
     game_state.unit_placement_mode = unit_type
 
@@ -46,7 +46,7 @@ def start_game():
 
 def switch_player():
      
-    game_state.cur_player = (cur_player + 1) % len(players)
+    game_state.cur_player = (game_state.cur_player + 1) % len(players)
 
 
 def next_turn():
@@ -67,8 +67,8 @@ def next_turn():
         # unit.center = unit.start_turn_position
         unit.reset_for_next_turn()
         unit.render()
-
-        if unit.color == players[cur_player].color:
+        print(unit.color,  game_state.players[game_state.cur_player].color)
+        if unit.color == game_state.players[game_state.cur_player].color:
             unit.get_units_movement_area()
         pygame.display.update()
 
@@ -108,7 +108,7 @@ def select_unit(clicked_pos):
         return
     if game_state.hovered_unit.remain_actions <= 0:
         return
-    if game_state.hovered_unit.color != players[cur_player].color:
+    if game_state.hovered_unit.color != game_state.players[game_state.cur_player].color:
         return
     if game_state.hovered_unit.rect.collidepoint(clicked_pos):
         game_state.selected_for_movement_unit = game_state.hovered_unit
@@ -125,7 +125,7 @@ def activate_attack_mode(click_pos):
     if isinstance(game_state.hovered_unit, Support):
         return
 
-    if game_state.hovered_unit.color != game_state.players[cur_player].color:
+    if game_state.hovered_unit.color != game_state.players[game_state.cur_player].color:
         return
     # if   game_state.hovered_unit.rect.collidepoint(click_pos):
 
@@ -163,7 +163,7 @@ def buy_unit(click_pos):
             # Check if the unit is being placed within the valid Y coordinate range
         if HEIGHT - BUTTON_BAR_HEIGHT-dummy.size < y:
             return print("Cannot place unit in this Y coordinate range.")
-        players[cur_player].create_unit(
+        game_state.players[game_state.cur_player].create_unit(
             (game_state.unit_to_be_placed, x, y))
         game_state.unit_to_be_placed = False
         game_state.unit_placement_mode = None
@@ -250,7 +250,7 @@ start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                            HEIGHT//2-50, 100, 100, start_game)
 draw_ui(screen,   )
 for unit in game_state.living_units:
-    if unit.color == game_state.players[cur_player].color:
+    if unit.color == game_state.players[game_state.cur_player].color:
         unit.get_units_movement_area()
 # for i, player in enumerate(game_state.players):
 #     player.place_starting_units( game_state.living_units, unit_params_list[i])
@@ -370,7 +370,7 @@ def handle_game_running_state():
 
         game_state.selected_attacking_unit.render_attack_circle()
     if game_state.unit_placement_mode:
-        game_state.players[cur_player].show_unit_to_be_placed(
+        game_state.players[game_state.cur_player].show_unit_to_be_placed(
             (game_state.unit_to_be_placed, 0, 0))
 
     text = "game" + (" ended  " if game_state.game_won else "  is running ")

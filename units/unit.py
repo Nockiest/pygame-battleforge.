@@ -91,7 +91,7 @@ class Unit:
         return False
 
     def get_units_movement_area(self):
-        num_samples = 180
+        num_samples = 90
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
