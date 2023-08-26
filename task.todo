@@ -12,12 +12,8 @@ vytvořit bojovou jednotku
         přidat movement soundfile
        
        
-        --dát kanonu area damage
+        
            nedovolit střele se dokutálet do lesea?
-    
-         
-         vytvořit attack mode
-            -zařídit aby vykreslil atttack circle
        
 musika
     najít 5 písniček
@@ -49,13 +45,11 @@ ui
 
  
 outreach
-    najít stránku, kde mohu sdílet svůj game dev s ostatními
-  
+ 
     zjisti jak vydat demo verzi
-    vydat třetí článek
-
+   
 next uo:
     vylepšit movement funkci
-    vydat článek s přehledem jednotek
+ 
      
     vytvořit proper bullet flying animaci

@@ -19,7 +19,7 @@ class Player:
         self.max_scroll = 0
         self.tender_x = tender_x  # X position for the tender rectangle
         self.scroll_position = 0
-     
+        self.preview_unit = None
 
     def update_sorted_units(self):
         self.sorted_by_class_units = {}
@@ -35,7 +35,7 @@ class Player:
        
         if self.supplies >= unit.cost:
 
-            game_state.living_units.append(unit)
+            # game_state.living_units.append(unit)
             self.units.append(unit)
             print("created unit",unit, )
             self.supplies -= unit.cost
@@ -52,21 +52,24 @@ class Player:
     def create_starting_unit(self, unit_params   ):
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
-        game_state.living_units.append(unit)
+        # game_state.living_units.append(unit)
         self.units.append(unit)
         self.update_sorted_units()
 
     def show_unit_to_be_placed(self, unit_params):
-
+       
         unit_class_name, _, _ = unit_params
         print(unit_class_name, "x")
         cursor_x, cursor_y = pygame.mouse.get_pos()
         try:
-            dummy_unit = unit_class_name(x=-100, y=-100, color=BLACK)
-            unit_x = cursor_x - dummy_unit.size // 2
-            unit_y = cursor_y - dummy_unit.size // 2
-            unit = unit_class_name(x=unit_x, y=unit_y, color=self.color)
-            unit.render()
+            
+            self.preview_unit = unit_class_name(x=-100, y=-100, color=BLACK)
+            self.preview_unit.x = cursor_x - self.preview_unit.size // 2
+            self.preview_unit.y = cursor_y - self.preview_unit.size // 2
+            # unit = unit_class_name(x=self.preview_unit.x , y=unit_y, color=self.color)
+            self.preview_unit.render()
+            pygame.display.flip() 
+            self.preview_unit.kill()
         except Exception as e:
             print(f"An error occurred: {e}")
 

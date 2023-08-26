@@ -8,7 +8,7 @@ from utils.utils import *
 class River(Structure):
     def __init__(self,startpoint, endpoint, control_points  ):
 
-        super().__init__(startpoint[0], startpoint[1], size = 5, color=RIVER_BLUE)
+        super().__init__(startpoint[0], startpoint[1], size = (5,5), color=RIVER_BLUE)
         self.points = [] 
         self.control_points = control_points 
         self.convergence_point = None

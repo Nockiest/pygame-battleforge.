@@ -1,10 +1,10 @@
 import game_state
-from game_functions import *
-from button import Button
-from generation.battelground import *
+from game import *
+from buttons.button import Button
+from battelground import *
 from player_actions import Player
 from config import *
-from buy_bar import *
+from buttons.buy_bar import *
 from utils import *
 import game_state
 from units import *

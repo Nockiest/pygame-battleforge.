@@ -76,7 +76,7 @@ def generate_from_edge_roads(screen_sides, towns):
 class Road(Structure):
     def __init__(self, nearby_town, start_town   ):
 
-        super().__init__(None, None, size = 5, color=ROAD_GRAY)
+        super().__init__(0, 0, size = (1,1), color=ROAD_GRAY)
         self.points = [] 
         self.start_town = start_town
         self.end_town = nearby_town
@@ -116,11 +116,11 @@ class Road(Structure):
     def draw(self, screen):
           
             for i in range(len(self.points) - 1):
-                pygame.draw.line(screen, ROAD_GRAY  , self.points[i], self.points[i + 1], 15)  # Saddle Brown
+                pygame.draw.line(screen, ROAD_GRAY  , self.points[i], self.points[i + 1], 10)  # Saddle Brown
                
                 # Calculate the coordinates for the corners of the square
                 x, y = self.points[i + 1]
-                square_size = 15
+                square_size = 7
                 square_corners = [
                     (x - square_size / 2, y - square_size / 2),
                     (x + square_size / 2, y - square_size / 2),

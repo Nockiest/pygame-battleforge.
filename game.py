@@ -1,8 +1,8 @@
 # from button import Button
-from generation.battelground import *
+from battelground import *
 from player_actions import Player
 from config import *
-from buy_bar import *
+from buttons.buy_bar import *
 from utils import *
 import game_state
 from utils.render_utils import *
@@ -11,7 +11,7 @@ from utils.text_utils import *
 import sys
 from os.path import dirname, basename, isfile, join
 import glob
- 
+
 
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [basename(f)[:-3] for f in modules if isfile(f)
@@ -45,8 +45,8 @@ def start_game():
 
 
 def switch_player():
-     
-    game_state.cur_player = (game_state.cur_player + 1) % len(players)
+    game_state.cur_player = (game_state.cur_player +
+                             1) % len(game_state.players)
 
 
 def next_turn():
@@ -58,7 +58,6 @@ def next_turn():
     screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))
     for unit in game_state.living_units:
         unit.render()
-    pygame.display.update()
 
     for player in players:
         player.update_sorted_units()
@@ -70,12 +69,9 @@ def next_turn():
         print(unit.color,  game_state.players[game_state.cur_player].color)
         if unit.color == game_state.players[game_state.cur_player].color:
             unit.get_units_movement_area()
-        pygame.display.update()
 
-    # for depo in game_state.battle_ground.supply_depots:
-    #     depo.dispense_ammo()
-    screen.fill((0, 0, 0))
-    pygame.display.flip()  # Update the screen again
+    for depo in game_state.battle_ground.supply_depots:
+        depo.dispense_ammo()
 
 
 def disable_unit_for_turn():
@@ -87,11 +83,11 @@ def disable_unit_for_turn():
 
 
 def deselect_unit():
-    if game_state.selected_for_movement_unit:
-        index = game_state.living_units.index(
-            game_state.selected_for_movement_unit)
-        print(game_state.selected_for_movement_unit.center,
-              game_state.living_units[index].center)
+    # if game_state.selected_for_movement_unit:
+        # index = game_state.living_units.index(
+        #     game_state.selected_for_movement_unit)
+        # print(game_state.selected_for_movement_unit.center,
+        #       game_state.living_units[index].center)
     game_state.selected_for_movement_unit = None
     # Set render_units_attack_screen to False
     game_state.selected_attacking_unit = None
@@ -150,10 +146,11 @@ def process_attack(attacker, attacked_pos):
 
 
 def buy_unit(click_pos):
+   
     if game_state.hovered_unit != None:
         return
     if game_state.unit_to_be_placed:
-        dummy = game_state.unit_to_be_placed(100, 100, BLACK)
+        dummy = game_state.unit_to_be_placed(-100, -100, BLACK)
         x = click_pos[0] - dummy.size // 2
         y = click_pos[1] - dummy.size // 2
 
@@ -172,7 +169,6 @@ def buy_unit(click_pos):
     else:
         print(f"Error: Unit type {game_state.unit_to_be_placed} not found.")
 
- 
 
 def place_starting_units(red_player, blue_player):
     # blue_player.create_starting_unit(
@@ -185,8 +181,8 @@ def place_starting_units(red_player, blue_player):
         (Canon, 250, 250))
     red_player.create_starting_unit(
         (Canon, 120, 100))
-    # red_player.create_starting_unit(
-    #     (Shield, 400, 300))
+    red_player.create_starting_unit(
+        (Shield, 400, 300))
     # blue_player.create_starting_unit(
     #     (Medic, 125, 160s)
     blue_player.create_starting_unit(
@@ -195,8 +191,8 @@ def place_starting_units(red_player, blue_player):
         (Commander, 550, 100))
     red_player.create_starting_unit(
         (Commander, 500, 70))
-    red_player.create_starting_unit(
-        (Pikeman, 700, 100))
+    # red_player.create_starting_unit(
+    #     (Pikeman, 700, 100))
     blue_player.create_starting_unit(
         (SupplyCart, 300, 300))
     blue_player.create_starting_unit(
@@ -246,10 +242,11 @@ game_state.button_bar = ButtonBar(enter_buy_mode)
 place_starting_units(red_player, blue_player)
 game_state.next_turn_button = Button(
     "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, next_turn)
-start_game_button = Button("BEGIN GAME", WIDTH//2-50,
+game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                            HEIGHT//2-50, 100, 100, start_game)
-draw_ui(screen,   )
+draw_ui(screen,)
 for unit in game_state.living_units:
+    
     if unit.color == game_state.players[game_state.cur_player].color:
         unit.get_units_movement_area()
 # for i, player in enumerate(game_state.players):
@@ -262,13 +259,13 @@ def handle_endgame_screen():
 
 def handle_start_screen():
     start_screen.fill(BRIDGE_COLOR)
-    start_game_button.draw(start_screen)
+    game_state.start_game_button.draw(start_screen)
 
     # Render everything on the display
     pygame.display.update()
 
     # RENDER ELEMENTS ON THE BACKGROUND SCREEN
-    draw_ui(background_screen,  )
+    draw_ui(background_screen,)
 
     clock.tick(fps)
 
@@ -345,7 +342,7 @@ def handle_game_running_state():
     screen.fill(GREEN)
     # RENDER ELEMENTS ON THE MAIN SCREEN
     # render the game game_state.state information
-    draw_ui(screen,     )
+    draw_ui(screen,)
 
     for unit in game_state.living_units:
         unit.render()
@@ -382,7 +379,7 @@ def handle_game_running_state():
     pygame.display.update()
 
     # RENDER ELEMENTS ON THE BACKGROUND SCREEN
-    draw_ui(background_screen,  )
+    draw_ui(background_screen,)
 
     clock.tick(fps)
 

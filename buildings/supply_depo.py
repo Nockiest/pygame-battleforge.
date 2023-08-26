@@ -14,7 +14,7 @@ RESUPPLY_RANGE = 300
 class SupplyDepo(Structure):
      
     def __init__(self, x, y, size, ammo_range, ammo_per_unit):
-        super().__init__(x, y, size, color=YELLOW)
+        super().__init__(x, y, (size,size), color=YELLOW)
         self.ammo_range = ammo_range
         self.ammo_per_unit = ammo_per_unit
         self.center = (x, y)

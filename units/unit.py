@@ -9,9 +9,9 @@ import shapely.geometry
 import game_state
 
 
-class Unit:
+class Unit(pygame.sprite.Sprite):
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range
@@ -28,18 +28,26 @@ class Unit:
         self.center = (self.x + self.size//2, self.y + self.size//2)
         self.start_turn_position = (
             self.x + self.size // 2, self.y + self.size // 2)
-
+        self.color = color
         self.ammo = ammo
         self.cost = cost
         self.icon = icon
-        self.rect = pygame.Rect(x, y, size, size)
+        self.image = pygame.Surface((size, size))
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
-        self.color = color
         self.attack_circle = []
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
 
         self.running_animations = []
+        game_state.living_units.add(self)
+        print( "living units after appending a new unit",  game_state.living_units)
+    def update(self):
+        # Add any necessary update logic here
+        pass
 
     def __repr__(self):
         return f'{type(self).__name__}(hp={self.hp},x={self.x}, y={self.y}, ammo={self.ammo}, actions={ self.remain_actions } , '
@@ -70,7 +78,7 @@ class Unit:
                     break
 
         # Update the position of the unit in the game_state.living_units list
-        index = game_state.living_units.index(self)
+        # index = game_state.living_units.index(self)
 
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
