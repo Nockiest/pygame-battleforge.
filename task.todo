@@ -1,19 +1,24 @@
 vytvořit bojovou jednotku      
     
-    zabránit úzoku přes jednotky
-        
+   
         zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
         přidat útočnou animaci
          
             přidat pro medica heal animaci
             přidat pro supply cart resupply animaci
-          
+            přidat pro depo resupply animaci
            
         přidat movement soundfile
+    
+    rozmístit vojáky do původních pozic
+    povolit pokíldání vojáků jen do své startovní zony
+    dát jednotkám smysluplné ceny
+    více odlišit různé druhy jednotek
+
+    
        
-       
-        
-           nedovolit střele se dokutálet do lesea?
+    oprovait jitter v movement arrea
+    
        
 musika
     najít 5 písniček
@@ -24,7 +29,7 @@ prostředí
     **vytvořit scrolling
     **přidat zdi
         
-        opravtz angle
+    přidat opevnění ve městech
 
 
 ui
@@ -45,7 +50,7 @@ ui
 
  
 outreach
- 
+    vytvořit discord
     zjisti jak vydat demo verzi
    
 next uo:

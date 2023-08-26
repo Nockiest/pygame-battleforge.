@@ -36,9 +36,6 @@ def enter_buy_mode(unit_type):
 
     # Draw game elements here
 
-    pygame.display.update()
-
-
 def start_game():
     print("click")
     game_state = "game is running"
@@ -175,37 +172,37 @@ def place_starting_units(red_player, blue_player):
     #     (Musketeer, 0, 100))
     red_player.create_starting_unit(
         (Musketeer, 200, 200))
-    red_player.create_starting_unit(
-        (Pikeman, 175, 175))
-    red_player.create_starting_unit(
-        (Canon, 250, 250))
-    red_player.create_starting_unit(
-        (Canon, 120, 100))
-    red_player.create_starting_unit(
-        (Shield, 400, 300))
-    # blue_player.create_starting_unit(
-    #     (Medic, 125, 160s)
-    blue_player.create_starting_unit(
-        (Medic, 500, 400))
-    blue_player.create_starting_unit(
-        (Commander, 550, 100))
-    red_player.create_starting_unit(
-        (Commander, 500, 70))
     # red_player.create_starting_unit(
-    #     (Pikeman, 700, 100))
-    blue_player.create_starting_unit(
-        (SupplyCart, 300, 300))
-    blue_player.create_starting_unit(
-        (Observer, 200, 150))
-    blue_player.create_starting_unit(
-        (Observer, 250, 150))
-    blue_player.create_starting_unit(
-        (Knight, 20, 100))
-    blue_player.create_starting_unit(
-        (Knight, 50, 100))
-    blue_player.create_starting_unit(
-        (Knight, 80, 100))
+    #     (Pikeman, 175, 175))
+    # red_player.create_starting_unit(
+    #     (Canon, 250, 250))
+    # red_player.create_starting_unit(
+    #     (Canon, 120, 100))
+    # red_player.create_starting_unit(
+    #     (Shield, 400, 300))
     # # blue_player.create_starting_unit(
+    # #     (Medic, 125, 160s)
+    # blue_player.create_starting_unit(
+    #     (Medic, 500, 400))
+    # blue_player.create_starting_unit(
+    #     (Commander, 550, 100))
+    # red_player.create_starting_unit(
+    #     (Commander, 500, 70))
+    # # red_player.create_starting_unit(
+    # #     (Pikeman, 700, 100))
+    # blue_player.create_starting_unit(
+    #     (SupplyCart, 300, 300))
+    # blue_player.create_starting_unit(
+    #     (Observer, 200, 150))
+    # blue_player.create_starting_unit(
+    #     (Observer, 250, 150))
+    # blue_player.create_starting_unit(
+    #     (Knight, 20, 100))
+    # blue_player.create_starting_unit(
+    #     (Knight, 50, 100))
+    # blue_player.create_starting_unit(
+    #     (Knight, 80, 100))
+    # # # blue_player.create_starting_unit(
     # #     (Knight, 50, 500)s)
     # # napsat funkci která je položí automaticky
 

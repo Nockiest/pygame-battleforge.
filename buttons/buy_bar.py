@@ -14,32 +14,39 @@ from units.support.medic import Medic
 from units.support.observer import Observer
 from units.support.supply_cart import SupplyCart
 from units.support.template import Support
-
+import game_state
 BUTTON_BAR_Y = HEIGHT - 100
  
-
 class BuyButton(Button):
-    def __init__(self, icon, unit_type, description,  x, enter_buy_mode,  ):
-        
+    def __init__(self, icon, unit_type, description, x, enter_buy_mode):
         self.icon = icon
         self.unit_type = unit_type
-        # self.width = 60     
+        self.width = 60
         self.height = 60
+
         def custom_callback():
-         enter_buy_mode(self.unit_type)  # Pass unit_type to the original callback   
-        super().__init__(description=description, x=x, y=(HEIGHT - 100), width=60, height=self.height, callback=custom_callback)   
-        # Calculate padding for the icon
-        icon_padding_x = (self.width - icon.get_width()) // 2
-        icon_padding_y = (self.height - icon.get_height()) // 2
-        # Blit the icon with padding onto the button surface
-        self.button_surface.blit(icon, (icon_padding_x, icon_padding_y))   
+            enter_buy_mode(self.unit_type)  # Pass unit_type to the original callback
+
+        super().__init__(description=description, x=x, y=(HEIGHT - 100), width=self.width, height=self.height, callback=custom_callback)
+
+        # Resize the icon to fit within the button
+        new_width = self.width - 10  # Leave some padding around the icon
+        new_height = self.height - 10
+        resized_icon = pygame.transform.scale(icon, (new_width, new_height))
+
+        # Center the icon within the button
+        icon_x = (self.width - resized_icon.get_width()) // 2
+        icon_y = (self.height - resized_icon.get_height()) // 2
+
+        # Blit the resized icon onto the button surface
+        self.button_surface.blit(resized_icon, (icon_x, icon_y))
         all_buttons.append(self)
 
-    def draw(self, screen, x, y ):
-        if self.hovered:
+    def draw(self, screen, x, y):
+        if self == game_state.hovered_button:
             # Darken the button when hovered
-            dark_surface = pygame.Surface((60, 60))
-            dark_surface.fill( 50)  # Dark gray color
+            dark_surface = pygame.Surface((self.width, self.height))
+            dark_surface.fill(50)  # Dark gray color
             dark_surface.set_alpha(100)  # Set transparency to achieve the hover effect
             screen.blit(dark_surface, (x, y))
         screen.blit(self.button_surface, (x, y))
