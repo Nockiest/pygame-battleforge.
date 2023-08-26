@@ -1,34 +1,61 @@
-vytvořit bojovou jednotku   
-    přidat koupení jednotky   
-        přidat aby mi ke kurzoru přilepilo novou jednotku
+vytvořit bojovou jednotku      
+    
+    zabránit úzoku přes jednotky
         
-        
-        zprovoznit hover function
- 
-    přidat movement soundfile
- 
+        zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
+        přidat útočnou animaci
+         
+            přidat pro medica heal animaci
+            přidat pro supply cart resupply animaci
+          
+           
+        přidat movement soundfile
+       
+       
+        --dát kanonu area damage
+           nedovolit střele se dokutálet do lesea?
+    
+         
+         vytvořit attack mode
+            -zařídit aby vykreslil atttack circle
+       
 musika
     najít 5 písniček
     
 prostředí
-    vytvořit scrolling
-    přidat ochranu před střelbou v lese
-    přidat zpomalení v lese
-    přidat města
-    přidat zdi
-    přidat cesty
-    přidat základny
-        napsat aby přidávali munici
-    přidat mosty
-   
+
+
+    **vytvořit scrolling
+    **přidat zdi
+        
+        opravtz angle
+
 
 ui
     přidat ukliádání
     přidat načítání
-    přidat počítání počtu jednotek
+    přidat start screen   
+    přidat úvodní nastavení hry
+    zprovoznit start screen
+        přidat nastavení
+   
+        nastavení prostředí
+        nastavení počtu jednotek
+    zprovozni endgame screen
+        vytvořit newgame button
+    vytvořit game_event/information window
+   
+ ** = můj rozmar
 
-game funcionality
-    přidat kontrolu vítěžství
-    zlepšit propočítáni pro to jakou funkci hráče zavolat
+ 
+outreach
+    najít stránku, kde mohu sdílet svůj game dev s ostatními
+  
+    zjisti jak vydat demo verzi
+    vydat třetí článek
 
-vytvořit funkci na propočítání útoku
+next uo:
+    vylepšit movement funkci
+    vydat článek s přehledem jednotek
+    zamezit klikání na obrazovku při rendrování animace
+    vytvořit proper bullet flying animaci
