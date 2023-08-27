@@ -101,54 +101,48 @@ class Unit(pygame.sprite.Sprite):
         return False
 
     def get_units_movement_area(self):
-        num_samples = 90
+        num_samples = 180
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
         for angle in range(0, 360, 360 // num_samples):
             # Convert angle to radians
+
             # create line from start to the edge of the screen
             # get the costs of every pixel on the line
             # find river or enemy unit at the first index
 
             radians = math.radians(angle)
             line_points = []
-
             current_cost = 0
             base_chunk = WIDTH//2
             distance = base_chunk
-            prev_distance = 0
+
             iteration = 2
 
             while base_chunk//iteration >= 1 and current_cost != self.base_movement:
-                current_line = []
-               
+
                 new_x = min(WIDTH, max(
                     center_x + distance * math.cos(radians), 0))
                 new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
                             distance * math.sin(radians), UPPER_BAR_HEIGHT))
-                if prev_distance < distance:
-                    line_points = bresenham_line(
-                        center_x, center_y, int(new_x), int(new_y))
-                    current_line = line_points
-                else:
-                    current_line = line_points[:distance]
 
+                line_points = bresenham_line(
+                    center_x, center_y, int(new_x), int(new_y))
                 line_pixel_colors = get_pixel_colors(
-                    current_line, background_screen)
+                    line_points, background_screen)
                 movement_cost = calculate_movement_cost(line_pixel_colors)
                 current_cost = movement_cost[-1][0]
 
                 if current_cost > self.base_movement:
-                    prev_distance = distance
+                    # print(distance, iteration, "decrementing",  512//iteration)
                     distance -= base_chunk//iteration
                 elif current_cost < self.base_movement:
-                    prev_distance = distance
+                    # print(distance, iteration, "incrementing")
                     distance += base_chunk//iteration
+                current_line = line_points
 
                 iteration *= 2
-
-                # if current_cost >= self.base_movement:
             if current_cost < self.base_movement:
                 while current_cost < self.base_movement:
                     new_x = min(WIDTH, max(
@@ -159,7 +153,7 @@ class Unit(pygame.sprite.Sprite):
                         [(int(new_x), int(new_y))], background_screen)
                     pixel_cost = calculate_movement_cost([new_pixel_color])
                     current_cost += movement_cost[-1][0]
-                    
+
                     if current_cost >= self.base_movement:
                         break
             else:
@@ -168,7 +162,6 @@ class Unit(pygame.sprite.Sprite):
                     last_pixel_color = line_pixel_colors[-1]
                     pixel_cost = calculate_movement_cost([last_pixel_color])
                     current_cost -= pixel_cost[-1][0]
-
                     line_points.pop()
 
             line_points = line_points[:-self.size//2]
@@ -187,6 +180,8 @@ class Unit(pygame.sprite.Sprite):
             if line_points:
                 self.valid_movement_positions_edges.append(
                     line_points[len(line_points) - 1])
+        if self.valid_movement_positions_edges:
+            print("points", self.valid_movement_positions_edges[-1])
                  
 
     def draw_possible_movement_area(self):

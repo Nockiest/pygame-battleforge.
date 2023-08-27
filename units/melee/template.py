@@ -6,7 +6,7 @@ from units.unit import Unit
 from utils.utils import *
 from config import *
 from game_state import *
-from animations.slash_animation import SlashAnimation
+from animations.basic_animations import SlashAnimation
  
 class Melee(Unit):
     def __init__(self, hp, attack_range,attack_resistance,   base_actions,  base_movement, size, x, y, icon, color, cost):

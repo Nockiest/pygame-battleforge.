@@ -15,8 +15,9 @@ vytvořit bojovou jednotku
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
 
-    
-       
+    zobrazit že hráč se netrefil
+    zobrazit kam se může v příštím ole pohnout nepřátelská jednotka
+    překodovat observer jednotku
     oprovait jitter v movement arrea
     
        

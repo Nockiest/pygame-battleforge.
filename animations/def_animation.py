@@ -1,8 +1,9 @@
 import pygame
 import os
 from  config import *
+from utils.render_utils import draw_ui, draw_units
 class Animation:
-    def __init__(self, x, y ,animation_folder, switch_speed=50):
+    def __init__(self, x, y ,animation_folder, switch_speed=100):
         self.images =  self.load_animation(animation_folder)
         self.start_time = pygame.time.get_ticks()
         self.switch_speed = switch_speed  # Switch image every 'switch_speed' milliseconds
@@ -20,6 +21,7 @@ class Animation:
         return   images 
     
     def render(self):
+        print("called", self.images)
         while not self.animation_ended:
             current_time = pygame.time.get_ticks()
             elapsed_time = current_time - self.start_time
@@ -28,10 +30,17 @@ class Animation:
                 self.current_frame = (self.current_frame + 1) % len(self.images)
                 self.start_time = current_time
                 frame = self.images[self.current_frame]
+                print("about to blit", frame, self.x, self.y)
+                screen.fill(GREEN)
+                draw_ui(screen)
+                draw_units(screen)
                 screen.blit(frame, (self.x, self.y))
+                pygame.display.update()
 
             if self.current_frame == len(self.images) - 1:
                 self.animation_ended = True
-                return "ENDED"
-            else:
-                return "STILL RUNNING"
+                print("end")
+            print(self.current_frame)
+                # return "ENDED"
+            # else:
+            #     return "STILL RUNNING"

@@ -1,6 +1,6 @@
 import game_state
 from config import *
-
+ 
 
 def draw_ui(screen):
     if len(game_state.players) == 0:
@@ -21,3 +21,31 @@ def draw_ui(screen):
             game_state.next_turn_button.draw(screen)
     except ValueError as e:
         print(e)
+
+
+def draw_units(screen):
+    for unit in game_state.living_units:
+        unit.render()
+        if unit == game_state.selected_for_movement_unit:
+            game_state.selected_for_movement_unit.draw_possible_movement_area()
+        elif unit == game_state.selected_attacking_unit:
+            game_state.selected_attacking_unit.draw_as_active()
+
+        if unit == game_state.hovered_unit:
+            unit.render_hovered_state()
+
+    if game_state.selected_attacking_unit != None:
+        game_state.selected_attacking_unit.highlight_attackable_units()
+    if game_state.selected_attacking_unit:
+        attack_range_provided = False
+        # for unit in game_state.living_units:
+        #     if isinstance(unit, Observer) and unit.color == game_state.selected_attacking_unit.color:
+        #         attack_range_provided = unit.provide_attack_range(
+        #             game_state.selected_for_movement_unit)
+        if attack_range_provided is False:
+            game_state.selected_attacking_unit.attack_range_modifiers["in_observer_range"] = 0
+
+        game_state.selected_attacking_unit.render_attack_circle()
+    if game_state.unit_placement_mode:
+        game_state.players[game_state.cur_player].show_unit_to_be_placed(
+            (game_state.unit_to_be_placed, 0, 0))

@@ -11,7 +11,7 @@ from utils.text_utils import *
 import sys
 from os.path import dirname, basename, isfile, join
 import glob
-
+from animations.basic_animations import *
 
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [basename(f)[:-3] for f in modules if isfile(f)
@@ -156,31 +156,31 @@ def buy_unit(click_pos):
         print(f"Error: Unit type {game_state.unit_to_be_placed} not found.")
 
 
-def place_starting_units(red_player, blue_player):
+def place_starting_units( ):
     # blue_player.create_starting_unit(
     #     (Musketeer, 0, 100))
     red_player.create_starting_unit(
         (Musketeer, 200, 200))
-    # red_player.create_starting_unit(
-    #     (Pikeman, 175, 175))
-    # red_player.create_starting_unit(
-    #     (Canon, 250, 250))
-    # red_player.create_starting_unit(
-    #     (Canon, 120, 100))
-    # red_player.create_starting_unit(
-    #     (Shield, 400, 300))
-    # # blue_player.create_starting_unit(
-    # #     (Medic, 125, 160s)
+    red_player.create_starting_unit(
+        (Pikeman, 175, 175))
+    red_player.create_starting_unit(
+        (Canon, 250, 250))
+    red_player.create_starting_unit(
+        (Canon, 120, 100))
+    red_player.create_starting_unit(
+        (Shield, 400, 300))
     # blue_player.create_starting_unit(
-    #     (Medic, 500, 400))
-    # blue_player.create_starting_unit(
-    #     (Commander, 550, 100))
-    # red_player.create_starting_unit(
-    #     (Commander, 500, 70))
-    # # red_player.create_starting_unit(
-    # #     (Pikeman, 700, 100))
-    # blue_player.create_starting_unit(
-    #     (SupplyCart, 300, 300))
+    #     (Medic, 125, 160s)
+    blue_player.create_starting_unit(
+        (Medic, 500, 400))
+    blue_player.create_starting_unit(
+        (Commander, 550, 100))
+    red_player.create_starting_unit(
+        (Commander, 500, 70))
+    red_player.create_starting_unit(
+        (Pikeman, 700, 100))
+    blue_player.create_starting_unit(
+        (SupplyCart, 300, 300))
     # blue_player.create_starting_unit(
     #     (Observer, 200, 150))
     # blue_player.create_starting_unit(
@@ -231,9 +231,9 @@ game_state.next_turn_button = Button(
 game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                            HEIGHT//2-50, 100, 100, start_game)
 draw_ui(screen )
- 
-for i, player in enumerate(game_state.players):
-    player.place_starting_units(  unit_params_list[i])
+place_starting_units( )
+# for i, player in enumerate(game_state.players):
+#     player.place_starting_units(  unit_params_list[i])
 for unit in game_state.living_units:
     
     if unit.color == game_state.players[game_state.cur_player].color:
@@ -329,33 +329,8 @@ def handle_game_running_state():
     # RENDER ELEMENTS ON THE MAIN SCREEN
     # render the game game_state.state information
     draw_ui(screen,)
-
-    for unit in game_state.living_units:
-        unit.render()
-        if unit == game_state.selected_for_movement_unit:
-            game_state.selected_for_movement_unit.draw_possible_movement_area()
-        elif unit == game_state.selected_attacking_unit:
-            game_state.selected_attacking_unit.draw_as_active()
-
-        if unit == game_state.hovered_unit:
-            unit.render_hovered_state()
-
-    if game_state.selected_attacking_unit != None:
-        game_state.selected_attacking_unit.highlight_attackable_units()
-    if game_state.selected_attacking_unit:
-        attack_range_provided = False
-        for unit in game_state.living_units:
-            if isinstance(unit, Observer) and unit.color == game_state.selected_attacking_unit.color:
-                attack_range_provided = unit.provide_attack_range(
-                    game_state.selected_for_movement_unit)
-        if attack_range_provided is False:
-            game_state.selected_attacking_unit.attack_range_modifiers["in_observer_range"] = 0
-
-        game_state.selected_attacking_unit.render_attack_circle()
-    if game_state.unit_placement_mode:
-        game_state.players[game_state.cur_player].show_unit_to_be_placed(
-            (game_state.unit_to_be_placed, 0, 0))
-
+    draw_units(screen)
+     
     text = "game" + (" ended  " if game_state.game_won else "  is running ")
 
     render_text(screen, text,
@@ -369,10 +344,12 @@ def handle_game_running_state():
 
     clock.tick(fps)
 
-
+anim = ResupplyAnimation(100,100)
+ 
 while game_state.lets_continue:
     if game_state.state == "game_is_running":
         handle_game_running_state()
+        anim.render()
     elif game_state.state == "start_scrreen":
         print("rendering start screen")
         handle_start_screen()
