@@ -13,6 +13,8 @@ class Animation:
         self.x = x
         self.y = y
         self.animation_ended = False
+    def __repr__(self):
+        return f'{type(self).__name__} '
 
     def load_animation(self, animation_folder):
         images = []
@@ -24,24 +26,27 @@ class Animation:
         return images
 
     def render(self):
-        if game_state.hovered_button:
-            game_state.hovered_button.hovered = False
-            game_state.hovered_button = None
-        while not self.animation_ended:
-            current_time = pygame.time.get_ticks()
-            elapsed_time = current_time - self.start_time
-            if elapsed_time >= self.switch_speed:
-                self.current_frame = (
-                    self.current_frame + 1) % len(self.images)
-                self.start_time = current_time
-                frame = self.images[self.current_frame]
+      
+        
+        # Update animation
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - self.start_time
+        if elapsed_time >= self.switch_speed:
+            self.current_frame = (self.current_frame + 1) % len(self.images)
+            self.start_time = current_time
 
-                screen.fill(GREEN)
-                draw_ui(screen)
-                draw_units(screen)
-                screen.blit(frame, (self.x, self.y))
-                pygame.display.update()
+        # Render current frame
+        frame = self.images[self.current_frame]
+       
+        screen.blit(frame, (self.x, self.y))
 
-            if self.current_frame == len(self.images) - 1:
-                self.animation_ended = True
-          
+        # Check if animation has ended
+        if self.current_frame == len(self.images) - 1:
+            self.animation_ended = True
+            print("ANIMATION ENDED", self)
+            game_state.animations.remove(self)
+            del self
+
+#   screen.fill(GREEN)
+#         draw_ui(screen)
+#         draw_units(screen)

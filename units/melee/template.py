@@ -12,7 +12,7 @@ class Melee(Unit):
     def __init__(self, hp, attack_range,attack_resistance,   base_actions,  base_movement, size, x, y, icon, color, cost):
         super().__init__(hp, attack_range,attack_resistance, base_actions,
                          base_movement, size, x, y, None, icon, color, cost)
-        self.slash_animation = SlashAnimation(self.x,self.y,  100)
+       
     def try_attack(self, click_pos, attacked_unit    ):
         res = super().try_attack(click_pos, attacked_unit   )
 
@@ -27,7 +27,7 @@ class Melee(Unit):
             line_pixel_colors = get_pixel_colors(line_points, background_screen)
             # self.slash_animation.x, self.slash_animation.x = attacked_unit.x , attacked_unit.y
             print("rendering slash anim",attacked_unit.x,attacked_unit.y)
-            self.slash_animation.render()
+            game_state.animations.append(SlashAnimation(self.center[0], self.center[1]))
             # self.play_attack_animation( self.x, self.y)
             
             if RIVER_BLUE   in line_pixel_colors:

@@ -53,7 +53,7 @@ class BattleGround:
          
 
         # Define quantities of each element to generate
-        self.num_forests = 5
+        self.num_forests = 0
         self.num_rivers = 2
         self.num_towns = 2
         self.num_roads = 9

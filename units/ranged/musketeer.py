@@ -22,8 +22,8 @@ class Musketeer(Ranged):
             # Calculate the line between unit's center and click position
             line_points = self.calculate_self_enemy_center_line(
                 attacked_unit.center)
-            self.shoot_animation = ShootingAnimation(self.x, self.y, line_points)
-            self.shoot_animation.render()
+            game_state.animations.append(ShootingAnimation(self.x, self.y, line_points))
+            
             line_pixel_colors = get_pixel_colors(
                 line_points, background_screen)
             prevented = self.prevent_shhooting_through_forrest(

@@ -39,18 +39,12 @@ def start_game():
 def switch_player():
     game_state.cur_player = (game_state.cur_player +
                              1) % len(game_state.players)
-
-
+ 
 def next_turn():
+    game_state.input_allowed = False
     # Block the MOUSEBUTTONDOWN event
-    if game_state.hovered_button:
-        game_state.hovered_button.hovered = False
-        game_state.hovered_button = None
-    # Calculate the next turn
-    # ...
-
-    # Unblock the MOUSEBUTTONDOWN event
-    
+    pygame.mouse.set_visible(False)
+    pygame.mouse.set_pos(0,0)
     update_sorted_units()
     switch_player()
     deselect_unit()
@@ -77,6 +71,8 @@ def next_turn():
     for depo in game_state.battle_ground.supply_depots:
         depo.dispense_ammo()
 
+    pygame.time.set_timer( pygame.mouse.set_visible(True), 3000)
+    
     
 
 
@@ -249,9 +245,9 @@ game_state.next_turn_button = Button(
 game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                       HEIGHT//2-50, 100, 100, start_game)
 draw_ui(screen)
-# place_starting_units(red_player, blue_player)
-for i, player in enumerate(game_state.players):
-    player.place_starting_units(  unit_params_list[i])
+place_starting_units(red_player, blue_player)
+# for i, player in enumerate(game_state.players):
+#     player.place_starting_units(  unit_params_list[i])
 for unit in game_state.living_units:
 
     if unit.color == game_state.players[game_state.cur_player].color:
@@ -335,7 +331,8 @@ def handle_game_running_state():
 
     cursor_x, cursor_y = pygame.mouse.get_pos()
     get_hovered_element(cursor_x, cursor_y)
-
+   
+       
     for event in pygame.event.get():
         
         if event.type == pygame.QUIT:
@@ -354,13 +351,16 @@ def handle_game_running_state():
 
     for player in game_state.players:
         player.handle_input()
+    
+     
 
     screen.fill(GREEN)
     # RENDER ELEMENTS ON THE MAIN SCREEN
     # render the game game_state.state information
     draw_ui(screen,)
     draw_units(screen)
-
+    for animation in game_state.animations:
+        animation.render()
     text = "game" + (" ended  " if game_state.game_won else "  is running ")
 
     render_text(screen, text,
@@ -386,5 +386,6 @@ while game_state.lets_continue:
         print("rendering end screen")
     else:
         print("this game screen doesnt exist")
+    game_state.input_allowed = True
     # Add more game states and handling logic here
 pygame.quit()

@@ -29,8 +29,7 @@ class SupplyDepo(Structure):
         for unit in game_state.living_units:
 
             if (isinstance(unit, Ranged) or isinstance(unit, SupplyCart)) and distance(self.center, unit.center) < RESUPPLY_RANGE:
-                resuuply_anim =   ResupplyAnimation(unit.x, unit.y)
-                resuuply_anim.render( )
+                game_state.animations.append(ResupplyAnimation(unit.x, unit.y))
                 unit.ammo += self.ammo_per_unit
                 self.ammo_count -= self.ammo_per_unit
                 print(f"Dispensing { self.ammo_per_unit} ammo. ")

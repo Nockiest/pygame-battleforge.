@@ -17,7 +17,7 @@ class Button:
         all_buttons.append(self)
     def draw(self, screen):
         # Draw the outline of the button
-        print("hovered",self.hovered)
+         
         self.color = RED if self.hovered else BLACK
         pygame.draw.rect(screen, self.color, self.rect, 2)
         

@@ -42,9 +42,9 @@ class Canon(Ranged):
         prevented = self.prevent_shhooting_through_forrest(
             line_pixel_colors, line_points)
         if not prevented:
-             self.shoot_animation =  ShootingAnimation(self.x, self.y, line_points, 10)
-             print("WE WILL RENDER", self.shoot_animation) 
-             self.shoot_animation.render()
+             game_state.animations.append(ShootingAnimation(self.x, self.y, line_points, 10))
+ 
+             
  
         for unit in game_state.living_units.copy():
             if unit.color == self.color:

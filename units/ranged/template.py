@@ -10,14 +10,7 @@ class Ranged(Unit):
     def __init__(self, hp, attack_range, attack_resistance, base_actions, ammo, base_movement, size, x, y, icon, color, cost):
         super().__init__(hp, attack_range, attack_resistance, base_actions,
                          base_movement, size, x, y, ammo, icon, color, cost)
-        self.shoot_animation =  None #ShootingAnimation(self.x, self.y, line_points, 10))
-
-    # def create_shoot_animation(self, line_points):
-    #     print("creating animation")
-    #     self.running_animations.append(
-    #             ShootingAnimation(self.x, self.y, line_points, 10))
-    #     print( self.running_animations[-1])
-    #     self.running_animations[-1].render()
+       
 
     
     def prevent_shhooting_through_forrest(self, line_pixel_colors, line_points):

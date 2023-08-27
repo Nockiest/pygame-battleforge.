@@ -20,3 +20,5 @@ battle_ground = None
 button_bar = None
 next_turn_button = None
 start_game_button = None
+input_allowed = True
+animations = []

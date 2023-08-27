@@ -39,10 +39,7 @@ def draw_units(screen):
         game_state.selected_attacking_unit.draw_lines_to_enemies_in_range()
     if game_state.selected_attacking_unit:
         attack_range_provided = False
-        # for unit in game_state.living_units:
-        #     if isinstance(unit, Observer) and unit.color == game_state.selected_attacking_unit.color:
-        #         attack_range_provided = unit.provide_attack_range(
-        #             game_state.selected_for_movement_unit)
+      
         if attack_range_provided is False:
             game_state.selected_attacking_unit.attack_range_modifiers["in_observer_range"] = 0
 
