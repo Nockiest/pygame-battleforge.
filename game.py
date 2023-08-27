@@ -30,7 +30,7 @@ def enter_buy_mode(unit_type):
     # players[cur_player].show_unit_to_be_placed((game_state.unit_to_be_placed, 0, 0), game_state.unit_to_be_placed)
     game_state.unit_placement_mode = unit_type
 
-    
+
 def start_game():
     print("click")
     game_state = "game is running"
@@ -132,7 +132,8 @@ def process_attack(attacker, attacked_pos):
 
 
 def buy_unit(click_pos):
-   
+    player = game_state.players[game_state.cur_player]
+    print("players buy area is ", player.buy_area)
     if game_state.hovered_unit != None:
         return
     if game_state.unit_to_be_placed:
@@ -143,11 +144,16 @@ def buy_unit(click_pos):
         # Check if the clicked position is not on the river
         if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
             return print("Cannot place unit on river.")
-            # Check if the unit is being placed within the valid Y coordinate range
-        if HEIGHT - BUTTON_BAR_HEIGHT-dummy.size < y:
-            return print("Cannot place unit in this Y coordinate range.")
-        game_state.players[game_state.cur_player].create_unit(
-            (game_state.unit_to_be_placed, x, y))
+        # Check if the unit is being placed within the valid Y coordinate range
+        # if HEIGHT - BUTTON_BAR_HEIGHT-dummy.size < y:
+        #     return print("Cannot place unit in this Y coordinate range.")
+        # Check if the unit is being placed within the buy area
+        buy_area_rect = pygame.Rect(*player.buy_area)
+        # Inflate the buy area rect by -dummy.size to create a smaller rect
+        buy_area_rect.inflate_ip(-dummy.size//2, -dummy.size//2)
+        if not buy_area_rect.collidepoint(click_pos):
+            return print("Cannot place unit outside of buy area.")
+        player.create_unit((game_state.unit_to_be_placed, x, y))
         game_state.unit_to_be_placed = False
         game_state.unit_placement_mode = None
 
@@ -156,7 +162,7 @@ def buy_unit(click_pos):
         print(f"Error: Unit type {game_state.unit_to_be_placed} not found.")
 
 
-def place_starting_units( ):
+def place_starting_units(red_player, blue_player):
     # blue_player.create_starting_unit(
     #     (Musketeer, 0, 100))
     red_player.create_starting_unit(
@@ -181,19 +187,18 @@ def place_starting_units( ):
         (Pikeman, 700, 100))
     blue_player.create_starting_unit(
         (SupplyCart, 300, 300))
-    # blue_player.create_starting_unit(
-    #     (Observer, 200, 150))
-    # blue_player.create_starting_unit(
-    #     (Observer, 250, 150))
-    # blue_player.create_starting_unit(
-    #     (Knight, 20, 100))
+    blue_player.create_starting_unit(
+        (Observer, 200, 150))
+    blue_player.create_starting_unit(
+        (Observer, 250, 150))
+    blue_player.create_starting_unit(
+        (Knight, 450, 500))
     # blue_player.create_starting_unit(
     #     (Knight, 50, 100))
     # blue_player.create_starting_unit(
     #     (Knight, 80, 100))
     # # # blue_player.create_starting_unit(
     # #     (Knight, 50, 500)s)
-    # # napsat funkci která je položí automaticky
 
 
 pygame.init()
@@ -215,7 +220,6 @@ unit_params_list = [
         Canon]
 ]
 
-
 # when you change the positions here you have to change get_pixel_color function
 red_player = Player(RED, 0)
 # when you change the positions here you have to change get_pixel_color function
@@ -229,15 +233,17 @@ game_state.button_bar = ButtonBar(enter_buy_mode)
 game_state.next_turn_button = Button(
     "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, next_turn)
 game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
-                           HEIGHT//2-50, 100, 100, start_game)
-draw_ui(screen )
-place_starting_units( )
-# for i, player in enumerate(game_state.players):
-#     player.place_starting_units(  unit_params_list[i])
+                                      HEIGHT//2-50, 100, 100, start_game)
+draw_ui(screen)
+# place_starting_units(red_player, blue_player)
+for i, player in enumerate(game_state.players):
+    player.place_starting_units(  unit_params_list[i])
 for unit in game_state.living_units:
-    
+
     if unit.color == game_state.players[game_state.cur_player].color:
+        
         unit.get_units_movement_area()
+        
 
 def handle_endgame_screen():
     pass
@@ -280,7 +286,6 @@ def handle_game_running_state():
             activate_attack_mode(event.pos)
 
     def handle_mouse_motion():
-
         if game_state.selected_for_movement_unit:
             game_state.selected_for_movement_unit.move_in_game_field(
                 event.pos)
@@ -330,7 +335,7 @@ def handle_game_running_state():
     # render the game game_state.state information
     draw_ui(screen,)
     draw_units(screen)
-     
+
     text = "game" + (" ended  " if game_state.game_won else "  is running ")
 
     render_text(screen, text,
@@ -344,12 +349,11 @@ def handle_game_running_state():
 
     clock.tick(fps)
 
-anim = ResupplyAnimation(100,100)
- 
+
 while game_state.lets_continue:
     if game_state.state == "game_is_running":
         handle_game_running_state()
-        anim.render()
+
     elif game_state.state == "start_scrreen":
         print("rendering start screen")
         handle_start_screen()

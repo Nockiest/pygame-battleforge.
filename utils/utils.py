@@ -193,6 +193,7 @@ def get_pixel_colors(points, surface):
         elif is_inside_rectangle(point[0], point[1], WIDTH - TENDER_WIDTH, HEIGHT-TENDER_HEIGHT, TENDER_WIDTH, TENDER_HEIGHT ):
             points_colors.append(TERMINATE_COLOR)  # terminate color
         elif point[0] >= 0 and point[0] < WIDTH and point[1] >= 0 and point[1] < HEIGHT:
+            
             pixel_color = surface.get_at(point)
             points_colors.append(pixel_color)
         else:

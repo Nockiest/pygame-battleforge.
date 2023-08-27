@@ -25,6 +25,8 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 RED_OUTLINE_COLOR = (1,1,1)
+DARK_RED = (139, 0, 0)  
+ORANGE=  (255,165,0)
 BLUE = (0, 0, 255)
 BLUE_OUTLINE_COLOR = (2,2,2)
 YELLOW = (255, 255, 0)
@@ -35,8 +37,7 @@ TOWN_RED = (200, 0, 0, 100)
 HOUSE_PURPLE = (255, 0, 255)
 BRIDGE_COLOR = (139, 69, 19)  # Saddle Brown
 TERMINATE_COLOR = (3,3,3)
-DARK_RED = (139, 0, 0)  # Dark red color
-
+ 
 RESUPPLY_RANGE = 100
  
 knight_buy_img = pygame.image.load("img/knight.png")

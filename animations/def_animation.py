@@ -1,10 +1,12 @@
 import pygame
 import os
-from  config import *
+from config import *
 from utils.render_utils import draw_ui, draw_units
+
+
 class Animation:
-    def __init__(self, x, y ,animation_folder, switch_speed=100):
-        self.images =  self.load_animation(animation_folder)
+    def __init__(self, x, y, animation_folder, switch_speed=100):
+        self.images = self.load_animation(animation_folder)
         self.start_time = pygame.time.get_ticks()
         self.switch_speed = switch_speed  # Switch image every 'switch_speed' milliseconds
         self.current_frame = 0
@@ -12,25 +14,26 @@ class Animation:
         self.y = y
         self.animation_ended = False
 
-    def load_animation(self,animation_folder  ):
-        images= []
+    def load_animation(self, animation_folder):
+        images = []
         for filename in os.listdir(animation_folder):
             if filename.endswith(".png"):
-                img = pygame.image.load(os.path.join(animation_folder, filename))
+                img = pygame.image.load(
+                    os.path.join(animation_folder, filename))
                 images.append(img)
-        return   images 
-    
+        return images
+
     def render(self):
-        print("called", self.images)
+
         while not self.animation_ended:
             current_time = pygame.time.get_ticks()
             elapsed_time = current_time - self.start_time
-
             if elapsed_time >= self.switch_speed:
-                self.current_frame = (self.current_frame + 1) % len(self.images)
+                self.current_frame = (
+                    self.current_frame + 1) % len(self.images)
                 self.start_time = current_time
                 frame = self.images[self.current_frame]
-                print("about to blit", frame, self.x, self.y)
+
                 screen.fill(GREEN)
                 draw_ui(screen)
                 draw_units(screen)
@@ -39,8 +42,4 @@ class Animation:
 
             if self.current_frame == len(self.images) - 1:
                 self.animation_ended = True
-                print("end")
-            print(self.current_frame)
-                # return "ENDED"
-            # else:
-            #     return "STILL RUNNING"
+          

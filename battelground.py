@@ -53,7 +53,7 @@ class BattleGround:
          
 
         # Define quantities of each element to generate
-        self.num_forests = 0
+        self.num_forests = 5
         self.num_rivers = 2
         self.num_towns = 2
         self.num_roads = 9
@@ -80,7 +80,7 @@ class BattleGround:
             forest_shape = find_edge_points(forest_from_squares)
             if len(forest_shape) >= 3:
                 forests.append(forest_shape)
-                print(forest_shape)
+                
         return forests
    
     def create_forest_squares(self, x, y, size, regularity, forest_size):

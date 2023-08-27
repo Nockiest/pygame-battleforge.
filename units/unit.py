@@ -21,6 +21,7 @@ class Unit(pygame.sprite.Sprite):
         self.base_movement = base_movement
         self.attack_resistance = attack_resistance
         self.enemies_in_range = []
+        self.lines_to_enemies_in_range = []
         self.x = x
         self.y = y
 
@@ -42,10 +43,9 @@ class Unit(pygame.sprite.Sprite):
         self.attack_circle = []
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
+        self.lines_to_enemies_in_range = []
 
-        self.running_animations = []
         game_state.living_units.add(self)
-        print("living units after appending a new unit",  game_state.living_units)
 
     def update(self):
         # Add any necessary update logic here
@@ -182,15 +182,14 @@ class Unit(pygame.sprite.Sprite):
                     line_points[len(line_points) - 1])
         if self.valid_movement_positions_edges:
             print("points", self.valid_movement_positions_edges[-1])
-                 
 
     def draw_possible_movement_area(self):
         farthest_points = []
         for angle in self.valid_movement_positions:
             if len(angle) >= 2:
                 farthest_points.append(angle[-1])
-       
-        if len(self.valid_movement_positions) > 1:
+
+        if len(self.valid_movement_positions) > 2:
             print("last movement point", self.valid_movement_positions[0])
             farthest_points.append(self.valid_movement_positions[0][-1])
             # farthest_points.append(angle[-2])
@@ -199,8 +198,39 @@ class Unit(pygame.sprite.Sprite):
         if len(farthest_points) > 1:
             pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
 
+    def find_obstacles_in_line_to_enemies(self, enemy, line_points):
+        # I could only reset the line to that specific unit instead of deleting the whole array
+        ######################### x FIND BLOCKING UNITS ##############
+        blocked = False
+        for unit in game_state.living_units:
+            if unit == enemy:
+                continue
+            elif unit.color == self.color:
+                continue
+            point_x, point_y, interferes = check_precalculated_line_square_interference(
+                unit, line_points)
+            if interferes:
+                print("this unit is blocking the way", unit, enemy)
+                blocked = True
+                self.lines_to_enemies_in_range.append({
+                    "enemy": enemy,
+                    "start": self.center,
+                    "interference_point": (point_x, point_y),
+                    "end": enemy.center})
+                print(self.lines_to_enemies_in_range)
+                break
+        if not blocked:
+            self.lines_to_enemies_in_range.append({
+                    "enemy": enemy,
+                    "start": self.center,
+                    "interference_point": None,
+                    "end": enemy.center})
+        
+        return blocked
+
     def get_attackable_units(self):
         self.enemies_in_range = []
+        self.lines_to_enemies_in_range = []
         # for every living unit
         for enemy in game_state.living_units:
             if enemy.color == self.color:
@@ -213,26 +243,13 @@ class Unit(pygame.sprite.Sprite):
             line_points = bresenham_line(
                 center_x, center_y, enemy_center_x, enemy_center_y)
             if distance - enemy.size//2 < self.attack_range:
-                blocked = False
-                for unit in game_state.living_units:
-                    if unit == enemy:
-                        continue
-                    elif unit.color == self.color:
-                        continue
-                    point_x, point_y, interferes = check_precalculated_line_square_interference(
-                        unit, line_points)
-                    if interferes:
-                        print("this unit is blocking the way", unit, enemy)
-                        print(unit.rect, line_points)
-                        blocked = True
-                        break
+                blocked = self.find_obstacles_in_line_to_enemies(
+                    enemy, line_points)
+
                 if not blocked:
                     self.enemies_in_range.append(enemy)
 
         print("in attack range are", self.enemies_in_range)
-
-    def calculate_attack_circle(self, battelground):
-        pass
 
     def render_attack_circle(self):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
@@ -242,7 +259,6 @@ class Unit(pygame.sprite.Sprite):
                            self.y + self.size // 2), int(attack_range_with_modifiers), 1)
 
     def attack(self):
-
         self.remain_actions -= 1
         if self.ammo != None:
             self.ammo -= 1
@@ -254,9 +270,6 @@ class Unit(pygame.sprite.Sprite):
             if hit_result:
                 remaining_hp = attacked_unit.take_damage(self)
                 print("remaining ", remaining_hp)
-                # if remaining_hp < 0:
-                #     game_state.players[ game_state.cur_player].remove_from_game(
-                #         attacked_unit)
 
             return "UNIT ATTACKS"
         return "Attack not possible"
@@ -279,7 +292,6 @@ class Unit(pygame.sprite.Sprite):
 
     def take_damage(self, attacker):
         self.hp -= 1
-
         if self.hp <= 0:
             game_state.living_units.remove(self)
             # game_state.players[game_state.cur_player].remove_from_game(self)
@@ -288,11 +300,8 @@ class Unit(pygame.sprite.Sprite):
             print("Removing unit:", self)
             print("Units in living_units:", game_state.living_units)
             # Check if it's the same instance
-
             return self.hp
-
             del self
-
         # print(game_state.living_units.index(self))
         return self.hp
 
@@ -302,47 +311,44 @@ class Unit(pygame.sprite.Sprite):
         # Check if the target_building is within the capture range of the unit
         # Reduce the capture progress of the building until it is captured
 
-    def remove_from_game(self, player):
-        # Remove the unit from the 'units' list of the player
-
-        print(player.color, self.color, player.units, self, "removing unit")
-        # Remove the unit from the ' game_state..cur_players' array
-        player.units.remove(self)
-        player.update_sorted_units()
-        game_state.living_units.remove(self)
-        # Set the unit's x, y, and rect attributes to None to remove it from the game field
-
-        print("Unit is dead")
 
     def reset_for_next_turn(self):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
         self.remain_actions = self.base_actions
 
+    def draw_lines_to_enemies_in_range(self):
+        for line in self.lines_to_enemies_in_range:
+            start = line["start"]
+            end = line["end"]
+            interference_point = line["interference_point"]
+            
+
+            if interference_point is not None:
+                pygame.draw.line(screen, DARK_RED, start, interference_point, 3)
+                pygame.draw.line(screen, (HOUSE_PURPLE), interference_point, end, 3)
+            else:
+                pygame.draw.line(screen, DARK_RED, start, end,3)
+                midpoint = ((start[0] + end[0]) // 2,
+                            (start[1] + end[1]) // 2)
+                distance = math.sqrt(
+                        (start[0] - end[0]) ** 2 + (start[1] - end[1]) ** 2)
+                font = pygame.font.Font(None, 20)
+                text_surface = font.render(
+                    f"{int(distance)} units", True, WHITE)
+                text_rect = text_surface.get_rect(center=midpoint)
+                screen.blit(text_surface, text_rect)
+             
+           
+        
     def highlight_attackable_units(self):
         for unit in self.enemies_in_range:
             # Calculate the center coordinates of self and the target unit
             self_center = self.center
             target_center = unit.center
-
-            # Calculate the midpoint of the line
-            midpoint = ((self_center[0] + target_center[0]) //
-                        2, (self_center[1] + target_center[1]) // 2)
-
-            # Calculate the distance between self and the target unit
-            distance = math.sqrt(
-                (self_center[0] - target_center[0]) ** 2 + (self_center[1] - target_center[1]) ** 2)
-
             # Draw a line from self's center to the target unit's center
             unit.draw_as_active()
-            pygame.draw.line(screen, DARK_RED, self_center, target_center, 2)
-
-            # Render the distance as text at the midpoint
-            font = pygame.font.Font(None, 20)
-            text_surface = font.render(
-                f"{int(distance)}/{self.attack_range} units", True, WHITE)
-            text_rect = text_surface.get_rect(center=midpoint)
-            screen.blit(text_surface, text_rect)
+           
 
     def render_hovered_state(self):
         padding = 2  # Adjust the padding size as needed

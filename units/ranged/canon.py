@@ -4,7 +4,7 @@ from utils.utils import *
 from config import *
 import game_state
 from .template import Ranged
-
+from animations.shooting_animation import ShootingAnimation
 
 class Canon(Ranged):
     size = 40
@@ -42,7 +42,9 @@ class Canon(Ranged):
         prevented = self.prevent_shhooting_through_forrest(
             line_pixel_colors, line_points)
         if not prevented:
-            self.create_shoot_animation(line_points)
+             self.shoot_animation =  ShootingAnimation(self.x, self.y, line_points, 10)
+             print("WE WILL RENDER", self.shoot_animation) 
+             self.shoot_animation.render()
  
         for unit in game_state.living_units.copy():
             if unit.color == self.color:

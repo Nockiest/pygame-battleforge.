@@ -5,7 +5,7 @@ from config import *
 from utils.image_utils import render_image
 from utils.utils import *
 from units.support.observer import Observer
- 
+
 import game_state
 SCROLL_SPEED = 5
 
@@ -20,6 +20,8 @@ class Player:
         self.tender_x = tender_x  # X position for the tender rectangle
         self.scroll_position = 0
         self.preview_unit = None
+        self.spawn_width = 200
+        self.buy_area = (0, UPPER_BAR_HEIGHT, self.spawn_width, HEIGHT - TENDER_HEIGHT - UPPER_BAR_HEIGHT)
 
     def update_sorted_units(self):
         self.sorted_by_class_units = {}
@@ -28,16 +30,16 @@ class Player:
             self.sorted_by_class_units[unit_type] = self.sorted_by_class_units.get(
                 unit_type, 0) + 1
 
-    def create_unit(self, unit_params  ):
+    def create_unit(self, unit_params):
         # Create the unit object
         unit_class, x, y = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
-       
+
         if self.supplies >= unit.cost:
 
             # game_state.living_units.append(unit)
             self.units.append(unit)
-            print("created unit",unit, )
+            print("created unit", unit, )
             self.supplies -= unit.cost
             print("player has :", self.supplies, "supplies")
         else:
@@ -45,11 +47,11 @@ class Player:
             del unit  # Remove the unit from memory since it won't be added to the lists
             return None
         self.update_sorted_units()
-        update_sorted_units( )
+        update_sorted_units()
 
         return unit
 
-    def create_starting_unit(self, unit_params   ):
+    def create_starting_unit(self, unit_params):
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
         # game_state.living_units.append(unit)
@@ -57,18 +59,21 @@ class Player:
         self.update_sorted_units()
 
     def show_unit_to_be_placed(self, unit_params):
-       
         unit_class_name, _, _ = unit_params
-        print(unit_class_name, "x")
+
         cursor_x, cursor_y = pygame.mouse.get_pos()
         try:
-            
             self.preview_unit = unit_class_name(x=-100, y=-100, color=BLACK)
             self.preview_unit.x = cursor_x - self.preview_unit.size // 2
             self.preview_unit.y = cursor_y - self.preview_unit.size // 2
             # unit = unit_class_name(x=self.preview_unit.x , y=unit_y, color=self.color)
             self.preview_unit.render()
-            pygame.display.flip() 
+            
+            # Draw the buy area rectangle in orange
+            buy_area_rect = pygame.Rect(*self.buy_area)
+            pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)
+            
+            pygame.display.flip()
             self.preview_unit.kill()
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -131,7 +136,7 @@ class Player:
             # Ensure scroll position doesn't go below 0
             self.scroll_position = max(self.scroll_position,   self.max_scroll)
         if keys[pygame.K_DOWN]:
-            
+
             self.scroll_position += 5
             # Ensure scroll position doesn't exceed max
             self.scroll_position = min(self.scroll_position, 0)
@@ -144,40 +149,32 @@ class Player:
     def announce_defeat(self):
         print("Player ", self.color, " has been defeated")
 
-    # def end_game(self, game):
-    #     game = True
-    #     return game
-
     def remove_self_unit(self,  unit):
-        
-        # Find the unit in the game_state.living_units list and remove it
-        # if unit in game_state.living_units:
-        #     game_state.living_units.remove(unit)
-
         # Find the unit in the player's units list and remove it
         if unit in self.units:
             self.units.remove(unit)
 
-       
         self.update_sorted_units()
         update_sorted_units()
 
-    def place_starting_units(self,  unit_class_list):
-        spawn_width = 200
+    
+    def place_starting_units(self, unit_class_list):
         sides = {
-            "(255, 0, 0)": WIDTH,
-            "(0, 0, 255)": spawn_width  # WIDTH //2
+            "(255, 0, 0)": 0,
+            "(0, 0, 255)": WIDTH - self.spawn_width
         }
+        self.buy_area = (sides[str(self.color)],) + self.buy_area[1:]
+        print(self.color, "buy area", self.buy_area)
         for unit_class in unit_class_list:
 
             print(self.color, unit_class.size, unit_class, "hello")
             while True:
                 # Random x on the left side
                 x = random.randint(
-                    sides[str(self.color)] - spawn_width, sides[str(self.color)]-30)
+                    sides[str(self.color)],  sides[str(self.color)]  +  self.spawn_width - unit_class.size  )
                 # Random y anywhere on screen
                 y = random.randint(
-                    UPPER_BAR_HEIGHT, HEIGHT -  TENDER_HEIGHT - unit_class.size) 
+                    UPPER_BAR_HEIGHT, HEIGHT - TENDER_HEIGHT - unit_class.size)
                 # Replace with your actual pixel color fetching function
                 pixel_color = get_pixel_colors(
                     [(x+unit_class.size//2, y+unit_class.size//2)], background_screen)
@@ -187,9 +184,9 @@ class Player:
                     break
 
             unit_params = (unit_class, x, y)
-            self.create_starting_unit(unit_params )
+            self.create_starting_unit(unit_params)
 
-    def is_position_occupied(self, x, y,  ):
+    def is_position_occupied(self, x, y,):
         for unit in game_state.living_units:
             if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:
                 return True

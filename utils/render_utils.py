@@ -36,6 +36,7 @@ def draw_units(screen):
 
     if game_state.selected_attacking_unit != None:
         game_state.selected_attacking_unit.highlight_attackable_units()
+        game_state.selected_attacking_unit.draw_lines_to_enemies_in_range()
     if game_state.selected_attacking_unit:
         attack_range_provided = False
         # for unit in game_state.living_units:

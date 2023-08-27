@@ -1,22 +1,17 @@
 vytvořit bojovou jednotku      
     
    
-        zobrazit kvůli jakké překážce nemůže útočník na nepřítele zaútočit
-        přidat útočnou animaci
-         
-            přidat pro medica heal animaci
-            přidat pro supply cart resupply animaci
-            přidat pro depo resupply animaci
-           
+      
         přidat movement soundfile
+    vytvořit missed animaci
+    vykreslit kdo dává munnici komu
     
-    rozmístit vojáky do původních pozic
     povolit pokíldání vojáků jen do své startovní zony
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
 
     zobrazit že hráč se netrefil
-    zobrazit kam se může v příštím ole pohnout nepřátelská jednotka
+    zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
     překodovat observer jednotku
     oprovait jitter v movement arrea
     
@@ -25,9 +20,7 @@ musika
     najít 5 písniček
     
 prostředí
-
-
-    **vytvořit scrolling
+ 
     **přidat zdi
         
     přidat opevnění ve městech
@@ -46,6 +39,7 @@ ui
     zprovozni endgame screen
         vytvořit newgame button
     vytvořit game_event/information window
+    zabránit spamu na next turn button
    
  ** = můj rozmar
 
@@ -53,8 +47,8 @@ ui
 outreach
     vytvořit discord
     zjisti jak vydat demo verzi
-   
-next uo:
+    napsat kostru terragen čánku
+next up:
     
  
      
