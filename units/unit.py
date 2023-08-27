@@ -19,7 +19,7 @@ class Unit(pygame.sprite.Sprite):
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
-        self.attack_resistance = attack_resistance
+        self.attack_resistance = attack_resistance + 1
         self.enemies_in_range = []
         self.lines_to_enemies_in_range = []
         self.x = x
@@ -282,12 +282,30 @@ class Unit(pygame.sprite.Sprite):
 
         # Calculate the actual hit chance considering the base_hit_chance and random factor
 
-        print("comparing", final_hit_probability,  hit_treshold_value,)
-        # Check if the unit is hit based on the actual hit chance
+        print("comparing", final_hit_probability,  hit_treshold_value,  final_hit_probability >=  hit_treshold_value)
+       
         if final_hit_probability >= hit_treshold_value:
             return True  # Unit is hit
         else:
-            return False  # Unit is not hi
+            # Unit is not hit
+            print("UNIT WASNT HIT")
+            # Create font object
+            font = pygame.font.Font(None, 25)
+
+            # Create text surface
+            text_surface = font.render("missed", True, (255, 0, 0))
+
+            # Get text rectangle
+            text_rect = text_surface.get_rect()
+
+            # Set center of text rectangle to center of unit
+            text_rect.center = (self.x, self.y)
+
+            # Blit text surface onto screen
+            screen.blit(text_surface, text_rect)
+
+            return False
+
 
     def take_damage(self, attacker):
         self.hp -= 1
