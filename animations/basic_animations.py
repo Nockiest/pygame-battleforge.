@@ -10,6 +10,6 @@ class SlashAnimation(Animation):
         super().__init__(x,y,"img/anime/slash")
        
 class ResupplyAnimation(Animation):
-    def __init__(self, x, y ,switch_speed=100):
+    def __init__(self, x, y ,switch_speed=25):
         super().__init__(x,y,"img/anime/resupply")
        

@@ -19,10 +19,8 @@ class Commander(Melee):
         hp = super().take_damage(attacker)
        # print(hp,game_state.game_won = True, "game won is")
         if hp <= 0:
-        #    players[cur_player].announce_defeat()
-            print(game_state.game_won)
+       
             game_state.game_won = True
-            print(game_state.game_won)
-            
-         #   print("now game won is", game_state.game_won = True)
+          
+     
         return hp

@@ -2,10 +2,10 @@ import pygame
 import os
 from config import *
 from utils.render_utils import draw_ui, draw_units
-
+import game_state
 
 class Animation:
-    def __init__(self, x, y, animation_folder, switch_speed=100):
+    def __init__(self, x, y, animation_folder, switch_speed=50):
         self.images = self.load_animation(animation_folder)
         self.start_time = pygame.time.get_ticks()
         self.switch_speed = switch_speed  # Switch image every 'switch_speed' milliseconds
@@ -24,7 +24,9 @@ class Animation:
         return images
 
     def render(self):
-
+        if game_state.hovered_button:
+            game_state.hovered_button.hovered = False
+            game_state.hovered_button = None
         while not self.animation_ended:
             current_time = pygame.time.get_ticks()
             elapsed_time = current_time - self.start_time

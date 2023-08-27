@@ -164,10 +164,10 @@ class Player:
             "(0, 0, 255)": WIDTH - self.spawn_width
         }
         self.buy_area = (sides[str(self.color)],) + self.buy_area[1:]
-        print(self.color, "buy area", self.buy_area)
+       
         for unit_class in unit_class_list:
 
-            print(self.color, unit_class.size, unit_class, "hello")
+           
             while True:
                 # Random x on the left side
                 x = random.randint(

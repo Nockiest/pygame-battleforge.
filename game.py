@@ -42,28 +42,42 @@ def switch_player():
 
 
 def next_turn():
+    # Block the MOUSEBUTTONDOWN event
+    if game_state.hovered_button:
+        game_state.hovered_button.hovered = False
+        game_state.hovered_button = None
+    # Calculate the next turn
+    # ...
+
+    # Unblock the MOUSEBUTTONDOWN event
+    
     update_sorted_units()
     switch_player()
     deselect_unit()
     loading_message = default_font.render(
         "Loading Next Turn...", True, (255, 255, 255))
-    screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))
+    draw_units(screen)
+    screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))  
+    pygame.display.update()
+    for unit in game_state.living_units:
+        # unit.center = unit.start_turn_position
+        unit.reset_for_next_turn()
+        unit.render()
+        
+        if unit.color == game_state.players[game_state.cur_player].color:
+            unit.get_units_movement_area()
     for unit in game_state.living_units:
         unit.render()
 
     for player in players:
         player.update_sorted_units()
 
-    for unit in game_state.living_units:
-        # unit.center = unit.start_turn_position
-        unit.reset_for_next_turn()
-        unit.render()
-        print(unit.color,  game_state.players[game_state.cur_player].color)
-        if unit.color == game_state.players[game_state.cur_player].color:
-            unit.get_units_movement_area()
+   
 
     for depo in game_state.battle_ground.supply_depots:
         depo.dispense_ammo()
+
+    
 
 
 def disable_unit_for_turn():
@@ -264,9 +278,10 @@ def handle_start_screen():
 
 def handle_game_running_state():
     def handle_left_mouse_clk(click_pos):
-        global all_buttons
+       
+         
         # Check if any button in the button bar is clicked
-        if game_state.hovered_button:
+        if game_state.hovered_button and game_state.hovered_button.hovered:
             game_state.hovered_button.callback()
         if game_state.unit_placement_mode:
             buy_unit(click_pos)
@@ -274,6 +289,7 @@ def handle_game_running_state():
             select_unit(click_pos)
 
     def handle_right_mouse_clk():
+         
         if game_state.hovered_button:
             game_state.hovered_button.callback()
         elif game_state.unit_to_be_placed != None:
@@ -286,6 +302,7 @@ def handle_game_running_state():
             activate_attack_mode(event.pos)
 
     def handle_mouse_motion():
+       
         if game_state.selected_for_movement_unit:
             game_state.selected_for_movement_unit.move_in_game_field(
                 event.pos)
@@ -300,24 +317,32 @@ def handle_game_running_state():
 
         for button in game_state.all_buttons:
             if button.rect.collidepoint((cursor_x, cursor_y)):
+              
+                
                 game_state.hovered_button = button
-
+                game_state.hovered_button.hovered = True
                 cursor_hovers_over_button = True
+            else:
+                button.hovered = False
+
+                
 
         if not cursor_hovers_over_unit:
             game_state.hovered_unit = None
         if not cursor_hovers_over_button:
+             
             game_state.hovered_button = None
 
     cursor_x, cursor_y = pygame.mouse.get_pos()
     get_hovered_element(cursor_x, cursor_y)
 
     for event in pygame.event.get():
-
+        
         if event.type == pygame.QUIT:
             print(event)
             game_state.lets_continue = False
-
+        
+        
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
 
             handle_left_mouse_clk(event.pos)

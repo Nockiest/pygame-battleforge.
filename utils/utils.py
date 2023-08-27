@@ -56,7 +56,7 @@ def check_precalculated_line_square_interference(attacked_unit, line_points):
 
         # print(attacked_unit.rect, point_x,point_y, attacked_unit.rect.collidepoint((point_x, point_y)))
         if attacked_unit.rect.collidepoint((point_x, point_y)):
-            print(f"Interfering point: ({point_x}, {point_y}  ) ")
+            # print(f"Interfering point: ({point_x}, {point_y}  ) ")
             interferes = True
             return (point_x, point_y,  interferes)
 
@@ -235,8 +235,7 @@ def update_sorted_units(   ) :
         for unit in game_state.living_units:
             unit_type = unit.__class__.__name__
             sorted_living_units.setdefault(unit_type, []).append(unit)
-
-        print("these are now soerted units", sorted_living_units)
+ 
 
 def is_inside_rectangle(x, y, left, top, width, height):
     if left <= x <= left + width and top <= y <= top + height:

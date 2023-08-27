@@ -6,7 +6,7 @@ vytvořit bojovou jednotku
     vytvořit missed animaci
     vykreslit kdo dává munnici komu
     
-    povolit pokíldání vojáků jen do své startovní zony
+  
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
 
@@ -14,7 +14,7 @@ vytvořit bojovou jednotku
     zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
     překodovat observer jednotku
     oprovait jitter v movement arrea
-    
+    přidat kupování ve městech
        
 musika
     najít 5 písniček

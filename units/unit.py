@@ -180,8 +180,7 @@ class Unit(pygame.sprite.Sprite):
             if line_points:
                 self.valid_movement_positions_edges.append(
                     line_points[len(line_points) - 1])
-        if self.valid_movement_positions_edges:
-            print("points", self.valid_movement_positions_edges[-1])
+       
 
     def draw_possible_movement_area(self):
         farthest_points = []
@@ -190,7 +189,7 @@ class Unit(pygame.sprite.Sprite):
                 farthest_points.append(angle[-1])
 
         if len(self.valid_movement_positions) > 2:
-            print("last movement point", self.valid_movement_positions[0])
+             
             farthest_points.append(self.valid_movement_positions[0][-1])
             # farthest_points.append(angle[-2])
 
@@ -217,7 +216,7 @@ class Unit(pygame.sprite.Sprite):
                     "start": self.center,
                     "interference_point": (point_x, point_y),
                     "end": enemy.center})
-                print(self.lines_to_enemies_in_range)
+              
                 break
         if not blocked:
             self.lines_to_enemies_in_range.append({
@@ -269,7 +268,7 @@ class Unit(pygame.sprite.Sprite):
             hit_result = attacked_unit.check_if_hit()  # 80% hit chance
             if hit_result:
                 remaining_hp = attacked_unit.take_damage(self)
-                print("remaining ", remaining_hp)
+                print("remaining enemy hp", remaining_hp)
 
             return "UNIT ATTACKS"
         return "Attack not possible"
@@ -403,11 +402,6 @@ class Unit(pygame.sprite.Sprite):
 
         # Draw the unit image
         screen.blit(warrior_img, warrior_img_rect)
-        # for animation in self.running_animations:
-        #     res = animation.render()
-        #     # print(res)
-        #     if res == "ENDED":
-        #         self.running_animations.remove(animation)
 
     def get_boost_for_destroying_unit(self):
         print("unit killed an enemy, and could get a boost now")

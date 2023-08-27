@@ -12,21 +12,22 @@ class Button:
         self.button_surface.fill((255, 255, 255))  # Fill with white color
         self.callback = callback
         self.hovered = False  # Track whether the button is currently being hovered over
+        self.color = RED if self.hovered else BLACK
         # game.all_buttons.append(self)
         all_buttons.append(self)
     def draw(self, screen):
         # Draw the outline of the button
-        pygame.draw.rect(screen, BLACK, self.rect, 2)
+        print("hovered",self.hovered)
+        self.color = RED if self.hovered else BLACK
+        pygame.draw.rect(screen, self.color, self.rect, 2)
         
         # Draw the text inside the button
         my_font = pygame.font.Font(MAIN_FONT_URL, 15)
-        text_surface = my_font.render(self.description, True, BLACK)
+        text_surface = my_font.render(self.description, True, self.color)
         text_rect = text_surface.get_rect(center=self.rect.center)
         screen.blit(text_surface, text_rect)
         
-        # Change the outline color when hovered
-        if self.hovered:
-            pygame.draw.rect(screen, RED, self.rect, 2)  # Change RED to your desired hover color
+        
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)

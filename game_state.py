@@ -8,7 +8,6 @@ players = []
 cur_player = 0
 game_won = False
 living_units = pygame.sprite.Group()
-input_allowed = True  # This flag controls whether input is accepted
 state = "game_is_running"
 selected_for_movement_unit = None
 selected_attacking_unit = None
