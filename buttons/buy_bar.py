@@ -59,6 +59,15 @@ class BuyButton(Button):
         text_x = x + (self.width - text_surface.get_width()) // 2
         text_y = y + self.height + 5  # Place the text below the button
         screen.blit(text_surface, (text_x, text_y))
+
+        # Create a surface for the cost text
+        cost_text = f"${self.unit_type.cost}"
+        cost_surface = font.render(cost_text, True, (0, 0, 0))  # Black color for the text
+
+        # Position the cost text next to the button
+        cost_x = x + self.width + 10  # Add some spacing between the button and the cost text
+        cost_y = y + (self.height - cost_surface.get_height()) // 2  # Center the cost text vertically within the button
+        screen.blit(cost_surface, (cost_x, cost_y))
     def set_position(self, x, y):
         # Set the position of the button within the game window
         self.position = (x, y)

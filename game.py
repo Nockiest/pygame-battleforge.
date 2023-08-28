@@ -134,7 +134,7 @@ def process_attack(attacker, attacked_pos):
     attack_result = attacker.try_attack(
         attacked_pos,  game_state.hovered_unit)
     print("ATTACK result:", attack_result,)
-    if attack_result == "UNIT ATTACKS":
+    if attack_result == "UNIT ATTACKS" or attack_result == "UNIT MISSED":
         disable_unit_for_turn()
         deselect_unit()
     elif attack_result == "Attack not possible":

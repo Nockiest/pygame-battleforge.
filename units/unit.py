@@ -7,7 +7,7 @@ import random
 import shapely.geometry
 
 import game_state
-
+from animations.basic_animations import MISSEDAnimation
 
 class Unit(pygame.sprite.Sprite):
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
@@ -270,7 +270,9 @@ class Unit(pygame.sprite.Sprite):
                 remaining_hp = attacked_unit.take_damage(self)
                 print("remaining enemy hp", remaining_hp)
 
-            return "UNIT ATTACKS"
+                return "UNIT ATTACKS"
+            else:
+                return "UNIT MISSED"
         return "Attack not possible"
 
     def check_if_hit(self):
@@ -285,25 +287,13 @@ class Unit(pygame.sprite.Sprite):
         print("comparing", final_hit_probability,  hit_treshold_value,  final_hit_probability >=  hit_treshold_value)
        
         if final_hit_probability >= hit_treshold_value:
+            print("UNIT WAS HIT")
             return True  # Unit is hit
         else:
             # Unit is not hit
             print("UNIT WASNT HIT")
-            # Create font object
-            font = pygame.font.Font(None, 25)
-
-            # Create text surface
-            text_surface = font.render("missed", True, (255, 0, 0))
-
-            # Get text rectangle
-            text_rect = text_surface.get_rect()
-
-            # Set center of text rectangle to center of unit
-            text_rect.center = (self.x, self.y)
-
-            # Blit text surface onto screen
-            screen.blit(text_surface, text_rect)
-
+            game_state.animations.append(MISSEDAnimation(x = self.x - self.size//2, y =self.y -self.size//2  , resize = (self.size *2, self.size*2)))
+          
             return False
 
 

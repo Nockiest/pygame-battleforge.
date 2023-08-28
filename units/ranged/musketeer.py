@@ -18,7 +18,7 @@ class Musketeer(Ranged):
 
         res = super().try_attack(click_pos, attacked_unit)
 
-        if res == "UNIT ATTACKS":
+        if res !=  "Attack not possible":
             # Calculate the line between unit's center and click position
             line_points = self.calculate_self_enemy_center_line(
                 attacked_unit.center)

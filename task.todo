@@ -1,7 +1,7 @@
 vytvořit bojovou jednotku      
     
-   
       
+
         přidat movement soundfile
     vytvořit missed animaci
     vykreslit kdo dává munnici komu
@@ -13,9 +13,12 @@ vytvořit bojovou jednotku
     zobrazit že hráč se netrefil
     zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
     překodovat observer jednotku
-    oprovait jitter v movement arrea
+    
     přidat kupování ve městech
        
+chyby
+    opravit chybu s buy area, který je stejný pro oba hráče
+    oprovait jitter v movement arrea
 musika
     najít 5 písniček
     

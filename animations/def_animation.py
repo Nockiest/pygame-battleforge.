@@ -5,7 +5,8 @@ from utils.render_utils import draw_ui, draw_units
 import game_state
 
 class Animation:
-    def __init__(self, x, y, animation_folder, switch_speed=50):
+    def __init__(self, x, y, animation_folder, switch_speed=50, resize=None):
+        self.resize = resize
         self.images = self.load_animation(animation_folder)
         self.start_time = pygame.time.get_ticks()
         self.switch_speed = switch_speed  # Switch image every 'switch_speed' milliseconds
@@ -13,6 +14,7 @@ class Animation:
         self.x = x
         self.y = y
         self.animation_ended = False
+
     def __repr__(self):
         return f'{type(self).__name__} '
 
@@ -22,6 +24,8 @@ class Animation:
             if filename.endswith(".png"):
                 img = pygame.image.load(
                     os.path.join(animation_folder, filename))
+                if self.resize:
+                    img = pygame.transform.scale(img, self.resize)
                 images.append(img)
         return images
 
