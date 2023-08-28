@@ -12,7 +12,7 @@ class River(Structure):
         self.points = [] 
         self.control_points = control_points 
         self.convergence_point = None
-        # self.chunks = []
+        
         self.num_segments = 10
         self.startpoint = startpoint
         self.endpoint = endpoint

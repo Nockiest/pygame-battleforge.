@@ -1,24 +1,16 @@
 vytvořit bojovou jednotku      
     
-      
-
         přidat movement soundfile
      
-    
-    
-  
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
 
-    
     zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
-    překodovat observer jednotku
-    vytvořit sorted living units list
     přidat kupování ve městech
-    přejmenovat musketeera
+
        
 chyby
-    
+ 
     oprovait jitter v movement arrea
     zjistit proč linie přes překážku není vykrslena rovně
     opravit že minus animace se zobrazí dvvakrát
@@ -54,7 +46,7 @@ outreach
     zjisti jak vydat demo verzi
     napsat kostru terragen čánku
 next up:
-    
+    odstranit gamestate z všech proměnných
  
      
     vytvořit proper bullet flying animaci

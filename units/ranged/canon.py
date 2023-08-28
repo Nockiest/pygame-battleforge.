@@ -50,7 +50,7 @@ class Canon(Ranged):
  
              
  
-        for unit in game_state.living_units.copy():
+        for unit in game_state.living_units.array.copy():
             if unit.color == self.color:
                 continue
             if unit == attacked_unit:
@@ -64,9 +64,9 @@ class Canon(Ranged):
                 remain_hp = unit.take_damage(self)
 
                 if remain_hp < 0:
-                    game_state.living_units.remove(unit)
+                    game_state.living_units.array.remove(unit)
                     self.enemies_in_range.remove(unit)
-                    print("Removed", unit, "from game_state.living_units")
+                    print("Removed", unit, "from game_state.living_units.array")
             
         return "UNIT ATTACKS"
      

@@ -33,18 +33,21 @@ def check_for_roads_intersection(roads, start_point, mid_point, end_point):
     for existing_road in roads:
        
         existaing_start_point, existing_mid_point, existing_endPoint = existing_road.points
-        if do_lines_intersect(mid_point, end_point, existaing_start_point, existing_mid_point):          
-            end_point = existing_mid_point
+        res1 = do_lines_intersect(mid_point, end_point, existaing_start_point, existing_mid_point)
+        res2 = do_lines_intersect(start_point, mid_point, existing_mid_point, existing_endPoint)
+        if res1 :          
+            end_point = res1 
             return True
-        elif do_lines_intersect(start_point, mid_point, existing_mid_point, existing_endPoint):          
-            end_point = start_point
-            mid_point = start_point
+        elif res2: 
+            print("INTERSECT")         
+            end_point =res2
+            mid_point =res2
             return True
         
     return False
 
 
-def generate_from_edge_roads(screen_sides, towns):
+def generate_from_edge_roads(screen_sides, towns, roads):
     edge_roads = []
     for index, town in enumerate(towns):
          
@@ -68,8 +71,10 @@ def generate_from_edge_roads(screen_sides, towns):
         end_point = (int(town.center[0] + road_length * math.cos(angle)),
                     int(town.center[1] + road_length * math.sin(angle)))
         new_edge_road = Road(town, selected_point)
-        new_edge_road.points = (town.center, selected_point, selected_point)
-        edge_roads.append(new_edge_road)
+        res = check_for_roads_intersection(roads, town.center, end_point, end_point)
+        if not res:
+            new_edge_road.points = (town.center, end_point, end_point)
+            edge_roads.append(new_edge_road)
     return edge_roads
 
 
@@ -82,7 +87,8 @@ class Road(Structure):
         self.end_town = nearby_town
         # self.intersects = False
 
-    
+    def __repr__(self) -> str:
+        return f'{type(self).__name__}, points {self.points} '  
     def generate_road_points(self, roads, screen_sides):
         # Calculate the point along the x or y axis to move first
         mid_point = calculate_mid_point_pos(self.start_town  ,self.end_town)
@@ -99,8 +105,9 @@ class Road(Structure):
         
         # Check for road intersections
         for road in roads:
+            print("road", road, self)
             _, road_start_point, road_end_point = road.points                
-            mid_point, road_end_point = augment_mid_point(road_end_point, road_start_point, mid_point)
+            mid_point,  _ = augment_mid_point(road_end_point, road_start_point, mid_point)
 
             # Check if the road intersects with any existing road segments
         check_for_roads_intersection( roads, self.start_town.center, mid_point, end_point)

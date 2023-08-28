@@ -91,7 +91,7 @@ class Ranged(Unit):
 
     def check_if_observer_in_range(self):
         observer_units = []
-        for unit in game_state.living_units:
+        for unit in game_state.living_units.array:
             if unit.color == self.color:
                 if re.search("observer", repr(unit), re.IGNORECASE):
                     

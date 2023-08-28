@@ -16,7 +16,7 @@ class SupplyCart(Support):
         self.size = 30
     def dispense_ammo(self, amount ):
         
-        for unit in living_units:
+        for unit in living_units.array:
             if self.ammo <= 0:
                 print("no ammo left")
                 break

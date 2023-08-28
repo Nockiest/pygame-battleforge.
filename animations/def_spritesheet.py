@@ -36,7 +36,7 @@ class Spritesheet:
         image = self.get_sprite(x, y, w, h)
         return image
     
-    def render(self, screen):
+    def render(self,  ):
       
         while not self.animation_ended:
             current_time = pygame.time.get_ticks()

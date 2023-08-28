@@ -1,13 +1,13 @@
  
 import pygame
-
+from classdict import SortedDict
 pygame.init()
 
 all_buttons = []
 players = []
 cur_player = 0
 game_won = False
-living_units = pygame.sprite.Group()
+living_units = SortedDict([])# pygame.sprite.Group()
 state = "game_is_running"
 selected_for_movement_unit = None
 selected_attacking_unit = None

@@ -53,14 +53,14 @@ def next_turn():
     draw_units(screen)
     screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))  
     pygame.display.update()
-    for unit in game_state.living_units:
+    for unit in game_state.living_units.array:
         # unit.center = unit.start_turn_position
         unit.reset_for_next_turn()
         unit.render()
         
         if unit.color == game_state.players[game_state.cur_player].color:
             unit.get_units_movement_area()
-    for unit in game_state.living_units:
+    for unit in game_state.living_units.array:
         unit.render()
 
     for player in players:
@@ -214,24 +214,26 @@ def place_starting_units(red_player, blue_player):
 
 
 pygame.init()
-
+pygame.display.set_caption('BattleForge')
 
 unit_params_list = [
     [Commander,
-        Observer,
-        Medic,
-        Pikeman,
-        Pikeman,
-        Pikeman,
-        Pikeman,
-        Canon,
-        Musketeer],
+        # Observer,
+        # Medic,
+        # Pikeman,
+        # Pikeman,
+        # Pikeman,
+        # Pikeman,
+        # Canon,
+        # Musketeer
+        ],
     [Commander,
-        Knight,
-        Canon,
-        SupplyCart,
-        Canon,
-        Canon]
+        # Knight,
+        # Canon,
+        # SupplyCart,
+        # Canon,
+        # Canon
+        ]
 ]
 
 # when you change the positions here you have to change get_pixel_color function
@@ -249,10 +251,10 @@ game_state.next_turn_button = Button(
 game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                       HEIGHT//2-50, 100, 100, start_game)
 draw_ui(screen)
-# place_starting_units(red_player, blue_player)
-for i, player in enumerate(game_state.players):
-    player.place_starting_units(  unit_params_list[i])
-for unit in game_state.living_units:
+place_starting_units(red_player, blue_player)
+# for i, player in enumerate(game_state.players):
+    # player.place_starting_units(  unit_params_list[i])
+for unit in game_state.living_units.array:
 
     if unit.color == game_state.players[game_state.cur_player].color:
         
@@ -310,7 +312,7 @@ def handle_game_running_state():
     def get_hovered_element(cursor_x, cursor_y):
         cursor_hovers_over_unit = False
         cursor_hovers_over_button = False
-        for unit in game_state.living_units:
+        for unit in game_state.living_units.array:
             if unit.rect.collidepoint((cursor_x, cursor_y)):
                 game_state.hovered_unit = unit
                 cursor_hovers_over_unit = True

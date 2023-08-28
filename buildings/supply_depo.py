@@ -26,7 +26,7 @@ class SupplyDepo(Structure):
         self.rect = pygame.Rect(x-self.dot_radius, y-self.dot_radius, self.dot_radius*2, self.dot_radius*2)
     def dispense_ammo(self):
 
-        for unit in game_state.living_units:
+        for unit in game_state.living_units.array:
 
             if (isinstance(unit, Ranged) or isinstance(unit, SupplyCart)) and distance(self.center, unit.center) < RESUPPLY_RANGE:
                 game_state.animations.append(ResupplyAnimation(unit.x, unit.y))

@@ -16,11 +16,11 @@ class Medic(Support):
 
         super().__init__(hp=1, attack_range=300, attack_resistance=0.05, base_actions=1, base_movement=75,
                          size=self.size, x=x, y=y,  icon="medic.png",   color=color, cost=self.cost)
-        self.heal_animation = Heal_animation(0,0)
+        
     def heal(self):
         # for unit in units:
         # Check if the target unit is not a Medic and is within the range of base movement
-        for unit in living_units:
+        for unit in living_units.array:
             if unit.color != self.color:
                 continue
             if unit == self:
@@ -28,8 +28,8 @@ class Medic(Support):
             if not isinstance(unit, Medic):
                 distance = get_two_units_center_distance(self, unit)
                 if distance <= self.attack_range and unit.base_hp > unit.hp:
-                    self.heal_animation.x, self.heal_animation.y =  unit.x, unit.y 
-                    self.heal_animation.render(screen)
+                    
+                    animations.append( Heal_animation(unit.x,unit.y))
                     unit.hp += 1  # Heal the target unit by 1 HP
 
     def reset_for_next_turn(self):

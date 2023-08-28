@@ -1,11 +1,16 @@
+from collections import defaultdict
+
 class SortedDict:
-    def __init__(self, array, key=None):
+    def __init__(self, array):
         self.array = array
-        self.key = key
         self.dict = self._create_dict()
 
     def _create_dict(self):
-        return {i: x for i, x in enumerate(sorted(self.array, key=self.key))}
+        result = defaultdict(list)
+        for element in sorted(self.array, key=lambda x: type(x).__name__):
+            key = type(element).__name__ + "s"
+            result[key].append(element)
+        return result
 
     def append(self, value):
         self.array.append(value)
