@@ -223,7 +223,9 @@ unit_params_list = [
         Pikeman,
         Pikeman,
         Pikeman,
-        Pikeman],
+        Pikeman,
+        Canon,
+        Musketeer],
     [Commander,
         Knight,
         Canon,
@@ -250,7 +252,6 @@ draw_ui(screen)
 # place_starting_units(red_player, blue_player)
 for i, player in enumerate(game_state.players):
     player.place_starting_units(  unit_params_list[i])
-    # player.define_buy_area()
 for unit in game_state.living_units:
 
     if unit.color == game_state.players[game_state.cur_player].color:

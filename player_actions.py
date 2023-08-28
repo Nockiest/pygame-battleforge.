@@ -159,14 +159,7 @@ class Player:
 
         self.update_sorted_units()
         update_sorted_units()
-
-    # def define_buy_area(self):
-    #     sides = {
-    #         "(255, 0, 0)": 0,
-    #         "(0, 0, 255)": WIDTH - self.spawn_width
-    #     }
-    #     self.buy_area = (sides[str(self.color)],) + self.buy_area[1:]
-    #     print("THIS IS PLAYERS", self.color, "BUY AREA",  self.buy_area)
+ 
     def place_starting_units(self, unit_class_list):
         sides = {
             "(255, 0, 0)": 0,

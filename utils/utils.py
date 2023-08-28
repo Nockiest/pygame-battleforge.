@@ -248,3 +248,17 @@ def update_players_unit():
         for unit in player.units:
             if unit not in game_state.living_units:
                 player.remove_self_unit(  unit)
+
+def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_state.living_units):
+        # Create a new rectangle for the unit's position
+
+        new_rect = pygame.Rect(point_x - self.size // 2,
+                               point_y - self.size // 2, self.size, self.size)
+
+        for unit in living_units:
+            if unit is self:
+                continue
+            res = unit.rect.colliderect(new_rect)
+            if res:
+                return True
+        return False

@@ -13,11 +13,12 @@ vytvořit bojovou jednotku
     
     zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
     překodovat observer jednotku
-    
+    vytvořit sorted living units list
     přidat kupování ve městech
+    přejmenovat musketeera
        
 chyby
-    opravit chybu s buy area, který je stejný pro oba hráče
+    
     oprovait jitter v movement arrea
     zjistit proč linie přes překážku není vykrslena rovně
     opravit že minus animace se zobrazí dvvakrát
@@ -27,7 +28,7 @@ musika
 prostředí
  
     **přidat zdi
-        
+    zabránit křížení cest
     přidat opevnění ve městech
 
 

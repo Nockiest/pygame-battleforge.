@@ -38,11 +38,6 @@ def draw_units(screen):
         game_state.selected_attacking_unit.highlight_attackable_units()
         game_state.selected_attacking_unit.draw_lines_to_enemies_in_range()
     if game_state.selected_attacking_unit:
-        attack_range_provided = False
-      
-        if attack_range_provided is False:
-            game_state.selected_attacking_unit.attack_range_modifiers["in_observer_range"] = 0
-
         game_state.selected_attacking_unit.render_attack_circle()
     if game_state.unit_placement_mode:
         game_state.players[game_state.cur_player].show_unit_to_be_placed(

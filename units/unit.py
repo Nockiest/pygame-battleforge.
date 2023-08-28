@@ -5,10 +5,10 @@ from utils.utils import *
 import math
 import random
 import shapely.geometry
-
+ 
 import game_state
 from animations.basic_animations import MISSEDAnimation
-
+ 
 class Unit(pygame.sprite.Sprite):
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
         super().__init__()
@@ -79,26 +79,17 @@ class Unit(pygame.sprite.Sprite):
                         self.size // 2, pos[1] - self.size // 2
                     break
 
-        # Update the position of the unit in the game_state.living_units list
-        # index = game_state.living_units.index(self)
-
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
         self.center = (self.x + self.size//2, self.y + self.size//2)
 
-    def new_point_interferes(self,  point_x, point_y, living_units=game_state.living_units):
-        # Create a new rectangle for the unit's position
+ 
+    
+        ## check if they are in range 
 
-        new_rect = pygame.Rect(point_x - self.size // 2,
-                               point_y - self.size // 2, self.size, self.size)
+        ## if one is give bonus to range and break the loop
 
-        for unit in living_units:
-            if unit is self:
-                continue
-            res = unit.rect.colliderect(new_rect)
-            if res:
-                return True
-        return False
+    
 
     def get_units_movement_area(self):
         num_samples = 180
@@ -170,7 +161,7 @@ class Unit(pygame.sprite.Sprite):
                 other_units = [
                     unit for unit in game_state.living_units if unit.color != self.color]
 
-                if not self.new_point_interferes(point[0], point[1], other_units,):
+                if not new_point_interferes_with_unit(self, point[0], point[1], other_units,):
                     new_line_points.append(point)
                 else:
                     break  # Stop adding points if interference is detected
@@ -252,6 +243,7 @@ class Unit(pygame.sprite.Sprite):
 
     def render_attack_circle(self):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
+        print("TOTAL ATTACK RANGE MODIFIER", total_attack_range_modifier, self.attack_range_modifiers)
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 
         pygame.draw.circle(screen, RED, (self.x + self.size // 2,
