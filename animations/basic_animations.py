@@ -16,3 +16,7 @@ class ResupplyAnimation(Animation):
 class MISSEDAnimation(Animation):
     def __init__(self, x, y , resize=None, switch_speed=100):
         super().__init__(x=x,y=y,animation_folder="img/anime/MISSED", switch_speed=switch_speed, resize=resize)
+    
+class AmmoExpendedAnimation(Animation):
+    def __init__(self, x, y , resize=None, switch_speed=100):
+        super().__init__(x=x,y=y,animation_folder="img/anime/bullet-minus", switch_speed=switch_speed,  )

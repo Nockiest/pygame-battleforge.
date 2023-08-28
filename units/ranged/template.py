@@ -4,6 +4,7 @@ from utils.utils import *
 from config import *
 from game_state import *
 from animations.shooting_animation import ShootingAnimation
+from animations.basic_animations import AmmoExpendedAnimation
 
 
 class Ranged(Unit):
@@ -30,12 +31,14 @@ class Ranged(Unit):
             self.center[0], self.center[1], defender_x,    defender_y
         )
         return line_points
-
+    def attack(self):
+        super().attack()
+        game_state.animations.append(AmmoExpendedAnimation(self.x,self.y - self.size//2))
     def try_attack(self, click_pos, attacked_unit):
 
         res = super().try_attack(click_pos, attacked_unit)
 
-        if res == "UNIT ATTACKS":
+        if res != "Attack not possible":
             # Calculate the line between unit's center and click position
             line_points = self.calculate_self_enemy_center_line(
                 attacked_unit.center)
@@ -48,6 +51,8 @@ class Ranged(Unit):
             #     self.create_shoot_animation(line_points)
             if prevented:
                 res = "Attack not possible"
+            
+               
             # Check if FORREST_GREEN is present in pixel colors
 
         return res

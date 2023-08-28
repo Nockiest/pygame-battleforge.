@@ -3,14 +3,14 @@ vytvořit bojovou jednotku
       
 
         přidat movement soundfile
-    vytvořit missed animaci
+     
     vykreslit kdo dává munnici komu
     
   
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
 
-    zobrazit že hráč se netrefil
+    
     zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
     překodovat observer jednotku
     
@@ -19,6 +19,8 @@ vytvořit bojovou jednotku
 chyby
     opravit chybu s buy area, který je stejný pro oba hráče
     oprovait jitter v movement arrea
+    zjistit proč linie přes překážku není vykrslena rovně
+    opravit že minus animace se zobrazí dvvakrát
 musika
     najít 5 písniček
     

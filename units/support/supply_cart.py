@@ -5,7 +5,7 @@ from config import *
 from game_state import *
 from .template import Support
 from units.ranged.template import Ranged
-from animations.basic_animations import ResupplyAnimation
+from animations.basic_animations import ResupplyAnimation, AmmoExpendedAnimation
 class SupplyCart(Support):
     size = 30
     cost = 500
@@ -26,11 +26,12 @@ class SupplyCart(Support):
  
 
             if isinstance(unit, Ranged) and distance(self.center, unit.center) <= RESUPPLY_RANGE:
-                resuuply_anim =   ResupplyAnimation(unit.x, unit.y)
                 
+                game_state.animations.append(AmmoExpendedAnimation(self.x, self.y ))
+                game_state.animations.append(ResupplyAnimation(unit.x, unit.y))
                 unit.ammo += amount
                 self.ammo -= amount
-                resuuply_anim.render( )
+               
                 print(f"Dispensing {amount} ammo. Remaining ammo: {self.ammo} to {unit}vv")
 
     def reset_for_next_turn(self,  ):

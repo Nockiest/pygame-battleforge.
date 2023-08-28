@@ -198,6 +198,8 @@ def place_starting_units(red_player, blue_player):
     blue_player.create_starting_unit(
         (SupplyCart, 300, 300))
     blue_player.create_starting_unit(
+        (Musketeer, 340, 300))
+    blue_player.create_starting_unit(
         (Observer, 200, 150))
     blue_player.create_starting_unit(
         (Observer, 250, 150))
