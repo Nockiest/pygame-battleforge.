@@ -178,9 +178,8 @@ class Player:
                 y = random.randint(
                     UPPER_BAR_HEIGHT, HEIGHT - TENDER_HEIGHT - unit_class.size)
                 # Replace with your actual pixel color fetching function
-                pixel_color = get_pixel_colors(
-                    [(x+unit_class.size//2, y+unit_class.size//2)], background_screen)
-
+                pixel_color = game_state.pixel_colors[x+unit_class.size//2][ y+unit_class.size//2 ]
+               
                 # Check if the position is valid (not on river and not occupied)
                 if pixel_color[0] != RIVER_BLUE and not self.is_position_occupied(x, y, ):
                     break

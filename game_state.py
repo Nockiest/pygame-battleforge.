@@ -25,9 +25,11 @@ input_allowed = True
 animations = []
 # create a two-dimensional array to store the movement costs
 movement_costs = []
+pixel_colors = []
 for X in range(WIDTH):
     row = []
     for Y in range(HEIGHT):
         row.append(0)
     movement_costs.append(row)
+    pixel_colors.append(row[:]) # Create a copy of the row list before appending 
  

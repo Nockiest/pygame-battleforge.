@@ -58,8 +58,8 @@ def next_turn():
         unit.reset_for_next_turn()
         unit.render()
         
-        if unit.color == game_state.players[game_state.cur_player].color:
-            unit.get_units_movement_area()
+        # if unit.color == game_state.players[game_state.cur_player].color:
+        unit.get_units_movement_area()
     for unit in game_state.living_units.array:
         unit.render()
 
@@ -264,7 +264,9 @@ try:
             color = get_pixel_colors([(x,y)], background_screen)
             arr = calculate_movement_cost(color)
             cost, _, color = arr[0]
+            # print(cost)
             game_state.movement_costs[x][y] = cost
+            game_state.pixel_colors[x][y] = color
 except Exception as e:
     print(f"An error occurred: {e}")
  

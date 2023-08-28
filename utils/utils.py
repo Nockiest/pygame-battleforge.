@@ -204,8 +204,6 @@ def get_pixel_colors(points, surface):
 def calculate_movement_cost(color_list):
     movement_costs = []
     total_cost = 0
-
-    
     for i, color in enumerate(color_list):
         # print(color)
         if color == FORREST_GREEN:

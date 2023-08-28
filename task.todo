@@ -7,10 +7,9 @@ vytvořit bojovou jednotku
 
     zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
     přidat kupování ve městech
-    překodovvat movement aby začal od prvního pixelu od jednotky a pokračoval ven
 chyby
  
-    oprovait jitter v movement arrea
+    
     zjistit proč linie přes překážku není vykrslena rovně
     opravit že minus animace se zobrazí dvvakrát
 musika
