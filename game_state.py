@@ -1,13 +1,14 @@
  
 import pygame
-
+from classdict import SortedDict
+from config import *
 pygame.init()
 
 all_buttons = []
 players = []
 cur_player = 0
 game_won = False
-living_units = pygame.sprite.Group()
+living_units = SortedDict([])# pygame.sprite.Group()
 state = "game_is_running"
 selected_for_movement_unit = None
 selected_attacking_unit = None
@@ -22,3 +23,11 @@ next_turn_button = None
 start_game_button = None
 input_allowed = True
 animations = []
+# create a two-dimensional array to store the movement costs
+movement_costs = []
+for X in range(WIDTH):
+    row = []
+    for Y in range(HEIGHT):
+        row.append(0)
+    movement_costs.append(row)
+ 

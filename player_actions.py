@@ -40,7 +40,7 @@ class Player:
 
         if self.supplies >= unit.cost:
 
-            # game_state.living_units.append(unit)
+            # game_state.living_units.array.append(unit)
             self.units.append(unit)
             print("created unit", unit, )
             self.supplies -= unit.cost
@@ -57,7 +57,7 @@ class Player:
     def create_starting_unit(self, unit_params):
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
-        # game_state.living_units.append(unit)
+        # game_state.living_units.array.append(unit)
         self.units.append(unit)
         self.update_sorted_units()
 
@@ -77,7 +77,9 @@ class Player:
             pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)
             
             pygame.display.flip()
+            game_state.living_units.remove(self.preview_unit)
             self.preview_unit.kill()
+            print("living units", game_state.living_units.array, game_state.living_units.dict)
         except Exception as e:
             print(f"An error occurred: {e}")
 
@@ -187,7 +189,7 @@ class Player:
             self.create_starting_unit(unit_params)
 
     def is_position_occupied(self, x, y,):
-        for unit in game_state.living_units:
+        for unit in game_state.living_units.array:
             if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:
                 return True
         return False

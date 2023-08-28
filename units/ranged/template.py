@@ -66,7 +66,7 @@ class Ranged(Unit):
         units_to_remove = []  # Create a list to store units to be removed
 
         for unit in self.enemies_in_range:
-            center_x, center_y = self.x, self.y
+            center_x, center_y = self.center[0], self.center[1]
             enemy_center_x, enemy_center_y = unit.start_turn_position[0], unit.start_turn_position[1]
             line_points = bresenham_line(
                 center_x, center_y, enemy_center_x, enemy_center_y)
@@ -91,7 +91,7 @@ class Ranged(Unit):
 
     def check_if_observer_in_range(self):
         observer_units = []
-        for unit in game_state.living_units:
+        for unit in game_state.living_units.array:
             if unit.color == self.color:
                 if re.search("observer", repr(unit), re.IGNORECASE):
                     

@@ -232,7 +232,7 @@ def calculate_movement_cost(color_list):
 def update_sorted_units(   ) :
         global sorted_living_units
         sorted_living_units = {}
-        for unit in game_state.living_units:
+        for unit in game_state.living_units.array:
             unit_type = unit.__class__.__name__
             sorted_living_units.setdefault(unit_type, []).append(unit)
  
@@ -246,10 +246,10 @@ def is_inside_rectangle(x, y, left, top, width, height):
 def update_players_unit():
     for player in game_state.players:
         for unit in player.units:
-            if unit not in game_state.living_units:
+            if unit not in game_state.living_units.array:
                 player.remove_self_unit(  unit)
 
-def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_state.living_units):
+def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_state.living_units.array):
         # Create a new rectangle for the unit's position
 
         new_rect = pygame.Rect(point_x - self.size // 2,
