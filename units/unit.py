@@ -5,10 +5,11 @@ from utils.utils import *
 import math
 import random
 import shapely.geometry
- 
+
 import game_state
 from animations.basic_animations import MISSEDAnimation
- 
+
+
 class Unit(pygame.sprite.Sprite):
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
         super().__init__()
@@ -83,13 +84,9 @@ class Unit(pygame.sprite.Sprite):
             self.x, self.y, self.size, self.size)
         self.center = (self.x + self.size//2, self.y + self.size//2)
 
- 
-    
-        ## check if they are in range 
+        # check if they are in range
 
-        ## if one is give bonus to range and break the loop
-
-    
+        # if one is give bonus to range and break the loop
 
     def get_units_movement_area(self):
         num_samples = 180
@@ -171,7 +168,6 @@ class Unit(pygame.sprite.Sprite):
             if line_points:
                 self.valid_movement_positions_edges.append(
                     line_points[len(line_points) - 1])
-       
 
     def draw_possible_movement_area(self):
         farthest_points = []
@@ -180,7 +176,7 @@ class Unit(pygame.sprite.Sprite):
                 farthest_points.append(angle[-1])
 
         if len(self.valid_movement_positions) > 2:
-             
+
             farthest_points.append(self.valid_movement_positions[0][-1])
             # farthest_points.append(angle[-2])
 
@@ -207,15 +203,15 @@ class Unit(pygame.sprite.Sprite):
                     "start": self.center,
                     "interference_point": (point_x, point_y),
                     "end": enemy.center})
-              
+
                 break
         if not blocked:
             self.lines_to_enemies_in_range.append({
-                    "enemy": enemy,
-                    "start": self.center,
-                    "interference_point": None,
-                    "end": enemy.center})
-        
+                "enemy": enemy,
+                "start": self.center,
+                "interference_point": None,
+                "end": enemy.center})
+
         return blocked
 
     def get_attackable_units(self):
@@ -243,7 +239,8 @@ class Unit(pygame.sprite.Sprite):
 
     def render_attack_circle(self):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
-        print("TOTAL ATTACK RANGE MODIFIER", total_attack_range_modifier, self.attack_range_modifiers)
+        print("TOTAL ATTACK RANGE MODIFIER",
+              total_attack_range_modifier, self.attack_range_modifiers)
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 
         pygame.draw.circle(screen, RED, (self.x + self.size // 2,
@@ -276,18 +273,19 @@ class Unit(pygame.sprite.Sprite):
 
         # Calculate the actual hit chance considering the base_hit_chance and random factor
 
-        print("comparing", final_hit_probability,  hit_treshold_value,  final_hit_probability >=  hit_treshold_value)
-       
+        print("comparing", final_hit_probability,  hit_treshold_value,
+              final_hit_probability >= hit_treshold_value)
+
         if final_hit_probability >= hit_treshold_value:
             print("UNIT WAS HIT")
             return True  # Unit is hit
         else:
             # Unit is not hit
             print("UNIT WASNT HIT")
-            game_state.animations.append(MISSEDAnimation(x = self.x - self.size//2, y =self.y -self.size//2  , resize = (self.size *2, self.size*2)))
-          
-            return False
+            game_state.animations.append(MISSEDAnimation(
+                x=self.x - self.size//2, y=self.y - self.size//2, resize=(self.size * 2, self.size*2)))
 
+            return False
 
     def take_damage(self, attacker):
         self.hp -= 1
@@ -310,7 +308,6 @@ class Unit(pygame.sprite.Sprite):
         # Check if the target_building is within the capture range of the unit
         # Reduce the capture progress of the building until it is captured
 
-
     def reset_for_next_turn(self):
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
@@ -321,25 +318,24 @@ class Unit(pygame.sprite.Sprite):
             start = line["start"]
             end = line["end"]
             interference_point = line["interference_point"]
-            
 
             if interference_point is not None:
-                pygame.draw.line(screen, DARK_RED, start, interference_point, 3)
-                pygame.draw.line(screen, (HOUSE_PURPLE), interference_point, end, 3)
+                pygame.draw.line(screen, DARK_RED, start,
+                                 interference_point, 3)
+                pygame.draw.line(screen, (HOUSE_PURPLE),
+                                 interference_point, end, 3)
             else:
-                pygame.draw.line(screen, DARK_RED, start, end,3)
+                pygame.draw.line(screen, DARK_RED, start, end, 3)
                 midpoint = ((start[0] + end[0]) // 2,
                             (start[1] + end[1]) // 2)
                 distance = math.sqrt(
-                        (start[0] - end[0]) ** 2 + (start[1] - end[1]) ** 2)
+                    (start[0] - end[0]) ** 2 + (start[1] - end[1]) ** 2)
                 font = pygame.font.Font(None, 20)
                 text_surface = font.render(
                     f"{int(distance)} units", True, WHITE)
                 text_rect = text_surface.get_rect(center=midpoint)
                 screen.blit(text_surface, text_rect)
-             
-           
-        
+
     def highlight_attackable_units(self):
         for unit in self.enemies_in_range:
             # Calculate the center coordinates of self and the target unit
@@ -347,7 +343,6 @@ class Unit(pygame.sprite.Sprite):
             target_center = unit.center
             # Draw a line from self's center to the target unit's center
             unit.draw_as_active()
-           
 
     def render_hovered_state(self):
         padding = 2  # Adjust the padding size as needed
@@ -408,7 +403,6 @@ class Unit(pygame.sprite.Sprite):
 
     def draw_as_active(self):
         try:
-
             outline_rect = pygame.Rect(
                 int(self.x) - 2, int(self.y) - 2, self.size + 4, self.size + 4)
             pygame.draw.rect(screen, BLACK, outline_rect, 2)

@@ -1,1 +1,1 @@
-def handle_game_running_state():
+# for i, player in enumerate(game_state.players):

@@ -90,7 +90,7 @@ def deselect_unit():
 
 
 def select_unit(clicked_pos):
-    print("hovered unit",  game_state.hovered_unit)
+   
     if game_state.hovered_unit == None:
         return
     if game_state.selected_attacking_unit != None:
@@ -154,9 +154,7 @@ def buy_unit(click_pos):
         # Check if the clicked position is not on the river
         if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
             return print("Cannot place unit on river.")
-        # Check if the unit is being placed within the valid Y coordinate range
-        # if HEIGHT - BUTTON_BAR_HEIGHT-dummy.size < y:
-        #     return print("Cannot place unit in this Y coordinate range.")
+   
         # Check if the unit is being placed within the buy area
         buy_area_rect = pygame.Rect(*player.buy_area)
         # Inflate the buy area rect by -dummy.size to create a smaller rect
@@ -249,9 +247,9 @@ game_state.next_turn_button = Button(
 game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                       HEIGHT//2-50, 100, 100, start_game)
 draw_ui(screen)
-# place_starting_units(red_player, blue_player)
-for i, player in enumerate(game_state.players):
-    player.place_starting_units(  unit_params_list[i])
+place_starting_units(red_player, blue_player)
+# for i, player in enumerate(game_state.players):
+#     player.place_starting_units(  unit_params_list[i])
 for unit in game_state.living_units:
 
     if unit.color == game_state.players[game_state.cur_player].color:
