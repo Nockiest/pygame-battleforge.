@@ -21,8 +21,11 @@ class Player:
         self.scroll_position = 0
         self.preview_unit = None
         self.spawn_width = 200
-        self.buy_area = (0, UPPER_BAR_HEIGHT, self.spawn_width, HEIGHT - TENDER_HEIGHT - UPPER_BAR_HEIGHT)
-
+        
+        self.side = 0 if self.color == RED else WIDTH - self.spawn_width
+        self.buy_area = ( self.side, UPPER_BAR_HEIGHT, self.spawn_width, HEIGHT - TENDER_HEIGHT - UPPER_BAR_HEIGHT)
+    def __repr_(self):
+        return f'Player{self.color}, has {self.units} sorted {self.sorted_by_class_units} and a buy area{self.buy_area}'
     def update_sorted_units(self):
         self.sorted_by_class_units = {}
         for unit in self.units:
@@ -157,21 +160,25 @@ class Player:
         self.update_sorted_units()
         update_sorted_units()
 
-    
+    # def define_buy_area(self):
+    #     sides = {
+    #         "(255, 0, 0)": 0,
+    #         "(0, 0, 255)": WIDTH - self.spawn_width
+    #     }
+    #     self.buy_area = (sides[str(self.color)],) + self.buy_area[1:]
+    #     print("THIS IS PLAYERS", self.color, "BUY AREA",  self.buy_area)
     def place_starting_units(self, unit_class_list):
         sides = {
             "(255, 0, 0)": 0,
             "(0, 0, 255)": WIDTH - self.spawn_width
         }
-        self.buy_area = (sides[str(self.color)],) + self.buy_area[1:]
-       
         for unit_class in unit_class_list:
 
            
             while True:
                 # Random x on the left side
                 x = random.randint(
-                    sides[str(self.color)],  sides[str(self.color)]  +  self.spawn_width - unit_class.size  )
+                    self.side ,  self.side   +  self.spawn_width - unit_class.size  )
                 # Random y anywhere on screen
                 y = random.randint(
                     UPPER_BAR_HEIGHT, HEIGHT - TENDER_HEIGHT - unit_class.size)

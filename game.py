@@ -247,9 +247,10 @@ game_state.next_turn_button = Button(
 game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                       HEIGHT//2-50, 100, 100, start_game)
 draw_ui(screen)
-place_starting_units(red_player, blue_player)
-# for i, player in enumerate(game_state.players):
-#     player.place_starting_units(  unit_params_list[i])
+# place_starting_units(red_player, blue_player)
+for i, player in enumerate(game_state.players):
+    player.place_starting_units(  unit_params_list[i])
+    # player.define_buy_area()
 for unit in game_state.living_units:
 
     if unit.color == game_state.players[game_state.cur_player].color:
