@@ -93,98 +93,165 @@ class Unit(pygame.sprite.Sprite):
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
-        for angle in range(0, 360, 360 // num_samples):
+
+
+        ## create a large circle around the unit
+        def get_circle_points(center_x, center_y, radius, num_samples):
+            points = []
+            for i in range(num_samples):
+                angle = math.radians(i * (360 / num_samples))
+                x = int(center_x + radius * math.cos(angle))
+                y = int(center_y + radius * math.sin(angle))
+                points.append((x, y))
+            return points
+         
+        ## take out all of the unique points the circle crosses
+        far_points =get_circle_points(center_x, center_y, self.base_movement*2.1, 180)
+        ## for each point get a path from that point to the unit center
+        for edge in far_points:
+            line_to_center = bresenham_line(center_x, center_y, edge[0], edge[1])
+            points_in_reach = []
+            cost = 0
+            for point in line_to_center:
+                if cost > self.base_movement:
+                    break
+                ## get the background movement cost
+                ## add it to cost
+                cost += game_state.movement_costs[point[0]][point[1]]
+                
+
+                ## append it to the points in reach 
+                points_in_reach.append(point)
+           
+            farthest_valid_point =  points_in_reach[-1] 
+            other_units = [
+                unit for unit in game_state.living_units.array if unit.color != self.color]
+            
+            for unit in other_units:
+                point_x, point_y, interferes = check_precalculated_line_square_interference(unit, points_in_reach)
+                if interferes:
+                    print(points_in_reach.index((point_x,point_y)) ,  points_in_reach.index(farthest_valid_point))
+                    if points_in_reach.index((point_x,point_y)) <  points_in_reach.index(farthest_valid_point):
+                        farthest_valid_point = (point_x,point_y)
+                        
+            # print("FARTHEST VAL POINT", farthest_valid_point,points_in_reach.index(farthest_valid_point) )
+            
+            # print("POINTS IN REACH BEFORE",points_in_reach,  last_point_index)
+            # print("x",points_in_reach[:last_point_index  ],  last_point_index)
+            
+            points_in_reach = points_in_reach[:points_in_reach.index(farthest_valid_point)  - self.size//2  ]
+            # print("POINTS IN REACH",points_in_reach, last_point_index)
+          
+            if len(points_in_reach) > 0:
+                self.valid_movement_positions.append(points_in_reach)
+                self.valid_movement_positions_edges.append(points_in_reach[-1])
+                
+                
+                
+                ## ensure that the point doesnt interfere with enemies
+
+            
+                # 
+                
+                
+                
+                 ## scan from the units center and find the farthest point, that has lower movement than movement cost
+
+        ## append the farthest point 
+
+
+        # for angle in range(0, 360, 360 // num_samples):
             # Convert angle to radians
 
             # create line from start to the edge of the screen
             # get the costs of every pixel on the line
             # find river or enemy unit at the first index
 
-            radians = math.radians(angle)
-            line_points = []
-            current_cost = 0
-            base_chunk = WIDTH//2
-            distance = base_chunk
+            # radians = math.radians(angle)
+            # line_points = []
+            # current_cost = 0
+            # base_chunk = WIDTH//2
+            # distance = base_chunk
 
-            iteration = 2
+            # iteration = 2
 
-            while base_chunk//iteration >= 1 and current_cost != self.base_movement:
+            # while base_chunk//iteration >= 1 and current_cost != self.base_movement:
 
-                new_x = min(WIDTH, max(
-                    center_x + distance * math.cos(radians), 0))
-                new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
-                            distance * math.sin(radians), UPPER_BAR_HEIGHT))
+            #     new_x = min(WIDTH, max(
+            #         center_x + distance * math.cos(radians), 0))
+            #     new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
+            #                 distance * math.sin(radians), UPPER_BAR_HEIGHT))
 
-                line_points = bresenham_line(center_x, center_y, int(new_x), int(new_y))
-                movement_cost = []
-                try:
-                    for point in line_points:
-                        x, y = point
-                        cost = game_state.movement_costs[x][y]
-                        movement_cost.append(cost)
-                except Exception as e:
-                    print(f"An error occurred: {e}")
+            #     line_points = bresenham_line(center_x, center_y, int(new_x), int(new_y))
+            #     movement_cost = []
+            #     try:
+            #         for point in line_points:
+            #             x, y = point
+            #             cost = game_state.movement_costs[x][y]
+            #             movement_cost.append(cost)
+            #     except Exception as e:
+            #         print(f"An error occurred: {e}")
 
-                current_cost = movement_cost[-1]
+            #     current_cost = movement_cost[-1]
 
 
-                if current_cost > self.base_movement:
-                    # print(distance, iteration, "decrementing",  512//iteration)
-                    distance -= base_chunk//iteration
-                elif current_cost < self.base_movement:
-                    # print(distance, iteration, "incrementing")
-                    distance += base_chunk//iteration
-                current_line = line_points
+            #     if current_cost > self.base_movement:
+            #         # print(distance, iteration, "decrementing",  512//iteration)
+            #         distance -= base_chunk//iteration
+            #     elif current_cost < self.base_movement:
+            #         # print(distance, iteration, "incrementing")
+            #         distance += base_chunk//iteration
+            #     current_line = line_points
 
-                iteration *= 2
-            if current_cost < self.base_movement:
-                while current_cost < self.base_movement:
-                    new_x = min(WIDTH, max(
-                        len(line_points) + 1 * math.cos(radians), 0))
-                    new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
-                                len(line_points) + 1 * math.sin(radians), UPPER_BAR_HEIGHT))
-                    new_pixel_color = get_pixel_colors(
-                        [(int(new_x), int(new_y))], background_screen)
-                    pixel_cost=10000
-                    try:
-                     pixel_cost =   game_state.movement_costs[int(new_x)][int(new_y)]
-                    except Exception as e:
-                        print(f"An error occurred: {e}{int(new_x) }{ int(new_y)}")
+            #     iteration *= 2
+            # if current_cost < self.base_movement:
+            #     while current_cost < self.base_movement:
+            #         new_x = min(WIDTH, max(
+            #             len(line_points) + 1 * math.cos(radians), 0))
+            #         new_y = min(HEIGHT - BUTTON_BAR_HEIGHT, max(center_y +
+            #                     len(line_points) + 1 * math.sin(radians), UPPER_BAR_HEIGHT))
+            #         new_pixel_color = get_pixel_colors(
+            #             [(int(new_x), int(new_y))], background_screen)
+            #         pixel_cost=10000
+            #         try:
+            #          pixel_cost =   game_state.movement_costs[int(new_x)][int(new_y)]
+            #         except Exception as e:
+            #             print(f"An error occurred: {e}{int(new_x) }{ int(new_y)}")
                     
-                    current_cost += pixel_cost 
+            #         current_cost += pixel_cost 
 
-                    if current_cost >= self.base_movement:
-                        break
-            else:
-                while current_cost > self.base_movement and line_points:
-                    last_x, last_y = line_points[-1]
+            #         if current_cost >= self.base_movement:
+            #             break
+            # else:
+            #     while current_cost > self.base_movement and line_points:
+            #         last_x, last_y = line_points[-1]
                     
-                    # check if the indices are within the valid range
-                    if 0 <= last_x < len(game_state.movement_costs) and 0 <= last_y < len(game_state.movement_costs[0]):
-                        pixel_cost = game_state.movement_costs[last_x][last_y]
-                        current_cost -= pixel_cost
-                    else:
-                        # subtract a large value from current_cost if the indices are out of range
-                        current_cost -= 10000000000
+            #         # check if the indices are within the valid range
+            #         if 0 <= last_x < len(game_state.movement_costs) and 0 <= last_y < len(game_state.movement_costs[0]):
+            #             pixel_cost = game_state.movement_costs[last_x][last_y]
+            #             current_cost -= pixel_cost
+            #         else:
+            #             # subtract a large value from current_cost if the indices are out of range
+            #             current_cost -= 10000000000
                     
-                    # pop the last point from line_points
-                    line_points.pop()
-            line_points = line_points[:-self.size//2]
-            new_line_points = []
-            for point in line_points:
-                other_units = [
-                    unit for unit in game_state.living_units.array if unit.color != self.color]
+            #         # pop the last point from line_points
+            #         line_points.pop()
+            # line_points = line_points[:-self.size//2]
+            # new_line_points = []
+            # for point in line_points:
+            #     other_units = [
+            #         unit for unit in game_state.living_units.array if unit.color != self.color]
 
-                if not new_point_interferes_with_unit(self, point[0], point[1], other_units,):
-                    new_line_points.append(point)
-                else:
-                    break  # Stop adding points if interference is detected
-            line_points = new_line_points
-            self.valid_movement_positions.append(line_points)
+            #     if not new_point_interferes_with_unit(self, point[0], point[1], other_units,):
+            #         new_line_points.append(point)
+            #     else:
+            #         break  # Stop adding points if interference is detected
+            # line_points = new_line_points
+            # self.valid_movement_positions.append(line_points)
 
-            if line_points:
-                self.valid_movement_positions_edges.append(
-                    line_points[len(line_points) - 1])
+            # if line_points:
+            #     self.valid_movement_positions_edges.append(
+            #         line_points[len(line_points) - 1])
 
     def draw_possible_movement_area(self):
         farthest_points = []

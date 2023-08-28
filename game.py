@@ -203,10 +203,10 @@ def place_starting_units(red_player, blue_player):
         (Observer, 250, 150))
     blue_player.create_starting_unit(
         (Knight, 450, 500))
-    # blue_player.create_starting_unit(
-    #     (Knight, 50, 100))
-    # blue_player.create_starting_unit(
-    #     (Knight, 80, 100))
+    blue_player.create_starting_unit(
+        (Knight, 50, 100))
+    blue_player.create_starting_unit(
+        (Knight, 80, 100))
     # # # blue_player.create_starting_unit(
     # #     (Knight, 50, 500)s)
 

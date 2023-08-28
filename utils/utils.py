@@ -39,7 +39,7 @@ def bresenham_line(x0, y0, x1, y1):
         if x0 == x1 and y0 == y1:
             break
         if 0> x0 or x0 > WIDTH or 0 > y0 or y0 > HEIGHT- BUTTON_BAR_HEIGHT:
-            print("point is now out of range")
+            
             return points 
         e2 = 2 * err
         if e2 > -dy:
