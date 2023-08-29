@@ -404,10 +404,10 @@ while game_state.lets_continue:
         handle_game_running_state()
 
     elif game_state.state == "start_screen":
-        print("rendering start screen")
+       
         handle_start_screen()
     elif game_state.state == "end_screen":
-        print("rendering end screen")
+        
         draw_end_screen()
     elif game_state.state == "settings":
         

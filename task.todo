@@ -19,20 +19,23 @@ prostředí
     **přidat zdi
     
     přidat opevnění ve městech
-
+    počítat zabizé jednotky
+    počítat kola
+    počítat útoky
 
 ui
     přidat ukliádání
     přidat načítání
     
     přidat úvodní nastavení hry
-    zprovoznit start screen
-        přidat nastavení
-        zorganizovat startscreen do vlastního souboru
-        nastavení prostředí
-        nastavení počtu jednotek
+      překodovat aby tu bylo potvrzení změn
+      vyjmout změny po potvrzení změn a přidat je do game_state
+    game_screen
+        vygenerovat až po kliknutí na new game
+        
+        
     zprovozni endgame screen
-        vytvořit newgame button
+        vypsat staty ze hry
     vytvořit game_event/information window
  
  ** = můj rozmar

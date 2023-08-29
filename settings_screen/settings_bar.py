@@ -10,9 +10,9 @@ class SettingsBar:
         self.y = y
         self.sliders = []
 
-    def add_slider(self, label, min_value, max_value, initial_value):
+    def add_slider(self, label, min_value, max_value, initial_value, update_fc):
         """Add a slider to the settings bar."""
-        slider = Slider(label, min_value, max_value, initial_value, self.x, self.y + 50 * (len(self.sliders)+1))
+        slider = Slider(label, min_value, max_value, initial_value,update_fc, self.x,  self.y + 50 * (len(self.sliders)+1))
         self.sliders.append(slider)
 
     def draw(self, screen):
@@ -27,17 +27,18 @@ class SettingsBar:
             slider.draw(screen)
 
 class Slider:
-    def __init__(self, label, min_value, max_value, initial_value, x, y):
+    def __init__(self, label, min_value, max_value, connected_value, update_function, x, y):
         """Initialize the slider."""
         self.label = label
         self.min_value = min_value
         self.max_value = max_value
-        self.value = initial_value
+        self.value = connected_value
+        self.update_function = update_function
         self.x = x
         self.y = y
-        self.slider_start = self.x +100
-        self.slider_end = self.slider_start +100
-
+        self.slider_start = self.x + 100
+        self.slider_end = self.slider_start + 100
+        self.slider_rect = pygame.Rect(self.slider_start,self.y -15,  self.slider_end - self.slider_start +10, 30)
     def draw(self, screen):
         """Draw the slider on the screen."""
       
@@ -61,11 +62,14 @@ class Slider:
 
     def handle_click(self, pos):
         """Handle click events on the slider."""
-        # check if the slider was clicked
-       
-        if pos[0] >=  self.slider_start and pos[0] <= self.x +   self.slider_end and pos[1] >= self.y - 15 and pos[1] <= self.y + 15:
-            print("CONDITION PASSED", pos[0],pos[1], self.x, self.min_value, self.max_value, self.value)
-            print("VALUES", pos[0] - self.x - 100, (self.max_value - self.min_value) / 100 ,   + self.min_value )
-            # update the value of the slider based on the click position
-            self.value = int((pos[0] - self.x - 100) * (self.max_value - self.min_value) / 100) + self.min_value
-            print(self.value, "value now is")
+    
+        # if pos[0] >=  self.slider_start and pos[0] <= self.x +   self.slider_end and pos[1] >= self.y - 15 and pos[1] <= self.y + 15:
+        # update the value of the slider based on the click position
+        new_value = int((pos[0] - self.x - 100) * (self.max_value - self.min_value) / 100) + self.min_value
+        # ensure that the new value is within the valid range
+        new_value = max(self.min_value, min(new_value, self.max_value))
+        if new_value != self.value:
+            # update the value of the connected variable using the update function
+            self.update_function(new_value)
+            # update the value of the slider
+            self.value = new_value
