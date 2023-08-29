@@ -81,7 +81,6 @@ class Unit(pygame.sprite.Sprite):
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
         self.center = (self.x + self.size//2, self.y + self.size//2)
-
         # check if they are in range
 
         # if one is give bonus to range and break the loop
@@ -139,7 +138,7 @@ class Unit(pygame.sprite.Sprite):
                         farthest_valid_point = (point_x,point_y)
                         
           
-            points_in_reach = points_in_reach[:points_in_reach.index(farthest_valid_point)     ]
+            points_in_reach = points_in_reach[:points_in_reach.index(farthest_valid_point)   ]
          
           
             if len(points_in_reach) > 0:
