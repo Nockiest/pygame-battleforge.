@@ -1,12 +1,12 @@
 import pygame
 import random
 from config import *
-# from game_state import *
+from game_state import *
 from utils.image_utils import render_image
 from utils.utils import *
 from units.support.observer import Observer
 
-import game_state
+# import game_state
 SCROLL_SPEED = 5
 
 
@@ -77,9 +77,9 @@ class Player:
             pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)
             
             pygame.display.flip()
-            game_state.living_units.remove(self.preview_unit)
+            living_units.remove(self.preview_unit)
             self.preview_unit.kill()
-            print("living units", game_state.living_units.array, game_state.living_units.dict)
+            print("living units",  living_units.array, living_units.dict)
         except Exception as e:
             print(f"An error occurred: {e}")
 
@@ -178,7 +178,7 @@ class Player:
                 y = random.randint(
                     UPPER_BAR_HEIGHT, HEIGHT - TENDER_HEIGHT - unit_class.size)
                 # Replace with your actual pixel color fetching function
-                pixel_color = game_state.pixel_colors[x+unit_class.size//2][ y+unit_class.size//2 ]
+                pixel_color =  pixel_colors[x+unit_class.size//2][ y+unit_class.size//2 ]
                
                 # Check if the position is valid (not on river and not occupied)
                 if pixel_color[0] != RIVER_BLUE and not self.is_position_occupied(x, y, ):
@@ -188,7 +188,7 @@ class Player:
             self.create_starting_unit(unit_params)
 
     def is_position_occupied(self, x, y,):
-        for unit in game_state.living_units.array:
+        for unit in living_units.array:
             if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:
                 return True
         return False

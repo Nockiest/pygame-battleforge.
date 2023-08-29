@@ -3,7 +3,7 @@ import math
 import random
 import shapely.geometry
 
-import game_state
+from game_state import *
 from animations.basic_animations import MISSEDAnimation
 from config import *
 from utils.utils import *
@@ -44,7 +44,7 @@ class Unit(pygame.sprite.Sprite):
         self.valid_movement_positions_edges = []
         self.lines_to_enemies_in_range = []
 
-        game_state.living_units.append(self)
+        living_units.append(self)
 
     def update(self):
         # Add any necessary update logic here
@@ -117,10 +117,10 @@ class Unit(pygame.sprite.Sprite):
                  
                 try:
                     # your code here
-                    cost += game_state.movement_costs[point[0]][point[1]]
+                    cost += movement_costs[point[0]][point[1]]
                 except Exception as e:
                     print(f"An error occurred: {e}")
-                    game_state.movement_costs[point[0]][point[1]]
+                    movement_costs[point[0]][point[1]]
                 
 
                 ## append it to the points in reach 
@@ -128,7 +128,7 @@ class Unit(pygame.sprite.Sprite):
            
             farthest_valid_point =  points_in_reach[-1] 
             other_units = [
-                unit for unit in game_state.living_units.array if unit.color != self.color]
+                unit for unit in living_units.array if unit.color != self.color]
             
             for unit in other_units:
                 point_x, point_y, interferes = check_precalculated_line_square_interference(unit, points_in_reach)
@@ -158,13 +158,13 @@ class Unit(pygame.sprite.Sprite):
 
         # Draw the connected path using lines
         if len(farthest_points) > 1:
-            pygame.draw.lines(screen, (0, 255, 0), False, farthest_points, 2)
+            pygame.draw.lines(screen, self.color, False, farthest_points, 2)
 
     def find_obstacles_in_line_to_enemies(self, enemy, line_points):
         # I could only reset the line to that specific unit instead of deleting the whole array
         ######################### x FIND BLOCKING UNITS ##############
         blocked = False
-        for unit in game_state.living_units.array:
+        for unit in living_units.array:
             if unit == enemy:
                 continue
             elif unit.color == self.color:
@@ -196,7 +196,7 @@ class Unit(pygame.sprite.Sprite):
         self.enemies_in_range = []
         self.lines_to_enemies_in_range = []
         # for every living unit
-        for enemy in game_state.living_units.array:
+        for enemy in living_units.array:
             if enemy.color == self.color:
                 continue
 
@@ -220,8 +220,8 @@ class Unit(pygame.sprite.Sprite):
        
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 
-        pygame.draw.circle(screen, RED, (self.x + self.size // 2,
-                           self.y + self.size // 2), int(attack_range_with_modifiers), 1)
+        pygame.draw.circle(screen, DARK_ORANGE, (self.x + self.size // 2,
+                           self.y + self.size // 2), int(attack_range_with_modifiers), 2)
 
     def attack(self):
         self.remain_actions -= 1
@@ -259,7 +259,7 @@ class Unit(pygame.sprite.Sprite):
         else:
             # Unit is not hit
             print("UNIT WASNT HIT")
-            game_state.animations.append(MISSEDAnimation(
+            animations.append(MISSEDAnimation(
                 x=self.x - self.size//2, y=self.y - self.size//2, resize=(self.size * 2, self.size*2)))
 
             return False
@@ -267,16 +267,16 @@ class Unit(pygame.sprite.Sprite):
     def take_damage(self, attacker):
         self.hp -= 1
         if self.hp <= 0:
-            game_state.living_units.array.remove(self)
-            # game_state.players[game_state.cur_player].remove_from_game(self)
+            living_units.array.remove(self)
+            # players[cur_player].remove_from_game(self)
             attacker.get_boost_for_destroying_unit()
             update_players_unit()
             print("Removing unit:", self)
-            print("Units in living_units:", game_state.living_units.array)
-            # Check if it's the same instance
+            print("Units in living_units:", living_units.array)
+             
             return self.hp
             del self
-        # print(game_state.living_units.array.index(self))
+         
         return self.hp
 
     def capture(self, target_building):
@@ -380,13 +380,14 @@ class Unit(pygame.sprite.Sprite):
 
     def draw_as_active(self):
         try:
+       
             outline_rect = pygame.Rect(
                 int(self.x) - 2, int(self.y) - 2, self.size + 4, self.size + 4)
             pygame.draw.rect(screen, BLACK, outline_rect, 2)
 
             # Draw a line from self.start_turn_position to the center of the unit in red
-            center_x = self.x + self.size // 2
-            center_y = self.y + self.size // 2
+            center_x = self.center[0]
+            center_y = self.center[1]
             pygame.draw.line(screen, self.color, self.start_turn_position,
                              (center_x, center_y), 2)
         except Exception as e:
@@ -457,7 +458,7 @@ class Unit(pygame.sprite.Sprite):
             #     try:
             #         for point in line_points:
             #             x, y = point
-            #             cost = game_state.movement_costs[x][y]
+            #             cost = movement_costs[x][y]
             #             movement_cost.append(cost)
             #     except Exception as e:
             #         print(f"An error occurred: {e}")
@@ -484,7 +485,7 @@ class Unit(pygame.sprite.Sprite):
             #             [(int(new_x), int(new_y))], background_screen)
             #         pixel_cost=10000
             #         try:
-            #          pixel_cost =   game_state.movement_costs[int(new_x)][int(new_y)]
+            #          pixel_cost =   movement_costs[int(new_x)][int(new_y)]
             #         except Exception as e:
             #             print(f"An error occurred: {e}{int(new_x) }{ int(new_y)}")
                     
@@ -497,8 +498,8 @@ class Unit(pygame.sprite.Sprite):
             #         last_x, last_y = line_points[-1]
                     
             #         # check if the indices are within the valid range
-            #         if 0 <= last_x < len(game_state.movement_costs) and 0 <= last_y < len(game_state.movement_costs[0]):
-            #             pixel_cost = game_state.movement_costs[last_x][last_y]
+            #         if 0 <= last_x < len(movement_costs) and 0 <= last_y < len(movement_costs[0]):
+            #             pixel_cost = movement_costs[last_x][last_y]
             #             current_cost -= pixel_cost
             #         else:
             #             # subtract a large value from current_cost if the indices are out of range
@@ -510,7 +511,7 @@ class Unit(pygame.sprite.Sprite):
             # new_line_points = []
             # for point in line_points:
             #     other_units = [
-            #         unit for unit in game_state.living_units.array if unit.color != self.color]
+            #         unit for unit in living_units.array if unit.color != self.color]
 
             #     if not new_point_interferes_with_unit(self, point[0], point[1], other_units,):
             #         new_line_points.append(point)

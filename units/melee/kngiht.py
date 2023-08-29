@@ -24,7 +24,7 @@ class Knight(Melee):
         
         self.start_turn_position = (
             self.x + self.size // 2, self.y + self.size // 2)
-        print("knights new movemenet start pos",self.x, self.y, self.start_turn_position)
+        print("knights new movemenet start pos",self.x, self.y, self.start_turn_position, self.remain_actions)
         self.get_units_movement_area()
        
 

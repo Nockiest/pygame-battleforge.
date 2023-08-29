@@ -1,6 +1,6 @@
 import math
 from config import *
-import game_state
+from game_state import *
 
 def get_two_units_center_distance(unit1, unit2):
     # Calculate the distance between the center points of the units, considering their sizes
@@ -230,7 +230,7 @@ def calculate_movement_cost(color_list):
 def update_sorted_units(   ) :
         global sorted_living_units
         sorted_living_units = {}
-        for unit in game_state.living_units.array:
+        for unit in living_units.array:
             unit_type = unit.__class__.__name__
             sorted_living_units.setdefault(unit_type, []).append(unit)
  
@@ -242,12 +242,12 @@ def is_inside_rectangle(x, y, left, top, width, height):
         return False
 
 def update_players_unit():
-    for player in game_state.players:
+    for player in players:
         for unit in player.units:
-            if unit not in game_state.living_units.array:
+            if unit not in living_units.array:
                 player.remove_self_unit(  unit)
 
-def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_state.living_units.array):
+def new_point_interferes_with_unit(self,  point_x, point_y, living_units=living_units.array):
         # Create a new rectangle for the unit's position
 
         new_rect = pygame.Rect(point_x - self.size // 2,

@@ -27,10 +27,10 @@ class Melee(Unit):
             # line_pixel_colors = get_pixel_colors(line_points, background_screen)
             # self.slash_animation.x, self.slash_animation.x = attacked_unit.x , attacked_unit.y
             print("rendering slash anim",attacked_unit.x,attacked_unit.y)
-            game_state.animations.append(SlashAnimation(self.center[0], self.center[1]))
+            animations.append(SlashAnimation(self.center[0], self.center[1]))
             # self.play_attack_animation( self.x, self.y)
             for point in line_points:
-                color = game_state.pixel_colors[point[0]][point[1]]
+                color =  pixel_colors[point[0]][point[1]]
                 if color == RIVER_BLUE :
                   res =  "MELEE UNIT CAN'T ATTACK THROUGH RIVERS " 
 

@@ -1,4 +1,5 @@
 import game_state
+from game_state import *
 from config import *
  
 
@@ -28,12 +29,16 @@ def draw_units(screen):
         unit.render()
         if unit == game_state.selected_for_movement_unit:
             game_state.selected_for_movement_unit.draw_possible_movement_area()
-        elif unit == game_state.selected_attacking_unit:
+            game_state.selected_for_movement_unit.draw_as_active()
+
+        if unit == game_state.selected_attacking_unit:
             game_state.selected_attacking_unit.draw_as_active()
 
         if unit == game_state.hovered_unit:
+            
+            unit.draw_possible_movement_area()
+            unit.render_attack_circle()
             unit.render_hovered_state()
-
     if game_state.selected_attacking_unit != None:
         game_state.selected_attacking_unit.highlight_attackable_units()
         game_state.selected_attacking_unit.draw_lines_to_enemies_in_range()

@@ -27,8 +27,8 @@ class SupplyCart(Support):
 
             if isinstance(unit, Ranged) and distance(self.center, unit.center) <= RESUPPLY_RANGE:
                 
-                game_state.animations.append(AmmoExpendedAnimation(self.x, self.y ))
-                game_state.animations.append(ResupplyAnimation(unit.x, unit.y))
+                animations.append(AmmoExpendedAnimation(self.x, self.y ))
+                animations.append(ResupplyAnimation(unit.x, unit.y))
                 unit.ammo += amount
                 self.ammo -= amount
                

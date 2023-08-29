@@ -12,8 +12,10 @@ class Support(Unit):
                          base_movement, size, x, y, ammo, icon, color, cost)
         
         
-    def try_attack(self, click_pos   ):
-        return  ("SUPPORTS DONT ATTACK") 
-    
+    def try_attack(self, click_pos, attacked_unit   ):
+        return "Attack not possible"
+    def get_attackable_units(self):
+        return print("SUPPORTS DONT ATTACK")
+
     # def get_attack_circle(self):
     #     return super().get_attack_circle()

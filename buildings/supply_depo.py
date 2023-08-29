@@ -4,7 +4,7 @@ from .structure import Structure
 from units.ranged.template import Ranged  # Import Ranged from units folder
 # Import SupplyCart from units folder
 from units.support.supply_cart import SupplyCart
-import game_state
+from game_state import *
 from utils.utils import *
 from config import *
 from animations.basic_animations import ResupplyAnimation, AmmoExpendedAnimation
@@ -26,11 +26,11 @@ class SupplyDepo(Structure):
         self.rect = pygame.Rect(x-self.dot_radius, y-self.dot_radius, self.dot_radius*2, self.dot_radius*2)
     def dispense_ammo(self):
 
-        for unit in game_state.living_units.array:
+        for unit in  living_units.array:
 
             if (isinstance(unit, Ranged) or isinstance(unit, SupplyCart)) and distance(self.center, unit.center) < RESUPPLY_RANGE:
-                game_state.animations.append(ResupplyAnimation(unit.x, unit.y))
-                game_state.animations.append(AmmoExpendedAnimation(self.x, self.y ))
+                animations.append(ResupplyAnimation(unit.x, unit.y))
+                animations.append(AmmoExpendedAnimation(self.x, self.y ))
                 unit.ammo += self.ammo_per_unit
                 self.ammo_count -= self.ammo_per_unit
                 print(f"Dispensing { self.ammo_per_unit} ammo. ")

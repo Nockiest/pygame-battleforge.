@@ -1,4 +1,4 @@
-# from button import Button
+ 
 from battelground import *
 from player_actions import Player
 from config import *
@@ -74,14 +74,13 @@ def next_turn():
     pygame.time.set_timer( pygame.mouse.set_visible(True), 3000)
     
     
-
-
-def disable_unit_for_turn():
+def remove_attack_point():
     print("unit disabled for turn")
     if game_state.selected_for_movement_unit:
-        game_state.selected_for_movement_unit.remain_actions = 0
+        game_state.selected_for_movement_unit.remain_actions -= 1
     elif game_state.selected_attacking_unit:
-        game_state.selected_attacking_unit.remain_actions = 0
+        game_state.selected_attacking_unit.remain_actions -= 1
+        print("units attack points",       game_state.selected_attacking_unit.remain_actions)
 
 
 def deselect_unit():
@@ -119,9 +118,6 @@ def select_unit(clicked_pos):
         deselect_unit()
         return
     # print("7")
-       
-    
-    
 
 
 def activate_attack_mode(click_pos):
@@ -129,29 +125,21 @@ def activate_attack_mode(click_pos):
         return
     if game_state.hovered_unit.remain_actions <= 0:
         return
-
-    if isinstance(game_state.hovered_unit, Support):
-        return
-
     if game_state.hovered_unit.color != game_state.players[game_state.cur_player].color:
         return
-    # if   game_state.hovered_unit.rect.collidepoint(click_pos):
-
     deselect_unit()
     game_state.selected_attacking_unit = game_state.hovered_unit
-
     print(game_state.hovered_unit, "unit to b eactivated")
-
     game_state.selected_attacking_unit.get_attackable_units()
     print("attack mode activated")
 
 
-def process_attack(attacker, attacked_pos):
+def process_attack(attacker, attacked_pos): 
     attack_result = attacker.try_attack(
         attacked_pos,  game_state.hovered_unit)
     print("ATTACK result:", attack_result,)
     if attack_result == "UNIT ATTACKS" or attack_result == "UNIT MISSED":
-        disable_unit_for_turn()
+        # remove_attack_point()
         deselect_unit()
     elif attack_result == "Attack not possible":
         deselect_unit()
@@ -308,9 +296,7 @@ except Exception as e:
     print(f"An error occurred: {e}")
  
 for unit in game_state.living_units.array:
- 
-    if unit.color == game_state.players[game_state.cur_player].color:
-        
+     
         unit.get_units_movement_area()
         
 

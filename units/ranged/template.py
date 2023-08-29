@@ -33,7 +33,7 @@ class Ranged(Unit):
         return line_points
     def attack(self):
         super().attack()
-        game_state.animations.append(AmmoExpendedAnimation(self.x,self.y - self.size//2))
+        animations.append(AmmoExpendedAnimation(self.x,self.y - self.size//2))
     
     def render_attack_circle(self):
         self.check_if_observer_in_range( )
@@ -91,7 +91,7 @@ class Ranged(Unit):
 
     def check_if_observer_in_range(self):
         observer_units = []
-        for unit in game_state.living_units.array:
+        for unit in  living_units.array:
             if unit.color == self.color:
                 if re.search("observer", repr(unit), re.IGNORECASE):
                     
