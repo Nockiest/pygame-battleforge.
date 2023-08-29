@@ -138,9 +138,11 @@ def process_attack(attacker, attacked_pos):
     attack_result = attacker.try_attack(
         attacked_pos,  game_state.hovered_unit)
     print("ATTACK result:", attack_result,)
+
     if attack_result == "UNIT ATTACKS" or attack_result == "UNIT MISSED":
         # remove_attack_point()
         deselect_unit()
+        game_state.num_attacks += 1
     elif attack_result == "Attack not possible":
         deselect_unit()
 

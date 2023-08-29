@@ -5,9 +5,10 @@ vytvořit bojovou jednotku
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
 
-    zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
+   
     přidat kupování ve městech
-    vykreslit movement area nepřítele jinou narvou
+    
+    první útok by měl vždy vyjít
 chyby
     vymazat jednotku až se vykreslí animace
 musika
@@ -38,11 +39,9 @@ ui
 
  
 outreach
-    vytvořit discord
+    
     zjisti jak vydat demo verzi
-    napsat kostru terragen čánku
+  
 next up:
-    odstranit gamestate z všech proměnných
- 
-     
+  
     vytvořit proper bullet flying animaci

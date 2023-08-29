@@ -7,11 +7,12 @@ from utils.text_utils import *
 from utils.render_utils import draw_ui
 # here I will add shared code between animation classes later on
 class ShootingAnimation(Animation):
-    def __init__(self, x, y, path, switch_speed=50 ):
+    def __init__(self, x, y, path,  attacker, units_in_attack_path=[], switch_speed=10, ):
         super().__init__(x, y, "img/anime/bullet_shot", switch_speed)
         self.path = path
         self.current_pos_index = 0
-
+        self.units_in_attack_path = units_in_attack_path
+        self.attacker = attacker
     def render(self  ):
         current_time = pygame.time.get_ticks()
         elapsed_time = current_time - self.start_time
@@ -29,7 +30,17 @@ class ShootingAnimation(Animation):
             game_state.animations.remove(self)
             del self
             return
-
+        for unit in self.units_in_attack_path:
+            
+            interferes = unit.rect.collidepoint(self.path[self.current_pos_index])
+            
+            if interferes :
+                # res = self.attacker.try_attack( self.path[self.current_pos_index],unit)
+                # if res == "UNIT ATTACKS":
+                remain_hp = unit.take_damage(self.attacker)
+                self.units_in_attack_path.remove(unit)
+               
+                   
         self.x, self.y = self.path[self.current_pos_index]
         pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), 5)  # Draw a red dot
      

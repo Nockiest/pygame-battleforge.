@@ -22,6 +22,7 @@ button_bar = None
 next_turn_button = None
 start_game_button = None
 input_allowed = True
+num_attacks = 0
 animations = []
 # create a two-dimensional array to store the movement costs
 movement_costs = []

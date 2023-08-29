@@ -22,7 +22,7 @@ class Musketeer(Ranged):
             # Calculate the line between unit's center and click position
             line_points = self.calculate_self_enemy_center_line(
                 attacked_unit.center)
-            animations.append(ShootingAnimation(self.x, self.y, line_points))
+            animations.append(ShootingAnimation(self.x, self.y, line_points, self,[attacked_unit]))
             
             line_pixel_colors = get_pixel_colors(
                 line_points, background_screen)

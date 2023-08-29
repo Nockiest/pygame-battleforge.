@@ -38,28 +38,35 @@ class Ranged(Unit):
     def render_attack_circle(self):
         self.check_if_observer_in_range( )
         return super().render_attack_circle()
+    
+
     def try_attack(self, click_pos, attacked_unit):
         self.check_if_observer_in_range( )
-        res = super().try_attack(click_pos, attacked_unit)
+         
+        if attacked_unit in self.enemies_in_range:
+            self.attack()
+            res = "UNIT ATTACKS"
+        else:
+           return "Attack not possible"
 
-        if res != "Attack not possible":
-            # Calculate the line between unit's center and click position
-            line_points = self.calculate_self_enemy_center_line(
-                attacked_unit.center)
+        
+        # Calculate the line between unit's center and click position
+        line_points = self.calculate_self_enemy_center_line(
+            attacked_unit.center)
 
-            line_pixel_colors = get_pixel_colors(
-                line_points, background_screen)
-            prevented = self.prevent_shhooting_through_forrest(
-                line_pixel_colors, line_points)
-            # if not prevented:
-            #     self.create_shoot_animation(line_points)
-            if prevented:
-                res = "Attack not possible"
+        line_pixel_colors = get_pixel_colors(
+            line_points, background_screen)
+        prevented = self.prevent_shhooting_through_forrest(
+            line_pixel_colors, line_points)
+        # if not prevented:
+        #     self.create_shoot_animation(line_points)
+        if prevented:
+            return "Attack not possible"
             
                
             # Check if FORREST_GREEN is present in pixel colors
 
-        return res
+        return "UNIT ATTACKS"
 
     def get_attackable_units(self):
         super().get_attackable_units()

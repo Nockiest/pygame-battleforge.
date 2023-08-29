@@ -7,6 +7,7 @@ from game_state import *
 from animations.basic_animations import MISSEDAnimation
 from config import *
 from utils.utils import *
+# from game_state import num_attacks
 
 class Unit(pygame.sprite.Sprite):
     def __init__(self, hp, attack_range, attack_resistance, base_actions, base_movement, size, x, y, ammo, icon, color, cost):
@@ -18,7 +19,7 @@ class Unit(pygame.sprite.Sprite):
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement
-        self.attack_resistance = attack_resistance  
+        self.attack_resistance = attack_resistance  -1
         self.enemies_in_range = []
         self.lines_to_enemies_in_range = []
         self.x = x
@@ -229,9 +230,11 @@ class Unit(pygame.sprite.Sprite):
             self.ammo -= 1
 
     def try_attack(self, click_pos, attacked_unit):
+        ####!!!RANGED UNITS ARNET CONNECTED O THIS FUNCTION!!!#####
         if attacked_unit in self.enemies_in_range:
             self.attack()
             hit_result = attacked_unit.check_if_hit()  # 80% hit chance
+            # num_attacks += 1
             if hit_result:
                 remaining_hp = attacked_unit.take_damage(self)
                 print("remaining enemy hp", remaining_hp)
@@ -243,6 +246,10 @@ class Unit(pygame.sprite.Sprite):
 
     def check_if_hit(self):
         # i will augment base_hit_chance by some variables
+        # if num_attacks == 0:
+        #     print("UNIT WAS HIT, num attacks", 0)
+        #     return True  # Unit is hit
+       
         final_hit_probability = 1 - self.attack_resistance
         print("final hit probability", final_hit_probability, )
         # Generate a random float between 0 and 1
