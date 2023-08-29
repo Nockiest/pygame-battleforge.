@@ -27,9 +27,8 @@ ui
     přidat ukliádání
     přidat načítání
     
-    přidat úvodní nastavení hry
-      překodovat aby tu bylo potvrzení změn
-      vyjmout změny po potvrzení změn a přidat je do game_state
+    
+     
     game_screen
         vygenerovat až po kliknutí na new game
         
@@ -37,7 +36,7 @@ ui
     zprovozni endgame screen
         vypsat staty ze hry
     vytvořit game_event/information window
- 
+    přidat click animacci pro tlačítka
  ** = můj rozmar
 
  

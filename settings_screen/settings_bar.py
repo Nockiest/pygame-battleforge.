@@ -1,5 +1,5 @@
 import pygame
-
+from .settings_globs import *
 from config import *
 
 class SettingsBar:
@@ -39,6 +39,7 @@ class Slider:
         self.slider_start = self.x + 100
         self.slider_end = self.slider_start + 100
         self.slider_rect = pygame.Rect(self.slider_start,self.y -15,  self.slider_end - self.slider_start +10, 30)
+        settings_bars.append(self)
     def draw(self, screen):
         """Draw the slider on the screen."""
       
@@ -63,13 +64,19 @@ class Slider:
     def handle_click(self, pos):
         """Handle click events on the slider."""
     
-        # if pos[0] >=  self.slider_start and pos[0] <= self.x +   self.slider_end and pos[1] >= self.y - 15 and pos[1] <= self.y + 15:
         # update the value of the slider based on the click position
         new_value = int((pos[0] - self.x - 100) * (self.max_value - self.min_value) / 100) + self.min_value
         # ensure that the new value is within the valid range
         new_value = max(self.min_value, min(new_value, self.max_value))
         if new_value != self.value:
             # update the value of the connected variable using the update function
-            self.update_function(new_value)
+            # self.update_function(new_value)
             # update the value of the slider
             self.value = new_value
+
+    def alter_original_value(self   ):
+        """Alter the original value of the connected variable."""
+        # update the value of the connected variable using the update function
+        self.update_function(self.value)
+        # update the value of the slider
+        
