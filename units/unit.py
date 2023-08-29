@@ -116,7 +116,12 @@ class Unit(pygame.sprite.Sprite):
                 ## get the background movement cost
                 ## add it to cost
                  
-                cost += game_state.movement_costs[point[0]][point[1]]
+                try:
+                    # your code here
+                    cost += game_state.movement_costs[point[0]][point[1]]
+                except Exception as e:
+                    print(f"An error occurred: {e}")
+                    game_state.movement_costs[point[0]][point[1]]
                 
 
                 ## append it to the points in reach 
@@ -129,21 +134,18 @@ class Unit(pygame.sprite.Sprite):
             for unit in other_units:
                 point_x, point_y, interferes = check_precalculated_line_square_interference(unit, points_in_reach)
                 if interferes:
-                    print(points_in_reach.index((point_x,point_y)) ,  points_in_reach.index(farthest_valid_point))
+                    
                     if points_in_reach.index((point_x,point_y)) <  points_in_reach.index(farthest_valid_point):
                         farthest_valid_point = (point_x,point_y)
                         
           
-            points_in_reach = points_in_reach[:points_in_reach.index(farthest_valid_point)  - self.size//2  ]
+            points_in_reach = points_in_reach[:points_in_reach.index(farthest_valid_point)     ]
          
           
             if len(points_in_reach) > 0:
                 self.valid_movement_positions.append(points_in_reach)
                 self.valid_movement_positions_edges.append(points_in_reach[-1])
-                
-                
-                
-          
+                      
     def draw_possible_movement_area(self):
         farthest_points = []
         for angle in self.valid_movement_positions:
@@ -216,8 +218,7 @@ class Unit(pygame.sprite.Sprite):
 
     def render_attack_circle(self):
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
-        print("TOTAL ATTACK RANGE MODIFIER",
-              total_attack_range_modifier, self.attack_range_modifiers)
+       
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 
         pygame.draw.circle(screen, RED, (self.x + self.size // 2,

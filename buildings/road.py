@@ -39,7 +39,7 @@ def check_for_roads_intersection(roads, start_point, mid_point, end_point):
             end_point = res1 
             return True
         elif res2: 
-            print("INTERSECT")         
+            # print("INTERSECT")         
             end_point =res2
             mid_point =res2
             return True

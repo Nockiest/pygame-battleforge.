@@ -18,12 +18,10 @@ class Canon(Ranged):
 
     def try_attack(self, click_pos, attacked_unit):
         res = super().try_attack( click_pos, attacked_unit)
-        print(res)
+      
         if res == "Attack not possible":
             return res
-        # if attacked_unit not in self.enemies_in_range:
-        #     return "Attack not possible"
-        
+      
          
         self.attack()
 

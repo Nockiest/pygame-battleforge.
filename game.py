@@ -90,22 +90,38 @@ def deselect_unit():
 
 
 def select_unit(clicked_pos):
-   
-    if game_state.hovered_unit == None:
+ 
+    if game_state.selected_for_movement_unit and game_state.selected_for_movement_unit.rect.collidepoint(clicked_pos):
+        game_state.selected_for_movement_unit = None
+        game_state.selected_attacking_unit = None
+        # print("0")
         return
-    if game_state.selected_attacking_unit != None:
-        return
-    if game_state.selected_for_movement_unit != None:
+    if game_state.hovered_unit is None:
+        # print("1")
         deselect_unit()
         return
-    if game_state.hovered_unit.remain_actions <= 0:
+    if  game_state.hovered_unit.color != game_state.players[game_state.cur_player].color:
+        # print("2")
         return
-    if game_state.hovered_unit.color != game_state.players[game_state.cur_player].color:
+    if    game_state.hovered_unit.remain_actions <= 0:
+        # print("3")
         return
     if game_state.hovered_unit.rect.collidepoint(clicked_pos):
+        # print("4")
         game_state.selected_for_movement_unit = game_state.hovered_unit
         game_state.selected_attacking_unit = None
         return
+    if game_state.selected_attacking_unit != None:
+        # print("5")
+        return
+    if game_state.selected_for_movement_unit != None:
+        # print("6")
+        deselect_unit()
+        return
+    # print("7")
+       
+    
+    
 
 
 def activate_attack_mode(click_pos):
@@ -143,16 +159,35 @@ def process_attack(attacker, attacked_pos):
 
 def buy_unit(click_pos):
     player = game_state.players[game_state.cur_player]
+    dummy = game_state.unit_to_be_placed(-100, -100, BLACK)
+    x = click_pos[0] - dummy.size // 2
+    y = click_pos[1] - dummy.size // 2
     print("players buy area is ", player.buy_area)
     if game_state.hovered_unit != None:
+        del dummy
         return
+    for unit in game_state.living_units.array:
+        print("UNIT TO BE PLACED COLOR", player.color)
+        if unit.color == player.color:
+            continue
+
+        # create a copy of the unit.rect object
+        rect_copy = unit.rect.copy()
+
+        # inflate the copy of the rect object
+        rect_copy.inflate_ip(dummy.size  , dummy.size  )
+
+        # check if the inflated copy of the rect object collides with the click position
+        if rect_copy.collidepoint(click_pos):
+            del dummy
+            return
+        
     if game_state.unit_to_be_placed:
-        dummy = game_state.unit_to_be_placed(-100, -100, BLACK)
-        x = click_pos[0] - dummy.size // 2
-        y = click_pos[1] - dummy.size // 2
+        
 
         # Check if the clicked position is not on the river
         if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
+            del dummy
             return print("Cannot place unit on river.")
    
         # Check if the unit is being placed within the buy area
@@ -160,14 +195,16 @@ def buy_unit(click_pos):
         # Inflate the buy area rect by -dummy.size to create a smaller rect
         buy_area_rect.inflate_ip(-dummy.size//2, -dummy.size//2)
         if not buy_area_rect.collidepoint(click_pos):
+            del dummy
             return print("Cannot place unit outside of buy area.")
         player.create_unit((game_state.unit_to_be_placed, x, y))
         game_state.unit_to_be_placed = False
         game_state.unit_placement_mode = None
 
-        del dummy
+       
     else:
         print(f"Error: Unit type {game_state.unit_to_be_placed} not found.")
+    del dummy
 
 
 def place_starting_units(red_player, blue_player):
@@ -183,8 +220,8 @@ def place_starting_units(red_player, blue_player):
         (Canon, 120, 100))
     red_player.create_starting_unit(
         (Shield, 400, 300))
-    # blue_player.create_starting_unit(
-    #     (Medic, 125, 160s)
+    blue_player.create_starting_unit(
+        (Medic, 125, 160 ))
     blue_player.create_starting_unit(
         (Medic, 500, 400))
     blue_player.create_starting_unit(
@@ -295,9 +332,7 @@ def handle_start_screen():
 
 
 def handle_game_running_state():
-    def handle_left_mouse_clk(click_pos):
-       
-         
+    def handle_left_mouse_clk(click_pos):      
         # Check if any button in the button bar is clicked
         if game_state.hovered_button and game_state.hovered_button.hovered:
             game_state.hovered_button.callback()

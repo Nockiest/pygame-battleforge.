@@ -54,7 +54,7 @@ def bresenham_line(x0, y0, x1, y1):
 def check_precalculated_line_square_interference(attacked_unit, line_points):
     for point_x, point_y in line_points:
 
-        # print(attacked_unit.rect, point_x,point_y, attacked_unit.rect.collidepoint((point_x, point_y)))
+       
         if attacked_unit.rect.collidepoint((point_x, point_y)):
             # print(f"Interfering point: ({point_x}, {point_y}  ) ")
             interferes = True
@@ -73,7 +73,7 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
 
     for point_x, point_y in line_points:
 
-        # print(attacked_unit.rect, point_x,point_y, attacked_unit.rect.collidepoint((point_x, point_y)))
+        
         if attacked_unit.rect.collidepoint((point_x, point_y)):
             # print(f"Interfering point: ({point_x}, {point_y}  ) ")
             return (point_x, point_y, False)
@@ -205,7 +205,7 @@ def calculate_movement_cost(color_list):
     movement_costs = []
     total_cost = 0
     for i, color in enumerate(color_list):
-        # print(color)
+        
         if color == FORREST_GREEN:
             total_cost += 2
         elif color == ROAD_GRAY:

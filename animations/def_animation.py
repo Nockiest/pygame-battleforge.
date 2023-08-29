@@ -47,7 +47,7 @@ class Animation:
         # Check if animation has ended
         if self.current_frame == len(self.images) - 1:
             self.animation_ended = True
-            print("ANIMATION ENDED", self)
+            
             game_state.animations.remove(self)
             del self
 

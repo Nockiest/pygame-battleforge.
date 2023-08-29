@@ -103,9 +103,9 @@ class Ranged(Unit):
             if res:
                 range_provided = True
         if range_provided == False:
-            print("deleting observer modifier", self.attack_range_modifiers)
+             
             self.attack_range_modifiers["in_observer_range"] = 0
-        print("range provided", range_provided, self.attack_range_modifiers)
+         
     def move_in_game_field(self, click_pos):
         super().move_in_game_field(click_pos)
         

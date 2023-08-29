@@ -8,9 +8,9 @@ vytvořit bojovou jednotku
     zobrazit kam se může v příštím kole pohnout nepřátelská jednotka
     přidat kupování ve městech
 chyby
- 
+    přepsat movemenet aby zelená čára byla hranice kterou nepřekročí ani jedna část jendotky
+     
     
-    zjistit proč linie přes překážku není vykrslena rovně
     opravit že minus animace se zobrazí dvvakrát
 musika
     najít 5 písniček
