@@ -20,6 +20,9 @@ def draw_ui(screen):
 
         if game_state.next_turn_button is not None:
             game_state.next_turn_button.draw(screen)
+
+        if game_state.end_screen_button is not None:
+            game_state.end_screen_button.draw(screen)
     except ValueError as e:
         print(e)
 

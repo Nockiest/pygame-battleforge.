@@ -24,11 +24,11 @@ prostředí
 ui
     přidat ukliádání
     přidat načítání
-    přidat start screen   
+    
     přidat úvodní nastavení hry
     zprovoznit start screen
         přidat nastavení
-   
+        zorganizovat startscreen do vlastního souboru
         nastavení prostředí
         nastavení počtu jednotek
     zprovozni endgame screen

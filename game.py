@@ -1,4 +1,4 @@
- 
+
 from battelground import *
 from player_actions import Player
 from config import *
@@ -12,7 +12,9 @@ import sys
 from os.path import dirname, basename, isfile, join
 import glob
 from animations.basic_animations import *
-
+from start_screen.start_screen import *
+from settings_screen.settings_screen import *
+from end_screen.end_screen import *
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [basename(f)[:-3] for f in modules if isfile(f)
            and not f.endswith('__init__.py')]
@@ -31,33 +33,29 @@ def enter_buy_mode(unit_type):
     game_state.unit_placement_mode = unit_type
 
 
-def start_game():
-    print("click")
-    game_state.state = "game_is_running"
-
-
 def switch_player():
     game_state.cur_player = (game_state.cur_player +
                              1) % len(game_state.players)
- 
+
+
 def next_turn():
     game_state.input_allowed = False
     # Block the MOUSEBUTTONDOWN event
     pygame.mouse.set_visible(False)
-    pygame.mouse.set_pos(0,0)
+    pygame.mouse.set_pos(0, 0)
     update_sorted_units()
     switch_player()
     deselect_unit()
     loading_message = default_font.render(
         "Loading Next Turn...", True, (255, 255, 255))
     draw_units(screen)
-    screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))  
+    screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))
     pygame.display.update()
     for unit in game_state.living_units.array:
         # unit.center = unit.start_turn_position
         unit.reset_for_next_turn()
         unit.render()
-        
+
         # if unit.color == game_state.players[game_state.cur_player].color:
         unit.get_units_movement_area()
     for unit in game_state.living_units.array:
@@ -66,21 +64,20 @@ def next_turn():
     for player in players:
         player.update_sorted_units()
 
-   
-
     for depo in game_state.battle_ground.supply_depots:
         depo.dispense_ammo()
 
-    pygame.time.set_timer( pygame.mouse.set_visible(True), 3000)
-    
-    
+    pygame.time.set_timer(pygame.mouse.set_visible(True), 3000)
+
+
 def remove_attack_point():
     print("unit disabled for turn")
     if game_state.selected_for_movement_unit:
         game_state.selected_for_movement_unit.remain_actions -= 1
     elif game_state.selected_attacking_unit:
         game_state.selected_attacking_unit.remain_actions -= 1
-        print("units attack points",       game_state.selected_attacking_unit.remain_actions)
+        print("units attack points",
+              game_state.selected_attacking_unit.remain_actions)
 
 
 def deselect_unit():
@@ -89,7 +86,7 @@ def deselect_unit():
 
 
 def select_unit(clicked_pos):
- 
+
     if game_state.selected_for_movement_unit and game_state.selected_for_movement_unit.rect.collidepoint(clicked_pos):
         game_state.selected_for_movement_unit = None
         game_state.selected_attacking_unit = None
@@ -99,10 +96,10 @@ def select_unit(clicked_pos):
         # print("1")
         deselect_unit()
         return
-    if  game_state.hovered_unit.color != game_state.players[game_state.cur_player].color:
+    if game_state.hovered_unit.color != game_state.players[game_state.cur_player].color:
         # print("2")
         return
-    if    game_state.hovered_unit.remain_actions <= 0:
+    if game_state.hovered_unit.remain_actions <= 0:
         # print("3")
         return
     if game_state.hovered_unit.rect.collidepoint(clicked_pos):
@@ -134,7 +131,7 @@ def activate_attack_mode(click_pos):
     print("attack mode activated")
 
 
-def process_attack(attacker, attacked_pos): 
+def process_attack(attacker, attacked_pos):
     attack_result = attacker.try_attack(
         attacked_pos,  game_state.hovered_unit)
     print("ATTACK result:", attack_result,)
@@ -165,21 +162,20 @@ def buy_unit(click_pos):
         rect_copy = unit.rect.copy()
 
         # inflate the copy of the rect object
-        rect_copy.inflate_ip(dummy.size  , dummy.size  )
+        rect_copy.inflate_ip(dummy.size, dummy.size)
 
         # check if the inflated copy of the rect object collides with the click position
         if rect_copy.collidepoint(click_pos):
             del dummy
             return
-        
+
     if game_state.unit_to_be_placed:
-        
 
         # Check if the clicked position is not on the river
         if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
             del dummy
             return print("Cannot place unit on river.")
-   
+
         # Check if the unit is being placed within the buy area
         buy_area_rect = pygame.Rect(*player.buy_area)
         # Inflate the buy area rect by -dummy.size to create a smaller rect
@@ -191,7 +187,6 @@ def buy_unit(click_pos):
         game_state.unit_to_be_placed = False
         game_state.unit_placement_mode = None
 
-       
     else:
         print(f"Error: Unit type {game_state.unit_to_be_placed} not found.")
     del dummy
@@ -211,7 +206,7 @@ def place_starting_units(red_player, blue_player):
     red_player.create_starting_unit(
         (Shield, 400, 300))
     blue_player.create_starting_unit(
-        (Medic, 125, 160 ))
+        (Medic, 125, 160))
     blue_player.create_starting_unit(
         (Medic, 500, 400))
     blue_player.create_starting_unit(
@@ -251,14 +246,14 @@ unit_params_list = [
         # Pikeman,
         # Canon,
         # Musketeer
-        ],
+     ],
     [Commander,
         # Knight,
         # Canon,
         # SupplyCart,
         # Canon,
         # Canon
-        ]
+     ]
 ]
 
 # when you change the positions here you have to change get_pixel_color function
@@ -273,22 +268,26 @@ game_state.button_bar = ButtonBar(enter_buy_mode)
 # place_starting_units(red_player, blue_player)
 game_state.next_turn_button = Button(
     "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, next_turn)
-game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
-                                      HEIGHT//2-50, 100, 100, start_game)
+def go_to_end_screen():
+    game_state.state = "end_screen"
+ 
+game_state.end_screen_button = Button(
+    "GIVE UP", WIDTH-100, 0, 100, UPPER_BAR_HEIGHT, go_to_end_screen)
+
 draw_ui(screen)
 draw_ui(background_screen)
 place_starting_units(red_player, blue_player)
 # for i, player in enumerate(game_state.players):
- 
-    # player.place_starting_units(  unit_params_list[i])
- 
+
+# player.place_starting_units(  unit_params_list[i])
+
 # initialize the movement costs for each pixel
- 
+
 try:
     for x in range(WIDTH):
         for y in range(HEIGHT):
             # set the movement cost for pixel (x, y)
-            color = get_pixel_colors([(x,y)], background_screen)
+            color = get_pixel_colors([(x, y)], background_screen)
             arr = calculate_movement_cost(color)
             cost, _, color = arr[0]
             # print(cost)
@@ -296,45 +295,18 @@ try:
             game_state.pixel_colors[x][y] = color
 except Exception as e:
     print(f"An error occurred: {e}")
- 
+
 for unit in game_state.living_units.array:
-     
-        unit.get_units_movement_area()
-        
+
+    unit.get_units_movement_area()
+
 
 def handle_endgame_screen():
     pass
 
 
-def handle_start_screen():
-    screen.fill(BRIDGE_COLOR)
-    game_state.start_game_button.draw(screen)
-    print( game_state.start_game_button)
-    for event in pygame.event.get():
-        
-        if event.type == pygame.QUIT:
-            print(event)
-            game_state.lets_continue = False
-        
-        
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if  game_state.start_game_button.rect.collidepoint(event.pos):
-                     game_state.start_game_button.callback()
-            
-
- 
-
-    # Render everything on the display
-    pygame.display.update()
-
-    # RENDER ELEMENTS ON THE BACKGROUND SCREEN
-    # draw_ui(background_screen )
-
-    clock.tick(fps)
-
-
 def handle_game_running_state():
-    def handle_left_mouse_clk(click_pos):      
+    def handle_left_mouse_clk(click_pos):
         # Check if any button in the button bar is clicked
         if game_state.hovered_button and game_state.hovered_button.hovered:
             game_state.hovered_button.callback()
@@ -344,7 +316,7 @@ def handle_game_running_state():
             select_unit(click_pos)
 
     def handle_right_mouse_clk():
-         
+
         if game_state.hovered_button:
             game_state.hovered_button.callback()
         elif game_state.unit_to_be_placed != None:
@@ -357,7 +329,7 @@ def handle_game_running_state():
             activate_attack_mode(event.pos)
 
     def handle_mouse_motion():
-       
+
         if game_state.selected_for_movement_unit:
             game_state.selected_for_movement_unit.move_in_game_field(
                 event.pos)
@@ -372,33 +344,28 @@ def handle_game_running_state():
 
         for button in game_state.all_buttons:
             if button.rect.collidepoint((cursor_x, cursor_y)):
-              
-                
+
                 game_state.hovered_button = button
                 game_state.hovered_button.hovered = True
                 cursor_hovers_over_button = True
             else:
                 button.hovered = False
 
-                
-
         if not cursor_hovers_over_unit:
             game_state.hovered_unit = None
         if not cursor_hovers_over_button:
-             
+
             game_state.hovered_button = None
 
     cursor_x, cursor_y = pygame.mouse.get_pos()
     get_hovered_element(cursor_x, cursor_y)
-   
-       
+
     for event in pygame.event.get():
-        
+
         if event.type == pygame.QUIT:
             print(event)
             game_state.lets_continue = False
-        
-        
+
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
 
             handle_left_mouse_clk(event.pos)
@@ -410,8 +377,6 @@ def handle_game_running_state():
 
     for player in game_state.players:
         player.handle_input()
-    
-     
 
     screen.fill(GREEN)
     # RENDER ELEMENTS ON THE MAIN SCREEN
@@ -438,13 +403,19 @@ while game_state.lets_continue:
     if game_state.state == "game_is_running":
         handle_game_running_state()
 
-    if game_state.state == "start_scrreen":
+    elif game_state.state == "start_screen":
         print("rendering start screen")
         handle_start_screen()
     elif game_state.state == "end_screen":
         print("rendering end screen")
+        draw_end_screen()
+    elif game_state.state == "settings":
+        
+        draw_settings_screen() 
     else:
-        print("this game screen doesnt exist")
-    game_state.input_allowed = True
+        print("this game screen doesnt exist", game_state.state)
+
+    
+
     # Add more game states and handling logic here
 pygame.quit()
