@@ -33,7 +33,7 @@ def enter_buy_mode(unit_type):
 
 def start_game():
     print("click")
-    game_state = "game is running"
+    game_state.state = "game_is_running"
 
 
 def switch_player():
@@ -307,14 +307,28 @@ def handle_endgame_screen():
 
 
 def handle_start_screen():
-    start_screen.fill(BRIDGE_COLOR)
-    game_state.start_game_button.draw(start_screen)
+    screen.fill(BRIDGE_COLOR)
+    game_state.start_game_button.draw(screen)
+    print( game_state.start_game_button)
+    for event in pygame.event.get():
+        
+        if event.type == pygame.QUIT:
+            print(event)
+            game_state.lets_continue = False
+        
+        
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if  game_state.start_game_button.rect.collidepoint(event.pos):
+                     game_state.start_game_button.callback()
+            
+
+ 
 
     # Render everything on the display
     pygame.display.update()
 
     # RENDER ELEMENTS ON THE BACKGROUND SCREEN
-    draw_ui(background_screen,)
+    # draw_ui(background_screen )
 
     clock.tick(fps)
 
@@ -424,7 +438,7 @@ while game_state.lets_continue:
     if game_state.state == "game_is_running":
         handle_game_running_state()
 
-    elif game_state.state == "start_scrreen":
+    if game_state.state == "start_scrreen":
         print("rendering start screen")
         handle_start_screen()
     elif game_state.state == "end_screen":

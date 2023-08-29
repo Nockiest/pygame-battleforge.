@@ -15,6 +15,9 @@ class Button:
         self.color = RED if self.hovered else BLACK
         # game.all_buttons.append(self)
         all_buttons.append(self)
+    def __repr__(self):
+         return f'{type(self).__name__}, rect: {self.rect},description: {self.description}, callback:{self.callback} '
+   
     def draw(self, screen):
         # Draw the outline of the button
          
