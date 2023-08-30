@@ -17,11 +17,15 @@ from settings_screen.settings_screen import *
 from end_screen.end_screen import *
 from game_screen.game_object import Game
 from game_screen.handle_game_running_state import handle_game_running_state
+from pygame.locals import *
+from pygame import mixer
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [basename(f)[:-3] for f in modules if isfile(f)
            and not f.endswith('__init__.py')]
 # this allows you to import entire folders
-
+# mixer.init()
+# mixer.music.load('_media/background-life.wav')
+# mixer.music.play()
 
 pygame.init()
 pygame.display.set_caption('BattleForge')

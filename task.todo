@@ -15,6 +15,7 @@ vytvořit bojovou jednotku
     vytvořit ikomnu observera nad jednotkou která má jeho bonus
 chyby
     opravit klikání na neviditelná tlačítka
+vyřešit problém s dummy unit
  
 musika
     najít 5 písniček
@@ -24,6 +25,7 @@ prostředí
     počítat zabizé jednotky
     počítat kola
     počítat útoky
+vymazat hru po skončení hry
 
 ui
     přidat ukliádání
@@ -34,6 +36,11 @@ ui
         vypsat staty ze hry
     vytvořit game_event/information window
     **přidat click animacci pro tlačítka
+
+    vylepšit settings
+     **přidat nastavení počátečních peněz
+     **přidat nastavení počtu jednotek pro každého hráče zvlášť
+     **přidat nastavení výše příjmu
  ** == není poviné
 
  

@@ -5,7 +5,7 @@ from config import *
 pygame.init()
 
 ## cokoliv sem přídáš bys měl přidat do reset_game_state v utils
-
+animations = []
 all_buttons = []
 players = []
 cur_player = 0
@@ -26,8 +26,14 @@ end_screen_button = None
 start_game_button = None
 settings_button = None
 game = None
+money_per_turn = 10
+## game stats
+num_turns = 0 
 num_attacks = 0
-animations = []
+killed_units = 0
+enemies_killed = 0
+money_spent = 0
+shots_fired = 0
 # create a two-dimensional array to store the movement costs
 movement_costs = []
 pixel_colors = []
@@ -37,6 +43,7 @@ for X in range(WIDTH):
         row.append(0)
     movement_costs.append(row)
     pixel_colors.append(row[:]) # Create a copy of the row list before appending 
+# settings config
 num_towns = 3
 num_rivers = 3
 num_forests = 0
@@ -48,4 +55,4 @@ num_Musketeers = 0
 num_Pikemen = 0
 num_Shields = 0
 num_Knights = 0
-num_Commanders = 0
+num_Commanders = 1

@@ -41,7 +41,7 @@ def handle_game_running_state(game):
                 game_state.hovered_unit = unit
                 cursor_hovers_over_unit = True
         for button in game_state.all_buttons:
-            if button.rect.collidepoint((cursor_x, cursor_y)):
+            if button.is_hovered((cursor_x, cursor_y)):
                 game_state.hovered_button = button
                 game_state.hovered_button.hovered = True
                 cursor_hovers_over_button = True
@@ -52,6 +52,7 @@ def handle_game_running_state(game):
             game_state.hovered_unit = None
         if not cursor_hovers_over_button:
             game_state.hovered_button = None
+        print("HOVERED BUTTON", game_state.hovered_button)
 
     cursor_x, cursor_y = pygame.mouse.get_pos()
     get_hovered_element(cursor_x, cursor_y)

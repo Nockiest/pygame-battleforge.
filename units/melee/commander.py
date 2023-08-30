@@ -20,7 +20,7 @@ class Commander(Melee):
        # print(hp,game_state.game_won = True, "game won is")
         if hp <= 0:
        
-            game_state.game_won = True
+            game_state.state = "end_screen"
           
      
         return hp

@@ -34,12 +34,16 @@ class Game():
         game_state.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
         game_state.button_bar = ButtonBar(self.enter_buy_mode)
         game_state.next_turn_button = Button(
-            "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn)
+            "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn, "game_is_running")
         game_state.end_screen_button = Button(
-    "GIVE UP", WIDTH-100, 0, 100, UPPER_BAR_HEIGHT, self.go_to_end_screen)
+    "GIVE UP", WIDTH-100, 0, 100, UPPER_BAR_HEIGHT, self.go_to_end_screen, "game_is_running")
 
-        game_state.next_turn_button .visible = True
-        game_state.end_screen_button .visible = True
+ 
+        game_state.num_turns = 0
+        game_state.enemies_killed = 0
+        game_state.money_spent = 0
+        game_state.shots_fired = 0
+        self.buttons = [game_state.next_turn_button, game_state.end_screen_button, ]
         for button in game_state.button_bar.button_instances:
                 button.visible = True
          # def place_starting_units(red_player, blue_player):
@@ -113,10 +117,10 @@ class Game():
         
     def go_to_end_screen(self):
         game_state.state = "end_screen"
-        game_state.next_turn_button.visiible = False
-        game_state.end_screen_button.visible = False
         for button in game_state.button_bar.button_instances:
             button.visible = False
+        game_state.game = None
+        del self
  
     def __del__(self):
         print("game instance del fucntion currently disabled")
@@ -160,6 +164,7 @@ class Game():
 
 
     def next_turn(self, ):
+        game_state.num_turns += 1
         self.switch_player()
         self.deselect_unit()
         loading_message = default_font.render(
@@ -179,6 +184,7 @@ class Game():
 
         for player in players:
             player.update_sorted_units()
+            player.supplies += game_state.money_per_turn
 
         for depo in game_state.battle_ground.supply_depots:
             depo.dispense_ammo()
@@ -286,7 +292,7 @@ class Game():
                 return
 
         if game_state.unit_to_be_placed:
-
+            game_state.money_spent  += dummy.cost
             # Check if the clicked position is not on the river
             if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
                 del dummy

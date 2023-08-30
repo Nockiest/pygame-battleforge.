@@ -14,8 +14,8 @@ class Unit(pygame.sprite.Sprite):
         super().__init__()
         self.hp = hp
         self.base_hp = hp
-        self.attack_range = attack_range
-        self.attack_range_modifiers = {"base_modifier": 1}
+        self.attack_range = attack_range * 2
+        self.attack_range_modifiers = {"base_modifier": 2}
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement *2
@@ -275,11 +275,13 @@ class Unit(pygame.sprite.Sprite):
             return False
 
     def take_damage(self, attacker):
+        global killed_units
         self.hp -= 1
         if self.hp <= 0:
             living_units.array.remove(self)
             # players[cur_player].remove_from_game(self)
             attacker.get_boost_for_destroying_unit()
+            killed_units += 1
             update_players_unit()
             print("Removing unit:", self)
             print("Units in living_units:", living_units.array)
@@ -319,7 +321,7 @@ class Unit(pygame.sprite.Sprite):
                     (start[0] - end[0]) ** 2 + (start[1] - end[1]) ** 2)
                 font = pygame.font.Font(None, 20)
                 text_surface = font.render(
-                    f"{int(distance)} units", True, WHITE)
+                    f"{int(distance)} meters", True, WHITE)
                 text_rect = text_surface.get_rect(center=midpoint)
                 screen.blit(text_surface, text_rect)
 

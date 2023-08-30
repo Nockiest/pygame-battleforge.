@@ -24,7 +24,7 @@ class Cannon(Ranged):
       
          
         # self.attack()
-
+        total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         # Calculate a line extending from the center of the unit towards the click position
         unit_center_x, unit_center_y = self.center
         attacked_center_x, attacked_center_y = attacked_unit.center
@@ -34,8 +34,8 @@ class Cannon(Ranged):
         # distance = math.sqrt(dx ** 2 + dy ** 2)
         # Calculate the angle between the attacker and the attacked unit
         angle_radians = math.atan2(dy, dx)
-        point_x = self.center[0] + self.attack_range * math.cos(angle_radians)
-        point_y = self.center[1] + self.attack_range * math.sin(angle_radians)
+        point_x = self.center[0] + self.attack_range*total_attack_range_modifier * math.cos(angle_radians)
+        point_y = self.center[1] + self.attack_range*total_attack_range_modifier * math.sin(angle_radians)
         line_points = bresenham_line(
             self.center[0], self.center[1], int(point_x),    int(point_y)
         )

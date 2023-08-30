@@ -1,10 +1,12 @@
 import pygame
 from config import * 
-from game_state import *
- 
+import game_state
+    
 class Button:
-    def __init__(self, description, x, y, width, height, callback    ):
+    def __init__(self, description, x, y, width, height, callback, game_state_screen    ):
         self.description = description
+        self.x = x
+        self.y = y
         self.rect = pygame.Rect(x, y, width, height)
         self.width = width
         self.height = height
@@ -14,8 +16,8 @@ class Button:
         self.hovered = False  # Track whether the button is currently being hovered over
         self.color = RED if self.hovered else BLACK
         self.visible = False
-        # game.all_buttons.append(self)
-        all_buttons.append(self)
+        game_state.all_buttons.append(self)
+        self.game_state_screen = game_state_screen
     def __repr__(self):
          return f'{type(self).__name__}, rect: {self.rect},description: {self.description}, callback:{self.callback} '
    
@@ -33,13 +35,24 @@ class Button:
         
     def hide_button(self):
         self.visible = False
+        self.rect = pygame.Rect(0,0,0,0)
+        print("RECT IS", self.rect)
+
+    def show_button(self):
+        self.visible = True
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def is_clicked(self, pos):
-        if not self.visible:
+      
+
+        if self.game_state_screen != game_state.state:
             return False
         return self.rect.collidepoint(pos)
     
     def is_hovered(self, pos):
-        if not self.visible:
+        
+        # print("state is " ,state)
+        if self.game_state_screen !=  game_state.state:
             return False
+        print("I CAN BE HOVERED", self, game_state.state, self.game_state_screen !=  game_state.state)
         return self.rect.collidepoint(pos)
