@@ -3,6 +3,7 @@ import game_state
 from config import *
 from buttons.button import Button
 from .start_scree_state import *
+from game_screen.game_object import Game
 def set_up_game_screen():
     global start_game_button
     global settings_button
@@ -18,6 +19,7 @@ def open_settings():
     game_state.state = "settings"
 def start_game():
     print("click")
+    game_state.game = Game()
     game_state.state = "game_is_running"
 
 def handle_start_screen():

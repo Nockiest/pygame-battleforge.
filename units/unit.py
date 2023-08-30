@@ -120,8 +120,8 @@ class Unit(pygame.sprite.Sprite):
                     # your code here
                     cost += movement_costs[point[0]][point[1]]
                 except Exception as e:
-                    print(f"An error occurred: {e}")
-                    movement_costs[point[0]][point[1]]
+                    print(f"An error occurred: {e}", point[0],point[1] )
+                       
                 
 
                 ## append it to the points in reach 

@@ -21,8 +21,9 @@ battle_ground = None
 button_bar = None
 next_turn_button = None
 end_screen_button = None
-battle_ground_structures = {}
-input_allowed = True
+ 
+ 
+game = None
 num_attacks = 0
 animations = []
 # create a two-dimensional array to store the movement costs
@@ -37,11 +38,12 @@ for X in range(WIDTH):
 num_towns = 5
 num_rivers = 3
 num_forests = 3
-num_medics = 1
-num_observers = 1
-num_supply_carts = 1
-num_cannons = 2
-num_musketeers = 3
-num_pikemen = 7
-num_shields = 2
-num_knights = 2
+num_Medics = 1
+num_Observers = 1
+num_Supply_carts = 1
+num_Cannons = 2
+num_Musketeers = 3
+num_Pikemen = 7
+num_Shields = 2
+num_Knights = 2
+num_Commanders = 1

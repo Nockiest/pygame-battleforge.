@@ -5,7 +5,7 @@ from config import *
 import game_state
 from utils.render_utils import *
 from utils.utils import *
-from game import *
+from app import *
 
 # create a BattleGround object
 battle_ground = BattleGround(WIDTH, HEIGHT)

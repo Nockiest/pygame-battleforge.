@@ -227,12 +227,12 @@ def calculate_movement_cost(color_list):
     
     return movement_costs
 
-def update_sorted_units(   ) :
-        global sorted_living_units
-        sorted_living_units = {}
-        for unit in living_units.array:
-            unit_type = unit.__class__.__name__
-            sorted_living_units.setdefault(unit_type, []).append(unit)
+# def update_sorted_units(   ) :
+#         global sorted_living_units
+#         sorted_living_units = {}
+#         for unit in living_units.array:
+#             unit_type = unit.__class__.__name__
+#             sorted_living_units.setdefault(unit_type, []).append(unit)
  
 
 def is_inside_rectangle(x, y, left, top, width, height):

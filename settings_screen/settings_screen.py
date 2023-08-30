@@ -65,13 +65,13 @@ structures_bar.add_slider("Forests", 0, 10, game_state.num_forests, update_num_f
  
 # create a new SettingsBar object for units
 units_bar = SettingsBar("Units", 300, 100)
-units_bar.add_slider("Medics", 0, 10, game_state.num_medics, update_num_medics)
-units_bar.add_slider("Observers", 0, 10, game_state.num_observers, update_num_observers)
-units_bar.add_slider("Supply Carts", 0, 10, game_state.num_supply_carts, update_num_supply_carts)
-units_bar.add_slider("Cannons", 0, 10, game_state.num_cannons, update_num_cannons)
-units_bar.add_slider("Musketeers", 0, 10, game_state.num_musketeers, update_num_musketeers)
-units_bar.add_slider("Pikemen", 0, 10, game_state.num_pikemen, update_num_pikemen)
-units_bar.add_slider("Shields", 0, 10, game_state.num_shields, update_num_shields)
-units_bar.add_slider("Knights", 0, 10, game_state.num_knights, update_num_knights)
+units_bar.add_slider("Medics", 0, 10, game_state.num_Medics, update_num_Medics)
+units_bar.add_slider("Observers", 0, 10, game_state.num_Observers, update_num_Observers)
+units_bar.add_slider("Supply Carts", 0, 10, game_state.num_Supply_carts, update_num_Supply_carts)
+units_bar.add_slider("Cannons", 0, 10, game_state.num_Cannons, update_num_Cannons)
+units_bar.add_slider("Musketeers", 0, 10, game_state.num_Musketeers, update_num_Musketeers)
+units_bar.add_slider("Pikemen", 0, 10, game_state.num_Pikemen, update_num_Pikemen)
+units_bar.add_slider("Shields", 0, 10, game_state.num_Shields, update_num_Shields)
+units_bar.add_slider("Knights", 0, 10, game_state.num_Knights, update_num_Knights)
 
  

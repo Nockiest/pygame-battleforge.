@@ -10,26 +10,26 @@ def update_num_rivers(new_value):
 def update_num_forests(new_value):
     game_state.num_forests = new_value
 
-def update_num_medics(new_value):
-    game_state.num_medics = new_value
+def update_num_Medics(new_value):
+    game_state.num_Medics = new_value
 
-def update_num_observers(new_value):
-    game_state.num_observers = new_value
+def update_num_Observers(new_value):
+    game_state.num_Observers = new_value
 
-def update_num_supply_carts(new_value):
-    game_state.num_supply_carts = new_value
+def update_num_Supply_carts(new_value):
+    game_state.num_Supply_carts = new_value
 
-def update_num_cannons(new_value):
-    game_state.num_cannons = new_value
+def update_num_Cannons(new_value):
+    game_state.num_Cannons = new_value
 
-def update_num_musketeers(new_value):
-    game_state.num_musketeers = new_value
+def update_num_Musketeers(new_value):
+    game_state.num_Musketeers = new_value
 
-def update_num_pikemen(new_value):
-    game_state.num_pikemen = new_value
+def update_num_Pikemen(new_value):
+    game_state.num_Pikemen = new_value
 
-def update_num_shields(new_value):
-    game_state.num_shields = new_value
+def update_num_Shields(new_value):
+    game_state.num_Shields = new_value
 
-def update_num_knights(new_value):
-    game_state.num_knights = new_value
+def update_num_Knights(new_value):
+    game_state.num_Knights = new_value

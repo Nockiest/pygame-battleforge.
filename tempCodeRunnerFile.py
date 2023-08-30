@@ -1,2 +1,1 @@
- # if isinstance(game_state.hovered_unit, Support):
-    #   
+place_starting_units

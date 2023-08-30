@@ -50,7 +50,7 @@ class Player:
             del unit  # Remove the unit from memory since it won't be added to the lists
             return None
         self.update_sorted_units()
-        update_sorted_units()
+        # update_sorted_units()
 
         return unit
 
@@ -160,7 +160,7 @@ class Player:
             self.units.remove(unit)
 
         self.update_sorted_units()
-        update_sorted_units()
+        # update_sorted_units()
  
     def place_starting_units(self, unit_class_list):
         sides = {

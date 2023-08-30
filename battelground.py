@@ -8,7 +8,7 @@ from buildings.bridge import Bridge
 from buildings.town import Town, is_far_enough, get_town_distances
 from buildings.road import *
 from buildings.river import River
-
+import game_state
 
 def find_river_segments_for_crossing(rivers):
     river_segments = []
@@ -49,9 +49,9 @@ class BattleGround:
         self.height = height
 
         # Define quantities of each element to generate
-        self.num_forests = 3
-        self.num_rivers = 2
-        self.num_towns = 4
+        self.num_forests = game_state.num_forests
+        self.num_rivers =game_state. num_rivers
+        self.num_towns = game_state.num_towns
         self.max_roads = 9
         self.num_supply_depots = 2
 # self.place_forrests()#
