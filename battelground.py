@@ -35,6 +35,8 @@ class BattleGround:
 
         self.river_segments = None
 
+    def __del__(self):
+        print("BATTLEGROUND DELETED")
     def place_forrests(self):
         forests = []
         for _ in range(self.num_forests):
@@ -343,7 +345,8 @@ class BattleGround:
          # Draw roads
         for road in self.roads:
             road.draw(screen)
-
+        for bridge in self.bridges:
+            bridge.draw(screen)
         for town in self.towns:
 
             town.draw_houses(screen)
@@ -352,8 +355,7 @@ class BattleGround:
         bridge_width = 25
         bridge_height = 50
 
-        for bridge in self.bridges:
-            bridge.draw(screen)
+     
         # Draw supply depots
         for depo in self.supply_depots:
             depo.draw(screen)

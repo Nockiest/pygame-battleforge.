@@ -21,10 +21,9 @@ def open_settings():
 
 
 def start_game():
-    game_state.state = "game_is_running"
-    game_state.start_game_button.hide_button()
-    game_state.settings_button.hide_button()
+ 
     # this function gets actually called multiple times
+    print("GAME IS CURRENTLY", game_state.game)
     if game_state.game is None:
         game_state.game = Game()
     game_state.state = "game_is_running"
@@ -36,8 +35,7 @@ def show_buttons():
             button.show_button()
         if button == game_state.settings_button:
             button.show_button()
-    print("BUTTONS", game_state.start_game_button.visible,
-          game_state.settings_button.visible)
+ 
 
 
 def handle_start_screen():

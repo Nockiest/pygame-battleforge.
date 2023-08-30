@@ -13,8 +13,9 @@ vytvořit bojovou jednotku
     zvýšit atttack resistance v lese
     dát jednotkám kolem velitele větší resitenci
     vytvořit ikomnu observera nad jednotkou která má jeho bonus
+    zobrazit movement jen když se jednotka může jště pohnout
 chyby
-    opravit klikání na neviditelná tlačítka
+    opravit smazání hry po ukončení hry
 vyřešit problém s dummy unit
  
 musika

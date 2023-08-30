@@ -26,6 +26,9 @@ class Player:
         self.buy_area = ( self.side, UPPER_BAR_HEIGHT, self.spawn_width, HEIGHT - TENDER_HEIGHT - UPPER_BAR_HEIGHT)
     def __repr_(self):
         return f'Player{self.color}, has {self.units} sorted {self.sorted_by_class_units} and a buy area{self.buy_area}'
+    
+    def __del__(self):
+        print("UNIT DELETED")
     def update_sorted_units(self):
         self.sorted_by_class_units = {}
         for unit in self.units:
@@ -102,7 +105,7 @@ class Player:
         total_text_height = supplies_text_line2.get_height() + unit_head_text.get_height()
 
         # Calculate unit_y based on the total text height
-        unit_y = HEIGHT - TENDER_HEIGHT + total_text_height + 10  # Adjust 10 for spacing
+        unit_y = HEIGHT - TENDER_HEIGHT + total_text_height + 20  # Adjust 20 for spacing
         # + unit_head_text_y# - HEIGHT + TENDER_HEIGHT
         total_content_height = len(self.sorted_by_class_units) * 30
 
@@ -120,7 +123,7 @@ class Player:
             # Calculate the y-coordinate for rendering
             render_y = unit_y + self.scroll_position
 
-            if render_y >= unit_head_text_y:
+            if render_y  >= unit_head_text_y:
                 # Render the unit count text
                 screen.blit(unit_text, (self.tender_x + 10, render_y))
                 # Load and render the unit image

@@ -51,8 +51,8 @@ class Button:
     
     def is_hovered(self, pos):
         
-        # print("state is " ,state)
+        
         if self.game_state_screen !=  game_state.state:
             return False
-        print("I CAN BE HOVERED", self, game_state.state, self.game_state_screen !=  game_state.state)
+       
         return self.rect.collidepoint(pos)

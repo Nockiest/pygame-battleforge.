@@ -38,7 +38,8 @@ def draw_units(screen):
             game_state.selected_attacking_unit.draw_as_active()
 
         if unit == game_state.hovered_unit:
-            
+            if unit.color ==  game_state.players[game_state.cur_player].color and unit.remain_actions <= 0:
+                continue
             unit.draw_possible_movement_area()
             unit.render_attack_circle()
             unit.render_hovered_state()

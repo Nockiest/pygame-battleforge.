@@ -263,7 +263,7 @@ def new_point_interferes_with_unit(self,  point_x, point_y, living_units=living_
 
 
 def reset_game_state():
-    global players, battle_ground, cur_player, game_won, living_units, state, selected_for_movement_unit, selected_attacking_unit, unit_placement_mode, unit_to_be_placed, hovered_unit, hovered_button, game, num_attacks, animations, movement_costs, pixel_colors
+    global players,num_turns,enemies_killed, money_spent,shots_fired, battle_ground, cur_player, game_won, living_units, state, selected_for_movement_unit, selected_attacking_unit, unit_placement_mode, unit_to_be_placed, hovered_unit, hovered_button, game, num_attacks, animations, movement_costs, pixel_colors
     players = []
     battle_ground = None
     players = []
@@ -283,6 +283,10 @@ def reset_game_state():
     animations = []
     movement_costs = []
     pixel_colors = []
+    num_turns = 0
+    enemies_killed = 0
+    money_spent = 0
+    shots_fired = 0
     for X in range(WIDTH):
         row = []
         for Y in range(HEIGHT):

@@ -44,7 +44,7 @@ for X in range(WIDTH):
     movement_costs.append(row)
     pixel_colors.append(row[:]) # Create a copy of the row list before appending 
 # settings config
-num_towns = 3
+num_towns = 5
 num_rivers = 3
 num_forests = 0
 num_Medics = 0
