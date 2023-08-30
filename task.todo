@@ -1,21 +1,17 @@
 vytvořit bojovou jednotku      
     
         přidat movement soundfile
-     
+
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
-
-   
-    přidat kupování ve městech
+    **přidat kupování ve městech
     **změnit kursor nad jednotkou kterou mohu vybrat
     první útok by měl vždy vyjít
-   
-    zvýšit atttack resistance v lese
-    dát jednotkám kolem velitele větší resitenci
-    vytvořit ikomnu observera nad jednotkou která má jeho bonus
-   
-chyby
+    **zvýšit atttack resistance v lese
+    **dát jednotkám kolem velitele větší resitenci
     
+chyby
+    **resupply_supplycart?
     vyřešit problém s dummy unit
  
 musika
@@ -24,8 +20,7 @@ musika
 prostředí   
     přidat opevnění ve městech
     počítat zabizé jednotky
-    počítat kola
-    počítat útoky
+    
 vymazat hru po skončení hry
 
 ui

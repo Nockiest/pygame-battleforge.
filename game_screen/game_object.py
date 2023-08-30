@@ -114,7 +114,7 @@ class Game():
         if len(game_state.animations) > 0:
             return
         game_state.num_turns += 1
-        self.switch_player()
+        
         self.deselect_unit()
         loading_message = default_font.render(
             "Loading Next Turn...", True, (255, 255, 255))
@@ -138,7 +138,7 @@ class Game():
         for depo in game_state.battle_ground.supply_depots:
             depo.dispense_ammo()
 
-        pygame.time.set_timer(pygame.mouse.set_visible(True), 3000)
+        self.switch_player()
 
     def remove_attack_point(self, ):
         print("unit disabled for turn")
