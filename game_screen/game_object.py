@@ -77,12 +77,11 @@ class Game():
         
     def go_to_end_screen(self):
         game_state.state = "end_screen"
-        print("I HAVE BEEN CALLED 1")
+       
         
         self.__del__()
     def __del__(self):
-        print("I HAVE BEEN CALLED")
-         
+        
         game_state.battle_ground.__del__()
         del game_state.button_bar
        

@@ -1,7 +1,7 @@
 import math
 from config import *
-from game_state import *
-
+import game_state
+from classdict import SortedDict
 def get_two_units_center_distance(unit1, unit2):
     # Calculate the distance between the center points of the units, considering their sizes
     dx = (unit1.x + unit1.size // 2) - (unit2.x + unit2.size // 2)
@@ -242,12 +242,12 @@ def is_inside_rectangle(x, y, left, top, width, height):
         return False
 
 def update_players_unit():
-    for player in players:
+    for player in game_state.players:
         for unit in player.units:
-            if unit not in living_units.array:
+            if unit not in game_state.living_units.array:
                 player.remove_self_unit(  unit)
 
-def new_point_interferes_with_unit(self,  point_x, point_y, living_units=living_units.array):
+def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_state.living_units.array):
         # Create a new rectangle for the unit's position
 
         new_rect = pygame.Rect(point_x - self.size // 2,
@@ -263,33 +263,33 @@ def new_point_interferes_with_unit(self,  point_x, point_y, living_units=living_
 
 
 def reset_game_state():
-    global players,num_turns,enemies_killed, money_spent,shots_fired, battle_ground, cur_player, game_won, living_units, state, selected_for_movement_unit, selected_attacking_unit, unit_placement_mode, unit_to_be_placed, hovered_unit, hovered_button, game, num_attacks, animations, movement_costs, pixel_colors
-    players = []
-    battle_ground = None
-    players = []
-    cur_player = 0
-    game_won = False
-    living_units = SortedDict([])# pygame.sprite.Group()
-    state = "start_screen"
-    selected_for_movement_unit = None
-    selected_attacking_unit = None
-    unit_placement_mode = None
-    unit_to_be_placed = None
-    hovered_unit = None
-    hovered_button = None    
-    battle_ground = None      
-    game = None
-    num_attacks = 0
-    animations = []
-    movement_costs = []
-    pixel_colors = []
-    num_turns = 0
-    enemies_killed = 0
-    money_spent = 0
-    shots_fired = 0
-    for X in range(WIDTH):
-        row = []
-        for Y in range(HEIGHT):
-            row.append(0)
-            movement_costs.append(row)
-            pixel_colors.append(row[:]) # Create a copy of the row list before appending 
+     
+    game_state.players = []
+    game_state.battle_ground = None
+    game_state.players = []
+    game_state.cur_player = 0
+    game_state.game_won = False
+    game_state.living_units = SortedDict([])# pygame.sprite.Group()
+    # game_state.state = "start_screen"
+    game_state.selected_for_movement_unit = None
+    game_state.selected_attacking_unit = None
+    game_state.unit_placement_mode = None
+    game_state.unit_to_be_placed = None
+    game_state.hovered_unit = None
+    game_state.hovered_button = None    
+    game_state.battle_ground = None      
+    game_state.game = None
+    game_state.num_attacks = 0
+    game_state.animations = []
+    # game_state.movement_costs = []
+    # game_state.pixel_colors = []
+    game_state.num_turns = 0
+    game_state.enemies_killed = 0
+    game_state.money_spent = 0
+    game_state.shots_fired = 0
+    # for X in range(WIDTH):
+    #     row = []
+    #     for Y in range(HEIGHT):
+    #         row.append(0)
+    #         game_state.movement_costs.append(row)
+    #         game_state.pixel_colors.append(row[:]) # Create a copy of the row list before appending 
