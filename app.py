@@ -21,34 +21,27 @@ modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [basename(f)[:-3] for f in modules if isfile(f)
            and not f.endswith('__init__.py')]
 # this allows you to import entire folders
- 
-
- 
 
 
 pygame.init()
 pygame.display.set_caption('BattleForge')
 
- 
- 
- 
+
 while game_state.lets_continue:
     if game_state.state == "game_is_running":
         handle_game_running_state(game_state.game)
 
     elif game_state.state == "start_screen":
-       
+
         handle_start_screen()
     elif game_state.state == "end_screen":
-        
+
         draw_end_screen()
     elif game_state.state == "settings":
-        
-        draw_settings_screen() 
+
+        draw_settings_screen()
     else:
         print("this game screen doesnt exist", game_state.state)
-
-    
 
     # Add more game states and handling logic here
 pygame.quit()

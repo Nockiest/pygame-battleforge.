@@ -119,16 +119,17 @@ class Game():
             button.visible = False
  
     def __del__(self):
-        print("MyClass instance destroyed")
-        game_state.living_units = []
+        print("game instance del fucntion currently disabled")
+        # print("MyClass instance destroyed")
+        # game_state.living_units = []
         
-        for player in  game_state.players:
-            for unit in player.units:
-                player.remove_self_unit(unit)
-        game_state.players = []
-        game_state.battle_ground = None
-        game_state.game = None
-        reset_game_state()
+        # for player in  game_state.players:
+        #     for unit in player.units:
+        #         player.remove_self_unit(unit)
+        # game_state.players = []
+        # game_state.battle_ground = None
+        # game_state.game = None
+        # reset_game_state()
         
     def get_pixel_values(self):
           for x in range(WIDTH):
