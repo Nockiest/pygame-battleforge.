@@ -8,40 +8,8 @@ from buildings.bridge import Bridge
 from buildings.town import Town, is_far_enough, get_town_distances
 from buildings.road import *
 from buildings.river import River
+from utils.generation_utils import find_river_segments_for_crossing
 import game_state
-
-def find_river_segments_for_crossing(rivers):
-    river_segments = []
-
-    for river in rivers:
-        if not river:
-            continue
-
-        # Start the river segment from the first point
-        river_segment_start = river[0]
-        river_segment_end = None
-
-        for point in river:
-            point_in_other_river = False
-            for other_river in rivers:
-                if other_river != river and point in other_river:
-                    point_in_other_river = True
-                    river_segment_end = point
-                    break
-
-            if point_in_other_river:
-                if river_segment_start != river_segment_end:  # Check if it's a line segment and not a dot
-                    river_segments.append(
-                        (river_segment_start, river_segment_end))
-                river_segment_start = river_segment_end
-                river_segment_end = None
-
-        # Add the last river segment if needed
-        if river_segment_end is None and river_segment_start != river[-1]:
-            river_segments.append((river_segment_start, river[-1]))
-
-    return river_segments
-
 
 class BattleGround:
     def __init__(self, width, height):
@@ -50,7 +18,7 @@ class BattleGround:
 
         # Define quantities of each element to generate
         self.num_forests = game_state.num_forests
-        self.num_rivers =game_state. num_rivers
+        self.num_rivers = game_state. num_rivers
         self.num_towns = game_state.num_towns
         self.max_roads = 9
         self.num_supply_depots = 2
@@ -126,6 +94,8 @@ class BattleGround:
                               (control_x1, control_y1), (control_x2, control_y2)])
             new_river.generate_chunks(rivers)
             rivers.append(new_river)
+        river_segments = (find_river_segments_for_crossing(rivers))
+        print("here are the river segments", river_segments)
         return rivers
 
     def place_towns(self):
@@ -160,7 +130,16 @@ class BattleGround:
     def place_roads(self):
         roads = []
         connected_towns = set()  # Keep track of connected towns to prevent duplicated roads
-
+        screen_sides_starts = [
+            ((0, random.randint(100, self.height - 100)), (self.width,
+                                                           random.randint(100, self.height - 100))),  # Top side
+            ((random.randint(100, self.width - 100), 0),
+             (random.randint(100, self.width - 100), self.height)),  # Left side
+            ((self.width, random.randint(100, self.height - 100)),
+             (0, random.randint(100, self.height - 100))),  # Bottom side
+            ((random.randint(100, self.width - 100), self.height),
+             (random.randint(100, self.width - 100), 0))   # Right side
+        ]
         for index, town in enumerate(self.towns):
             # List to store distances and corresponding town indices
             distances = get_town_distances(
@@ -176,26 +155,17 @@ class BattleGround:
                 # Check if a road connection already exists between these towns
                 if (index, i) in connected_towns or (i, index) in connected_towns:
                     continue
-                screen_sides = [
-                    ((0, random.randint(100, self.height - 100)), (self.width,
-                     random.randint(100, self.height - 100))),  # Top side
-                    ((random.randint(100, self.width - 100), 0),
-                     (random.randint(100, self.width - 100), self.height)),  # Left side
-                    ((self.width, random.randint(100, self.height - 100)),
-                     (0, random.randint(100, self.height - 100))),  # Bottom side
-                    ((random.randint(100, self.width - 100), self.height),
-                     (random.randint(100, self.width - 100), 0))   # Right side
-                ]
 
                 new_road = Road(nearby_town, town)
-                new_road.generate_road_points(roads, screen_sides)
+                new_road.generate_road_points(roads, screen_sides_starts)
 
             # if not new_road.intersects:
             connected_towns.add((index, i))
             connected_towns.add((i, index))
             roads.append(new_road)
 
-        edge_roads = generate_from_edge_roads(screen_sides, self.towns, roads)
+        edge_roads = generate_from_edge_roads(
+            screen_sides_starts, self.towns, roads)
 
         for road in edge_roads:
             # Save the road path to self.roads

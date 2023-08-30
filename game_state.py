@@ -37,15 +37,15 @@ for X in range(WIDTH):
         row.append(0)
     movement_costs.append(row)
     pixel_colors.append(row[:]) # Create a copy of the row list before appending 
-num_towns = 5
-num_rivers = 3
-num_forests = 3
-num_Medics = 1
-num_Observers = 1
-num_Supply_carts = 1
-num_Cannons = 2
-num_Musketeers = 3
-num_Pikemen = 7
-num_Shields = 2
-num_Knights = 2
-num_Commanders = 1
+num_towns = 0
+num_rivers = 5
+num_forests = 0
+num_Medics = 0
+num_Observers = 0
+num_Supply_carts = 0
+num_Cannons = 0
+num_Musketeers = 0
+num_Pikemen = 0
+num_Shields = 0
+num_Knights = 0
+num_Commanders = 0

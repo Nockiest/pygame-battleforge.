@@ -49,18 +49,10 @@ def change_cursor():
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             button.hovered = True
             break
-    # check if a button or input field was clicked
-    # ...
-
- 
-        
-    # update game variables based on the selected settings
-    # ...
-
  
 
 # create a new SettingsBar object for structures
-selected_slider = None
+ 
 structures_bar = SettingsBar("Structures", 50, 100)
 structures_bar.add_slider("Towns", 0, 10, game_state.num_towns, update_num_towns)
 structures_bar.add_slider("Rivers", 0, 5, game_state.num_rivers, update_num_rivers)

@@ -79,7 +79,7 @@ class Player:
             pygame.display.flip()
             living_units.remove(self.preview_unit)
             self.preview_unit.kill()
-            print("living units",  living_units.array, living_units.dict)
+            # print("living units",  living_units.array, living_units.dict)
         except Exception as e:
             print(f"An error occurred: {e}")
 

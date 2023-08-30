@@ -224,7 +224,7 @@ class Unit(pygame.sprite.Sprite):
        
         attack_range_with_modifiers = self.attack_range * total_attack_range_modifier
 
-        pygame.draw.circle(screen, DARK_ORANGE, (self.x + self.size // 2,
+        pygame.draw.circle(screen, BLACK, (self.x + self.size // 2,
                            self.y + self.size // 2), int(attack_range_with_modifiers), 2)
 
     def attack(self):
