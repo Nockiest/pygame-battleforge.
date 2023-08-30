@@ -7,7 +7,7 @@ from units.melee.kngiht import Knight
 from units.melee.pikeman import Pikeman
 from units.melee.shield import Shield
 from units.melee.template import Melee
-from units.ranged.canon import Canon
+from units.ranged.cannon import Cannon
 from units.ranged.musketeer import Musketeer
 from units.ranged.template import Ranged
 from units.support.medic import Medic
@@ -88,7 +88,7 @@ class ButtonBar:
         self.button_instances = [
             BuyButton(knight_buy_img, Knight, "Buy Knight", x=220,  enter_buy_mode= callback,  ),
             BuyButton(shield_buy_img, Shield, "Buy Shield", x=280, enter_buy_mode= callback,  ),
-            BuyButton(canon_buy_img, Canon, "Buy Canon", x=340, enter_buy_mode= callback,  ),
+            BuyButton(Cannon_buy_img, Cannon, "Buy Cannon", x=340, enter_buy_mode= callback,  ),
             BuyButton(medic_buy_img, Medic, "Buy Medic", x=400, enter_buy_mode=  callback,  ),
             BuyButton(pike_buy_img, Pikeman, "Buy Pike", x=460, enter_buy_mode= callback,  ),
             BuyButton(musket_buy_img, Musketeer, "Buy Musket", x=600, enter_buy_mode= callback,  )

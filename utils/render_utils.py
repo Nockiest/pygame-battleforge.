@@ -24,7 +24,7 @@ def draw_ui(screen):
         if game_state.end_screen_button is not None:
             game_state.end_screen_button.draw(screen)
     except ValueError as e:
-        print(e)
+        print("Error in drawing ui",e)
 
 
 def draw_units(screen):

@@ -10,7 +10,10 @@ def apply_settings():
         slider.alter_original_value()
 
 def go_back():
+    back_button.visible = False
+    apply_button.visible = False
     game_state.state = "start_screen"
+ 
 
 back_button = Button("BACK", WIDTH//2-50, HEIGHT//2-50, 100, 100, go_back)
 apply_button =  Button("APPLY", WIDTH - 100, 50, 100, 50, apply_settings)

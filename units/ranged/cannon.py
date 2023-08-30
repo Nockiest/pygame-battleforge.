@@ -6,13 +6,13 @@ import game_state
 from .template import Ranged
 from animations.shooting_animation import ShootingAnimation
 
-class Canon(Ranged):
+class Cannon(Ranged):
     size = 40
     cost = 30
 
     def __init__(self, x, y, color):
         super().__init__(hp=1, attack_range=300, attack_resistance=0.05, base_actions=1, base_movement=50,
-                         size=self.size, x=x, y=y, ammo=5, icon="canon.png", color=color, cost=self.cost)
+                         size=self.size, x=x, y=y, ammo=5, icon="Cannon.png", color=color, cost=self.cost)
     
      
 
@@ -31,7 +31,7 @@ class Canon(Ranged):
         dx = attacked_center_x - unit_center_x
         dy = attacked_center_y - unit_center_y
         # Calculate the distance between the attacker and the attacked unit
-        distance = math.sqrt(dx ** 2 + dy ** 2)
+        # distance = math.sqrt(dx ** 2 + dy ** 2)
         # Calculate the angle between the attacker and the attacked unit
         angle_radians = math.atan2(dy, dx)
         point_x = self.center[0] + self.attack_range * math.cos(angle_radians)

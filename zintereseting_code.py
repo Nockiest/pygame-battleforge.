@@ -45,13 +45,13 @@
     # print(unit1.x, unit1.y)
 
 
-# canon_img = pygame.image.load("img/white-canon.png")
-# canon_img_rect = canon_img.get_rect()
+# Cannon_img = pygame.image.load("img/white-Cannon.png")
+# Cannon_img_rect = Cannon_img.get_rect()
 # # set the pos relative to top left corner # the center centers the image around the point # midtop midbottom left x y bottom up ...
-# canon_img_rect.center = (300, 300)
-# screen.blit(canon_img, canon_img_rect)
+# Cannon_img_rect.center = (300, 300)
+# screen.blit(Cannon_img, Cannon_img_rect)
 
-# my_font_text = my_font.render("Canon", False, BLACK, None)
+# my_font_text = my_font.render("Cannon", False, BLACK, None)
 # my_font_text_rect = my_font_text.get_rect()
 # my_font_text_rect.center = (WIDTH//2, HEIGHT//2)
 #############################################xx
@@ -74,9 +74,9 @@
 # system_font = pygame.font.SysFont("vivaldi", 50)
 # # Font a text
 
-# canon_img = pygame.image.load("img/white-canon.png")
-# canon_img_rect = canon_img.get_rect()
-# canon_img_rect.center = (300, 300)  # set the pos relative to top left corner # the center centers the image around the point # midtop midbottom left x y bottom up ...
+# Cannon_img = pygame.image.load("img/white-Cannon.png")
+# Cannon_img_rect = Cannon_img.get_rect()
+# Cannon_img_rect.center = (300, 300)  # set the pos relative to top left corner # the center centers the image around the point # midtop midbottom left x y bottom up ...
 
 # screen.fill(green)
 
@@ -94,38 +94,38 @@
 
 #            print(f"Pozice X: {event.pos[0]}")
 #            print(f"Pozice Y: {event.pos[1]}")
-#            canon_img_rect.centerx = event.pos[0]
-#            canon_img_rect.centery = event.pos[1]
+#            Cannon_img_rect.centerx = event.pos[0]
+#            Cannon_img_rect.centery = event.pos[1]
 
   
 
 #     keys = pygame.key.get_pressed()
-#     if (keys[pygame.K_UP] or keys[pygame.K_w]) and canon_img_rect.top > 0:
-#        canon_img_rect.y -= distance
-#     elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and canon_img_rect.bottom < height:
-#        canon_img_rect.y += distance
-#     elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and canon_img_rect.left > 0:
-#        canon_img_rect.x -= distance
-#     elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and canon_img_rect.right < width:
-#        canon_img_rect.x += distance
+#     if (keys[pygame.K_UP] or keys[pygame.K_w]) and Cannon_img_rect.top > 0:
+#        Cannon_img_rect.y -= distance
+#     elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and Cannon_img_rect.bottom < height:
+#        Cannon_img_rect.y += distance
+#     elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and Cannon_img_rect.left > 0:
+#        Cannon_img_rect.x -= distance
+#     elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and Cannon_img_rect.right < width:
+#        Cannon_img_rect.x += distance
 
-#     print(  canon_img_rect.x, canon_img_rect.y)
+#     print(  Cannon_img_rect.x, Cannon_img_rect.y)
 
 #         # if event.type == pygame.KEYDOWN:
 #         #     print(pygame.key.name(event.key))
 #         #     if event.key == pygame.K_UP:
-#         #         canon_img_rect.y -= distance
+#         #         Cannon_img_rect.y -= distance
 #         #     elif event.key == pygame.K_DOWN:
-#         #         canon_img_rect.y += distance
+#         #         Cannon_img_rect.y += distance
 #         #     elif event.key == pygame.K_LEFT:
-#         #         canon_img_rect.x -= distance
+#         #         Cannon_img_rect.x -= distance
 #         #     elif event.key == pygame.K_RIGHT:
-#         #         canon_img_rect.x += distance
+#         #         Cannon_img_rect.x += distance
 
 #     pygame.display.update()
     
 #     screen.fill(green)
-#     screen.blit(canon_img, canon_img_rect)
+#     screen.blit(Cannon_img, Cannon_img_rect)
 
 #     clock.tick(fps)
 

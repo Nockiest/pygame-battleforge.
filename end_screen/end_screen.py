@@ -15,7 +15,7 @@ def draw_end_screen():
 
     # draw the new game button
     new_game_button.draw(screen)
-
+    new_game_button.visible = True
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             print(event)
@@ -31,7 +31,7 @@ def new_game():
     """Start a new game."""
    
     global score
-
+    new_game_button.visible = False
     # reset the game state and score
     game_state.state = "start_screen"
     score = 0

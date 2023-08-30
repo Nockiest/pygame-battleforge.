@@ -18,8 +18,9 @@ def open_settings():
      
     game_state.state = "settings"
 def start_game():
-    print("click")
-    game_state.game = Game()
+    # this function gets actually called multiple times
+    if game_state.game is   None: 
+      game_state.game = Game()
     game_state.state = "game_is_running"
 
 def handle_start_screen():

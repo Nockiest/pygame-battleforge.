@@ -43,7 +43,7 @@ RESUPPLY_RANGE = 100
  
 knight_buy_img = pygame.image.load("img/knight.png")
 shield_buy_img = pygame.image.load("img/shield.png")
-canon_buy_img = pygame.image.load("img/canon.png")
+Cannon_buy_img = pygame.image.load("img/Cannon.png")
 medic_buy_img = pygame.image.load("img/medic.png")
 pike_buy_img = pygame.image.load("img/pikeman.png")
 musket_buy_img = pygame.image.load("img/musketeer.png")

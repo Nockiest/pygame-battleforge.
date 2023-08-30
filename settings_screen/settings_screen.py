@@ -8,6 +8,9 @@ from .fc.handle_screen_click import handle_screen_click
 import settings_screen.settings_buttons as settings_btn
 def draw_settings_screen():  
     """Draw the settings screen."""
+
+    settings_btn.back_button.visible = True
+    settings_btn.apply_button.visible = True
     # fill the screen with white color
     screen.fill(WHITE)
     change_cursor()

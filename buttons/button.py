@@ -13,6 +13,7 @@ class Button:
         self.callback = callback
         self.hovered = False  # Track whether the button is currently being hovered over
         self.color = RED if self.hovered else BLACK
+        self.visible = False
         # game.all_buttons.append(self)
         all_buttons.append(self)
     def __repr__(self):
@@ -33,7 +34,11 @@ class Button:
         
 
     def is_clicked(self, pos):
+        if not self.visible:
+            return False
         return self.rect.collidepoint(pos)
     
     def is_hovered(self, pos):
+        if not self.visible:
+            return False
         return self.rect.collidepoint(pos)

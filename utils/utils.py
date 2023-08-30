@@ -260,3 +260,32 @@ def new_point_interferes_with_unit(self,  point_x, point_y, living_units=living_
             if res:
                 return True
         return False
+
+
+def reset_game_state():
+    global players, battle_ground, cur_player, game_won, living_units, state, selected_for_movement_unit, selected_attacking_unit, unit_placement_mode, unit_to_be_placed, hovered_unit, hovered_button, game, num_attacks, animations, movement_costs, pixel_colors
+    players = []
+    battle_ground = None
+    players = []
+    cur_player = 0
+    game_won = False
+    living_units = SortedDict([])# pygame.sprite.Group()
+    state = "start_screen"
+    selected_for_movement_unit = None
+    selected_attacking_unit = None
+    unit_placement_mode = None
+    unit_to_be_placed = None
+    hovered_unit = None
+    hovered_button = None    
+    battle_ground = None      
+    game = None
+    num_attacks = 0
+    animations = []
+    movement_costs = []
+    pixel_colors = []
+    for X in range(WIDTH):
+        row = []
+        for Y in range(HEIGHT):
+            row.append(0)
+            movement_costs.append(row)
+            pixel_colors.append(row[:]) # Create a copy of the row list before appending 

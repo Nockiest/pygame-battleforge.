@@ -4,6 +4,8 @@ from classdict import SortedDict
 from config import *
 pygame.init()
 
+## cokoliv sem přídáš bys měl přidat do reset_game_state v utils
+
 all_buttons = []
 players = []
 cur_player = 0

@@ -35,22 +35,63 @@ class Game():
         game_state.button_bar = ButtonBar(self.enter_buy_mode)
         game_state.next_turn_button = Button(
             "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn)
-                
-        
-        # self.battelfield = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
-        self.players = game_state.players
-        
-        self.get_pixel_values( )
-        
+        game_state.end_screen_button = Button(
+    "GIVE UP", WIDTH-100, 0, 100, UPPER_BAR_HEIGHT, self.go_to_end_screen)
+
+        game_state.next_turn_button .visible = True
+        game_state.end_screen_button .visible = True
+        for button in game_state.button_bar.button_instances:
+                button.visible = True
+         # def place_starting_units(red_player, blue_player):
+            #     # blue_player.create_starting_unit(
+            #     #     (Musketeer, 0, 100))
+            #     red_player.create_starting_unit(
+            #         (Musketeer, 200, 200))
+            #     red_player.create_starting_unit(
+            #         (Pikeman, 175, 175))
+            #     red_player.create_starting_unit(
+            #         (Cannon, 250, 250))
+            #     red_player.create_starting_unit(
+            #         (Cannon, 120, 100))
+            #     red_player.create_starting_unit(
+            #         (Shield, 400, 300))
+            #     blue_player.create_starting_unit(
+            #         (Medic, 125, 160))
+            #     blue_player.create_starting_unit(
+            #         (Medic, 500, 400))
+            #     blue_player.create_starting_unit(
+            #         (Commander, 550, 100))
+            #     red_player.create_starting_unit(
+            #         (Commander, 500, 70))
+            #     red_player.create_starting_unit(
+            #         (Pikeman, 700, 100))
+            #     blue_player.create_starting_unit(
+            #         (SupplyCart, 300, 300))
+            #     blue_player.create_starting_unit(
+            #         (Musketeer, 340, 300))
+            #     blue_player.create_starting_unit(
+            #         (Observer, 200, 150))
+            #     blue_player.create_starting_unit(
+            #         (Observer, 250, 150))
+            #     blue_player.create_starting_unit(
+            #         (Knight, 450, 500))
+            #     blue_player.create_starting_unit(
+            #         (Knight, 50, 100))
+            #     blue_player.create_starting_unit(
+            #         (Knight, 80, 100))
+            #     # # # blue_player.create_starting_unit(
+            #     # #     (Knight, 50, 500) )
         ## create ui##
-        draw_ui(screen)
+        # draw_ui(screen)
         draw_ui(background_screen)
+        draw_ui(screen)
+        self.get_pixel_values( )
         ## create unit instances##
         unit_instances = {
         "medic": (Medic, game_state.num_Medics),
         "observer": (Observer, game_state.num_Observers),
         "supply_cart": (SupplyCart, game_state.num_Supply_carts),
-        "cannon": (Canon, game_state.num_Cannons),
+        "cannon": (Cannon, game_state.num_Cannons),
         "musketeer": (Musketeer, game_state.num_Musketeers),
         "pikeman": (Pikeman, game_state.num_Pikemen),
         "shield": (Shield, game_state.num_Shields),
@@ -63,46 +104,32 @@ class Game():
             unit_array.extend([unit_class] * num_units)
             
            
-        for i, player in enumerate(self.players):
+        for i, player in enumerate( game_state.players):
             player.place_starting_units(   unit_array)
        
         
         for unit in game_state.living_units.array:
           unit.get_units_movement_area()
         
-
+    def go_to_end_screen(self):
+        game_state.state = "end_screen"
+        game_state.next_turn_button.visiible = False
+        game_state.end_screen_button.visible = False
+        for button in game_state.button_bar.button_instances:
+            button.visible = False
+ 
     def __del__(self):
         print("MyClass instance destroyed")
         game_state.living_units = []
         
-        for player in self.players:
+        for player in  game_state.players:
             for unit in player.units:
                 player.remove_self_unit(unit)
         game_state.players = []
         game_state.battle_ground = None
-        players = []
-        cur_player = 0
-        game_won = False
-        living_units = SortedDict([])# pygame.sprite.Group()
-        state = "start_screen"
-        selected_for_movement_unit = None
-        selected_attacking_unit = None
-        unit_placement_mode = None
-        unit_to_be_placed = None
-        hovered_unit = None
-        hovered_button = None    
-        battle_ground = None      
-        game = None
-        num_attacks = 0
-        animations = []
-        movement_costs = []
-        pixel_colors = []
-        for X in range(WIDTH):
-            row = []
-            for Y in range(HEIGHT):
-                row.append(0)
-            movement_costs.append(row)
-            pixel_colors.append(row[:]) # Create a copy of the row list before appending 
+        game_state.game = None
+        reset_game_state()
+        
     def get_pixel_values(self):
           for x in range(WIDTH):
             for y in range(HEIGHT):

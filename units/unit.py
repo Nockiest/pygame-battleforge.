@@ -18,7 +18,7 @@ class Unit(pygame.sprite.Sprite):
         self.attack_range_modifiers = {"base_modifier": 1}
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
-        self.base_movement = base_movement
+        self.base_movement = base_movement *2
         self.attack_resistance = attack_resistance  -1
         self.enemies_in_range = []
         self.lines_to_enemies_in_range = []
@@ -104,23 +104,25 @@ class Unit(pygame.sprite.Sprite):
             return points
          
         ## take out all of the unique points the circle crosses
-        far_points =get_circle_points(center_x, center_y, self.base_movement*2.1, 180)
+        far_points = get_circle_points(center_x, center_y, self.base_movement*2.1, 180)
         ## for each point get a path from that point to the unit center
         for edge in far_points:
-            line_to_center = bresenham_line(center_x, center_y, edge[0], edge[1])
+            # Check if edge coordinates are within bounds
+            edge_x = max(0, min(edge[0], WIDTH - 1))
+            edge_y = max(UPPER_BAR_HEIGHT, min(edge[1], HEIGHT - 1))
+             
+            line_to_center = bresenham_line(center_x, center_y, edge_x, edge_y)
             points_in_reach = []
             cost = 0
             for point in line_to_center:
                 if cost > self.base_movement:
                     break
-                ## get the background movement cost
-                ## add it to cost
-                 
+                # get the background movement cost
+                # add it to cost
                 try:
-                    # your code here
                     cost += movement_costs[point[0]][point[1]]
                 except Exception as e:
-                    print(f"An error occurred: {e}", point[0],point[1] )
+                    print(f"An error occurred: {e}", point[0], point[1])
                        
                 
 
@@ -173,7 +175,7 @@ class Unit(pygame.sprite.Sprite):
             point_x, point_y, interferes = check_precalculated_line_square_interference(
                 unit, line_points)
             distance_between_units = get_two_units_center_distance(unit  , enemy )
-            print(abs(distance_between_units ),max(enemy.size, unit.size))
+            
             if interferes and abs(distance_between_units )> max(enemy.size//2, unit.size//2):
                 print("this unit is blocking the way", unit, enemy)
                 blocked = True
@@ -196,6 +198,7 @@ class Unit(pygame.sprite.Sprite):
     def get_attackable_units(self):
         self.enemies_in_range = []
         self.lines_to_enemies_in_range = []
+        total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         # for every living unit
         for enemy in living_units.array:
             if enemy.color == self.color:
@@ -207,7 +210,7 @@ class Unit(pygame.sprite.Sprite):
                                  ** 2 + (enemy_center_y - center_y)**2)
             line_points = bresenham_line(
                 center_x, center_y, enemy_center_x, enemy_center_y)
-            if distance - enemy.size//2 < self.attack_range:
+            if distance - enemy.size//2 < self.attack_range  * total_attack_range_modifier:
                 blocked = self.find_obstacles_in_line_to_enemies(
                     enemy, line_points)
 
