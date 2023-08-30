@@ -1,0 +1,18 @@
+{
+    "files.exclude": {
+        "utils/__pycache__": true,
+        "units/ranged/__pycache__": true,
+        "units/melee/__pycache__": true,
+        "units/__pycache__": true,
+        "game_screen/__pycache__": true,
+        "end_screen/__pycache__": true,
+        "buttons/__pycache__": true,
+        "buildings/__pycache__": true,
+        "animations/__pycache__": true,
+        "__pycache__": true
+    },
+    "editor.tokenColorCustomizations": {
+        "comments": "",
+        "textMateRules": []
+    }
+}

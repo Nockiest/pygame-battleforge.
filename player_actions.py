@@ -48,6 +48,7 @@ class Player:
             print("created unit", unit, )
             self.supplies -= unit.cost
             print("player has :", self.supplies, "supplies")
+            unit.remain_actions = 0
         else:
             print("you cant buy this unit")
             del unit  # Remove the unit from memory since it won't be added to the lists
@@ -58,6 +59,7 @@ class Player:
         return unit
 
     def create_starting_unit(self, unit_params):
+        print("CALLED CREATE UNIT")
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
         # game_state.living_units.array.append(unit)
@@ -80,7 +82,7 @@ class Player:
             pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)
             
             pygame.display.flip()
-            living_units.remove(self.preview_unit)
+            game_state.living_units.remove(self.preview_unit)
             self.preview_unit.kill()
             # print("living units",  living_units.array, living_units.dict)
         except Exception as e:

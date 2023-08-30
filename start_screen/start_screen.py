@@ -7,21 +7,19 @@ from game_screen.game_object import Game
 
 
 def set_up_game_screen():
-
     game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
                                           HEIGHT//2-50, 100, 100, start_game, "start_screen")
     game_state.settings_button = Button("SETTINGS", WIDTH//2-50,
-                                        HEIGHT//2+50, 100, 100, open_settings,"start_screen" )
+                                        HEIGHT//2+50, 100, 100, open_settings, "start_screen")
     screen_set_up = True
 
 
 def open_settings():
-
     game_state.state = "settings"
 
 
 def start_game():
- 
+
     # this function gets actually called multiple times
     print("GAME IS CURRENTLY", game_state.game)
     if game_state.game is None:
@@ -29,19 +27,10 @@ def start_game():
     game_state.state = "game_is_running"
 
 
-def show_buttons():
-    for button in game_state.all_buttons:
-        if button == game_state.start_game_button:
-            button.show_button()
-        if button == game_state.settings_button:
-            button.show_button()
- 
-
-
 def handle_start_screen():
     if not screen_set_up:
         set_up_game_screen()
-        show_buttons()
+
     screen.fill(BRIDGE_COLOR)
 
     game_state.start_game_button.draw(screen)
@@ -60,6 +49,5 @@ def handle_start_screen():
 
     # Render everything on the display
     pygame.display.update()
-    
 
     clock.tick(fps)

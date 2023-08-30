@@ -1,6 +1,6 @@
  
 import pygame
-from classdict import SortedDict
+from utils.classdict import SortedDict
 from config import *
 pygame.init()
 
@@ -48,7 +48,7 @@ num_towns = 5
 num_rivers = 3
 num_forests = 0
 num_Medics = 0
-num_Observers = 0
+num_Observers = 2
 num_Supply_carts = 0
 num_Cannons = 0
 num_Musketeers = 0

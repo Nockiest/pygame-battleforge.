@@ -20,85 +20,72 @@ __all__ = [basename(f)[:-3] for f in modules if isfile(f)
 # this allows you to import entire folders
 
 
-
 class Game():
-    
-    def __init__(self    ):
+
+    def __init__(self):
         # when you change the positions here you have to change get_pixel_color function
-       
+
         self.red_player = Player(RED, 0)
         # when you change the positions here you have to change get_pixel_color function
         self.blue_player = Player(BLUE, WIDTH - TENDER_WIDTH)
         game_state.players.append(self.red_player)
         game_state.players.append(self.blue_player)
-        game_state.battle_ground = BattleGround(WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
+        game_state.battle_ground = BattleGround(
+            WIDTH, HEIGHT - BUTTON_BAR_HEIGHT)
         game_state.button_bar = ButtonBar(self.enter_buy_mode)
         game_state.next_turn_button = Button(
             "Next Turn", 0, 0, 100, UPPER_BAR_HEIGHT, self.next_turn, "game_is_running")
         game_state.end_screen_button = Button(
-    "GIVE UP", WIDTH-100, 0, 100, UPPER_BAR_HEIGHT, self.go_to_end_screen, "game_is_running")
+            "GIVE UP", WIDTH-100, 0, 100, UPPER_BAR_HEIGHT, self.go_to_end_screen, "game_is_running")
 
- 
         game_state.num_turns = 0
         game_state.enemies_killed = 0
         game_state.money_spent = 0
         game_state.shots_fired = 0
-        self.buttons = [game_state.next_turn_button, game_state.end_screen_button, ]
-       
-       
+   
+
         ## create ui##
         draw_ui(background_screen)
         draw_ui(screen)
-        self.get_pixel_values( )
+        self.get_pixel_values()
         ## create unit instances##
         unit_instances = {
-        "medic": (Medic, game_state.num_Medics),
-        "observer": (Observer, game_state.num_Observers),
-        "supply_cart": (SupplyCart, game_state.num_Supply_carts),
-        "cannon": (Cannon, game_state.num_Cannons),
-        "musketeer": (Musketeer, game_state.num_Musketeers),
-        "pikeman": (Pikeman, game_state.num_Pikemen),
-        "shield": (Shield, game_state.num_Shields),
-        "knight": (Knight, game_state.num_Knights),
-        "commander": (Commander, game_state.num_Commanders),
+            "medic": (Medic, game_state.num_Medics),
+            "observer": (Observer, game_state.num_Observers),
+            "supply_cart": (SupplyCart, game_state.num_Supply_carts),
+            "cannon": (Cannon, game_state.num_Cannons),
+            "musketeer": (Musketeer, game_state.num_Musketeers),
+            "pikeman": (Pikeman, game_state.num_Pikemen),
+            "shield": (Shield, game_state.num_Shields),
+            "knight": (Knight, game_state.num_Knights),
+            "commander": (Commander, game_state.num_Commanders),
         }
 
         unit_array = []
         for unit_type, (unit_class, num_units) in unit_instances.items():
             unit_array.extend([unit_class] * num_units)
-            
-           
-        for i, player in enumerate( game_state.players):
-            player.place_starting_units(   unit_array)
-       
-        
+
+        for i, player in enumerate(game_state.players):
+            print("PLACING STAERTING UNITS", player)
+            player.place_starting_units(unit_array)
+
         for unit in game_state.living_units.array:
-          unit.get_units_movement_area()
-        
+            unit.get_units_movement_area()
+
     def go_to_end_screen(self):
         game_state.state = "end_screen"
-       
-        
         self.__del__()
+
     def __del__(self):
-        
         game_state.battle_ground.__del__()
         del game_state.button_bar
-       
-        game_state.selected_for_movement_unit = None
-        game_state.selected_attacking_unit = None
-        game_state.living_units = SortedDict([]) 
-        game_state.players = []
-        for player in  game_state.players:
+        for player in game_state.players:
             for unit in player.units:
                 player.__del__()
-        game_state.players = []
-      
-        
         reset_game_state()
-        
+
     def get_pixel_values(self):
-          for x in range(WIDTH):
+        for x in range(WIDTH):
             for y in range(HEIGHT):
                 # set the movement cost for pixel (x, y)
                 color = get_pixel_colors([(x, y)], background_screen)
@@ -119,13 +106,13 @@ class Game():
         # players[cur_player].show_unit_to_be_placed((game_state.unit_to_be_placed, 0, 0), game_state.unit_to_be_placed)
         game_state.unit_placement_mode = unit_type
 
-
     def switch_player(self, ):
         game_state.cur_player = (game_state.cur_player +
-                                1) % len(game_state.players)
-
+                                 1) % len(game_state.players)
 
     def next_turn(self, ):
+        if len(game_state.animations) > 0:
+            return
         game_state.num_turns += 1
         self.switch_player()
         self.deselect_unit()
@@ -153,7 +140,6 @@ class Game():
 
         pygame.time.set_timer(pygame.mouse.set_visible(True), 3000)
 
-
     def remove_attack_point(self, ):
         print("unit disabled for turn")
         if game_state.selected_for_movement_unit:
@@ -161,13 +147,11 @@ class Game():
         elif game_state.selected_attacking_unit:
             game_state.selected_attacking_unit.remain_actions -= 1
             print("units attack points",
-                game_state.selected_attacking_unit.remain_actions)
-
+                  game_state.selected_attacking_unit.remain_actions)
 
     def deselect_unit(self, ):
         game_state.selected_for_movement_unit = None
         game_state.selected_attacking_unit = None
-
 
     def select_unit(self, clicked_pos):
 
@@ -200,7 +184,6 @@ class Game():
             return
         # print("7")
 
-
     def activate_attack_mode(self, click_pos):
         if not game_state.hovered_unit:
             return
@@ -214,7 +197,6 @@ class Game():
         game_state.selected_attacking_unit.get_attackable_units()
         print("attack mode activated")
 
-
     def process_attack(self, attacker, attacked_pos):
         attack_result = attacker.try_attack(
             attacked_pos,  game_state.hovered_unit)
@@ -227,8 +209,7 @@ class Game():
         elif attack_result == "Attack not possible":
             self.deselect_unit()
 
-
-    def buy_unit(self,click_pos):
+    def buy_unit(self, click_pos):
         player = game_state.players[game_state.cur_player]
         dummy = game_state.unit_to_be_placed(-100, -100, BLACK)
         x = click_pos[0] - dummy.size // 2
@@ -254,7 +235,7 @@ class Game():
                 return
 
         if game_state.unit_to_be_placed:
-            game_state.money_spent  += dummy.cost
+            game_state.money_spent += dummy.cost
             # Check if the clicked position is not on the river
             if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
                 del dummy
@@ -272,50 +253,47 @@ class Game():
             game_state.unit_placement_mode = None
 
         else:
-            print(f"Error: Unit type {game_state.unit_to_be_placed} not found.")
+            print(
+                f"Error: Unit type {game_state.unit_to_be_placed} not found.")
         game_state.living_units.remove(dummy)
         del dummy
 
-
-
-
-
-           # def place_starting_units(red_player, blue_player):
-            #     # blue_player.create_starting_unit(
-            #     #     (Musketeer, 0, 100))
-            #     red_player.create_starting_unit(
-            #         (Musketeer, 200, 200))
-            #     red_player.create_starting_unit(
-            #         (Pikeman, 175, 175))
-            #     red_player.create_starting_unit(
-            #         (Cannon, 250, 250))
-            #     red_player.create_starting_unit(
-            #         (Cannon, 120, 100))
-            #     red_player.create_starting_unit(
-            #         (Shield, 400, 300))
-            #     blue_player.create_starting_unit(
-            #         (Medic, 125, 160))
-            #     blue_player.create_starting_unit(
-            #         (Medic, 500, 400))
-            #     blue_player.create_starting_unit(
-            #         (Commander, 550, 100))
-            #     red_player.create_starting_unit(
-            #         (Commander, 500, 70))
-            #     red_player.create_starting_unit(
-            #         (Pikeman, 700, 100))
-            #     blue_player.create_starting_unit(
-            #         (SupplyCart, 300, 300))
-            #     blue_player.create_starting_unit(
-            #         (Musketeer, 340, 300))
-            #     blue_player.create_starting_unit(
-            #         (Observer, 200, 150))
-            #     blue_player.create_starting_unit(
-            #         (Observer, 250, 150))
-            #     blue_player.create_starting_unit(
-            #         (Knight, 450, 500))
-            #     blue_player.create_starting_unit(
-            #         (Knight, 50, 100))
-            #     blue_player.create_starting_unit(
-            #         (Knight, 80, 100))
-            #     # # # blue_player.create_starting_unit(
-            #     # #     (Knight, 50, 500) )
+        # def place_starting_units(red_player, blue_player):
+        #     # blue_player.create_starting_unit(
+        #     #     (Musketeer, 0, 100))
+        #     red_player.create_starting_unit(
+        #         (Musketeer, 200, 200))
+        #     red_player.create_starting_unit(
+        #         (Pikeman, 175, 175))
+        #     red_player.create_starting_unit(
+        #         (Cannon, 250, 250))
+        #     red_player.create_starting_unit(
+        #         (Cannon, 120, 100))
+        #     red_player.create_starting_unit(
+        #         (Shield, 400, 300))
+        #     blue_player.create_starting_unit(
+        #         (Medic, 125, 160))
+        #     blue_player.create_starting_unit(
+        #         (Medic, 500, 400))
+        #     blue_player.create_starting_unit(
+        #         (Commander, 550, 100))
+        #     red_player.create_starting_unit(
+        #         (Commander, 500, 70))
+        #     red_player.create_starting_unit(
+        #         (Pikeman, 700, 100))
+        #     blue_player.create_starting_unit(
+        #         (SupplyCart, 300, 300))
+        #     blue_player.create_starting_unit(
+        #         (Musketeer, 340, 300))
+        #     blue_player.create_starting_unit(
+        #         (Observer, 200, 150))
+        #     blue_player.create_starting_unit(
+        #         (Observer, 250, 150))
+        #     blue_player.create_starting_unit(
+        #         (Knight, 450, 500))
+        #     blue_player.create_starting_unit(
+        #         (Knight, 50, 100))
+        #     blue_player.create_starting_unit(
+        #         (Knight, 80, 100))
+        #     # # # blue_player.create_starting_unit(
+        #     # #     (Knight, 50, 500) )

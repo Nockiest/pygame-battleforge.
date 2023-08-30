@@ -1,7 +1,7 @@
 import math
 from config import *
 import game_state
-from classdict import SortedDict
+from utils.classdict import SortedDict
 def get_two_units_center_distance(unit1, unit2):
     # Calculate the distance between the center points of the units, considering their sizes
     dx = (unit1.x + unit1.size // 2) - (unit2.x + unit2.size // 2)
@@ -263,12 +263,12 @@ def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_st
 
 
 def reset_game_state():
-     
     game_state.players = []
     game_state.battle_ground = None
     game_state.players = []
     game_state.cur_player = 0
     game_state.game_won = False
+    del game_state.living_units
     game_state.living_units = SortedDict([])# pygame.sprite.Group()
     # game_state.state = "start_screen"
     game_state.selected_for_movement_unit = None

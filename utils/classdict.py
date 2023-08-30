@@ -5,6 +5,8 @@ class SortedDict:
         self.array = array
         self.dict = self._create_dict()
 
+    def __del__(self):
+        print("DICTIONARY DELETED")
     def _create_dict(self):
         result = defaultdict(list)
         for element in sorted(self.array, key=lambda x: type(x).__name__):

@@ -28,7 +28,9 @@ def draw_ui(screen):
 
 
 def draw_units(screen):
+   
     for unit in game_state.living_units.array:
+     
         unit.render()
         if unit == game_state.selected_for_movement_unit:
             game_state.selected_for_movement_unit.draw_possible_movement_area()

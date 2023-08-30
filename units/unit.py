@@ -3,10 +3,11 @@ import math
 import random
 import shapely.geometry
 
-from game_state import *
+import game_state
 from animations.basic_animations import MISSEDAnimation
 from config import *
 from utils.utils import *
+from utils.image_utils import *
 # from game_state import num_attacks
 
 class Unit(pygame.sprite.Sprite):
@@ -14,7 +15,7 @@ class Unit(pygame.sprite.Sprite):
         super().__init__()
         self.hp = hp
         self.base_hp = hp
-        self.attack_range = attack_range * 2
+        self.attack_range = attack_range 
         self.attack_range_modifiers = {"base_modifier": 2}
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
@@ -45,7 +46,7 @@ class Unit(pygame.sprite.Sprite):
         self.valid_movement_positions_edges = []
         self.lines_to_enemies_in_range = []
 
-        living_units.append(self)
+        game_state.living_units.append(self)
 
     def update(self):
         # Add any necessary update logic here
@@ -120,7 +121,7 @@ class Unit(pygame.sprite.Sprite):
                 # get the background movement cost
                 # add it to cost
                 try:
-                    cost += movement_costs[point[0]][point[1]]
+                    cost += game_state.movement_costs[point[0]][point[1]]
                 except Exception as e:
                     print(f"An error occurred: {e}", point[0], point[1])
                        
@@ -131,7 +132,7 @@ class Unit(pygame.sprite.Sprite):
            
             farthest_valid_point =  points_in_reach[-1] 
             other_units = [
-                unit for unit in living_units.array if unit.color != self.color]
+                unit for unit in game_state.living_units.array if unit.color != self.color]
             
             for unit in other_units:
                 point_x, point_y, interferes = check_precalculated_line_square_interference(unit, points_in_reach)
@@ -167,7 +168,7 @@ class Unit(pygame.sprite.Sprite):
         # I could only reset the line to that specific unit instead of deleting the whole array
         ######################### x FIND BLOCKING UNITS ##############
         blocked = False
-        for unit in living_units.array:
+        for unit in game_state.living_units.array:
             if unit == enemy:
                 continue
             elif unit.color == self.color:
@@ -200,7 +201,7 @@ class Unit(pygame.sprite.Sprite):
         self.lines_to_enemies_in_range = []
         total_attack_range_modifier = sum(self.attack_range_modifiers.values())
         # for every living unit
-        for enemy in living_units.array:
+        for enemy in game_state.living_units.array:
             if enemy.color == self.color:
                 continue
 
@@ -269,22 +270,22 @@ class Unit(pygame.sprite.Sprite):
         else:
             # Unit is not hit
             print("UNIT WASNT HIT")
-            animations.append(MISSEDAnimation(
+            game_state.animations.append(MISSEDAnimation(
                 x=self.x - self.size//2, y=self.y - self.size//2, resize=(self.size * 2, self.size*2)))
 
             return False
 
     def take_damage(self, attacker):
-        global killed_units
+      
         self.hp -= 1
         if self.hp <= 0:
-            living_units.array.remove(self)
+            game_state.living_units.array.remove(self)
             # players[cur_player].remove_from_game(self)
             attacker.get_boost_for_destroying_unit()
-            killed_units += 1
+            game_state.killed_units += 1
             update_players_unit()
             print("Removing unit:", self)
-            print("Units in living_units:", living_units.array)
+            print("Units in living_units:", game_state.living_units.array)
              
             return self.hp
             del self
@@ -391,19 +392,46 @@ class Unit(pygame.sprite.Sprite):
         print("unit killed an enemy, and could get a boost now")
 
     def draw_as_active(self):
+        # Try to execute the following block of code
         try:
-       
+            # Check if the attack_range_modifiers attribute contains "in_observers_range"
+            print("attac range mod", self.attack_range_modifiers)
+            if "in_observer_range" in self.attack_range_modifiers   :
+                if self.attack_range_modifiers[ "in_observer_range"] > 0:
+                    outline_rect = pygame.Rect(
+                    self.x+self.size//2, self.y-10  , 20 , 20)
+                    pygame.draw.rect(screen,  GRAY, outline_rect, 0)
+
+                    render_image("img/observer.png", (15, 15), (self.x+self.size//2, self.y-10 ), screen)
+                # # Load the observer image from the img/observer directory
+                # observer_image = pygame.image.load("img/observer.png")
+                # # Scale the image to 10x10 pixels
+                # observer_image = pygame.transform.scale(observer_image, (10, 10))
+                # # Create a surface with a gray background
+               
+                # gray_background = pygame.Surface((10, 10))
+                # gray_background.fill((128, 128, 128))
+                # # # Blit the observer image onto the gray background
+                # # gray_background.blit(observer_image, (0, 0))
+                # # # Blit the gray background onto the screen right above the unit's x and y coordinates
+                # screen.blit(gray_background,(self.x+self.size//2, self.y-10 ))
+
+            # Create a rectangle outline around the unit
             outline_rect = pygame.Rect(
                 int(self.x) - 2, int(self.y) - 2, self.size + 4, self.size + 4)
+            # Draw the rectangle outline on the screen in black color with a width of 2 pixels
             pygame.draw.rect(screen, BLACK, outline_rect, 2)
 
-            # Draw a line from self.start_turn_position to the center of the unit in red
+            # Calculate the center coordinates of the unit
             center_x = self.center[0]
             center_y = self.center[1]
+            # Draw a line from the start_turn_position attribute to the center of the unit in red color with a width of 2 pixels
             pygame.draw.line(screen, self.color, self.start_turn_position,
-                             (center_x, center_y), 2)
+                            (center_x, center_y), 2)
+        # If an exception occurs
         except Exception as e:
-            print("An error occurred:", e)
+            # Print an error message with the exception details
+            print("An error occurred in draw as active:", e)
 
 
 
