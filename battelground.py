@@ -33,6 +33,8 @@ class BattleGround:
         self.bridges = self.place_bridges()
         self.supply_depots = self.place_supply_depots()
 
+        self.river_segments = None
+
     def place_forrests(self):
         forests = []
         for _ in range(self.num_forests):
@@ -94,8 +96,8 @@ class BattleGround:
                               (control_x1, control_y1), (control_x2, control_y2)])
             new_river.generate_chunks(rivers)
             rivers.append(new_river)
-        river_segments = (find_river_segments_for_crossing(rivers))
-        print("here are the river segments", river_segments)
+        self.river_segments = (find_river_segments_for_crossing(rivers))
+         
         return rivers
 
     def place_towns(self):
@@ -174,75 +176,119 @@ class BattleGround:
 
     def place_bridges(self):
         bridges = []
-        all_river_parts = []
-        for river in self.rivers:
-            river_parts = []  # Initialize the list to hold current river segment
+       
+        print("here are the river segments", self.river_segments)
+        print("here are the rivers", [river.points for river in self.rivers])
 
-            for point in river.points:
-                # Check if the point matches any convergence point
-                if point == river.convergence_point:
-                    # if len(river_parts) > 1:
-                    river_parts.append(point)
-                    # Append the current segment to the list
-                    all_river_parts.append(river_parts)
-                    # Start a new segment with the convergence point
-                    river_parts = [point]
-                else:
-                    # Append the point to the current segment
-                    river_parts.append(point)
-
-            if len(river_parts) > 1:
-                # Append the last segment if it has more than one point
-                all_river_parts.append(river_parts)
-
-            # vím, že tato funkce neappenduje convergence point k oběma částem rozdělené řeky, ale je mi to asi jedno
-
-        for part in all_river_parts:
-            river_part_intersects = False
-            if len(part) <= 3:
+        # for every river segment
+        for segment in self.river_segments:
+            # if the segment doesnt have two points continue
+            if len(segment) < 2:
                 continue
-            for i in range(len(part) - 2):
-                point1 = part[i + 1]
-                point2 = part[i + 2]
-                line_segment = (point1, point2)
+            # for i in len(segment) - 1 :
+            #     for road in self.roads:
+            #         start_point, mid_point, end_point = road.points
 
-                # print(point1, point2, "points")
-                for road in self.roads:
-                    start_point, mid_point, end_point = road.points
+            #         if do_lines_intersect(point1, point2,  start_point, mid_point):
+            #             # print(f"River segment {line_segment} intersects with road segment ({start_point}, {mid_point})")
+            #             river_part_intersects = True
+            #         elif do_lines_intersect(point1, point2, mid_point, end_point):
+            #             # print(f"River segment {line_segment} intersects with road segment ({mid_point}, {end_point})")
+            #             river_part_intersects = True
+            # choose random point excluding the last point
+            start_point = random.choice(segment[:-1])
+            end_point_index = segment.index(start_point) + 1
+            end_point = segment[end_point_index]
+            print("start end", start_point, end_point, segment)
+            # get the a random point on a line between that point and a point next to that
+            t = random.uniform(0, 1)
+            bridge_point = (
+                int(start_point[0] + t *
+                    (end_point[0] - start_point[0])),
+                int(start_point[1] + t *
+                    (end_point[1] - start_point[1]))
+            )
+            # create a bridge on that point
+            dx = end_point[0] - start_point[0]
+            dy = end_point[1] - start_point[1]
+            angle = math.atan2(dy, dx)
 
-                    if do_lines_intersect(point1, point2,  start_point, mid_point):
-                        # print(f"River segment {line_segment} intersects with road segment ({start_point}, {mid_point})")
-                        river_part_intersects = True
-                    elif do_lines_intersect(point1, point2, mid_point, end_point):
-                        # print(f"River segment {line_segment} intersects with road segment ({mid_point}, {end_point})")
-                        river_part_intersects = True
+            new_bridge = Bridge(
+                bridge_point[0], bridge_point[1], angle, (40, 30), BRIDGE_COLOR)
 
-            if not river_part_intersects:
-                # Choose a random index from the river part
-                random_index = random.randint(0, len(part) - 2)
-                random_point = part[random_index]
-                next_point = part[random_index + 1]
+            print(
+                f"River segment doesn't intersect with any road. Bridge declared at {bridge_point}, angle: {angle}")
+            bridges.append(new_bridge)
+            # append it
 
-                # Calculate a random point on the line between random_point and next_point
-                t = random.uniform(0, 1)
-                bridge_point = (
-                    int(random_point[0] + t *
-                        (next_point[0] - random_point[0])),
-                    int(random_point[1] + t *
-                        (next_point[1] - random_point[1]))
-                )
+        # for river in self.rivers:
+        #     river_parts = []  # Initialize the list to hold current river segment
 
-                # Calculate the angle between the line segment and the x-axis
-                dx = next_point[0] - random_point[0]
-                dy = next_point[1] - random_point[1]
-                angle = math.atan2(dy, dx)
+        #     for point in river.points:
+        #         # Check if the point matches any convergence point
+        #         if point == river.convergence_point:
+        #             # if len(river_parts) > 1:
+        #             river_parts.append(point)
+        #             # Append the current segment to the list
+        #             all_river_parts.append(river_parts)
+        #             # Start a new segment with the convergence point
+        #             river_parts = [point]
+        #         else:
+        #             # Append the point to the current segment
+        #             river_parts.append(point)
 
-                new_bridge = Bridge(
-                    bridge_point[0], bridge_point[1], angle, (40, 30), BRIDGE_COLOR)
+        #     if len(river_parts) > 1:
+        #         # Append the last segment if it has more than one point
+        #         all_river_parts.append(river_parts)
 
-                print(
-                    f"River segment doesn't intersect with any road. Bridge declared at {bridge_point}, angle: {angle}")
-                bridges.append(new_bridge)
+        #     # vím, že tato funkce neappenduje convergence point k oběma částem rozdělené řeky, ale je mi to asi jedno
+
+        # for part in all_river_parts:
+        #     river_part_intersects = False
+        #     if len(part) <= 3:
+        #         continue
+        #     for i in range(len(part) - 2):
+        #         point1 = part[i + 1]
+        #         point2 = part[i + 2]
+        #         line_segment = (point1, point2)
+
+        #         # print(point1, point2, "points")
+        #         for road in self.roads:
+        #             start_point, mid_point, end_point = road.points
+
+        #             if do_lines_intersect(point1, point2,  start_point, mid_point):
+        #                 # print(f"River segment {line_segment} intersects with road segment ({start_point}, {mid_point})")
+        #                 river_part_intersects = True
+        #             elif do_lines_intersect(point1, point2, mid_point, end_point):
+        #                 # print(f"River segment {line_segment} intersects with road segment ({mid_point}, {end_point})")
+        #                 river_part_intersects = True
+
+        #     if not river_part_intersects:
+        #         # Choose a random index from the river part
+        #         random_index = random.randint(0, len(part) - 2)
+        #         random_point = part[random_index]
+        #         next_point = part[random_index + 1]
+
+        #         # Calculate a random point on the line between random_point and next_point
+        #         t = random.uniform(0, 1)
+        #         bridge_point = (
+        #             int(random_point[0] + t *
+        #                 (next_point[0] - random_point[0])),
+        #             int(random_point[1] + t *
+        #                 (next_point[1] - random_point[1]))
+        #         )
+
+        #         # Calculate the angle between the line segment and the x-axis
+        #         dx = next_point[0] - random_point[0]
+        #         dy = next_point[1] - random_point[1]
+        #         angle = math.atan2(dy, dx)
+
+        #         new_bridge = Bridge(
+        #             bridge_point[0], bridge_point[1], angle, (40, 30), BRIDGE_COLOR)
+
+        #         print(
+        #             f"River segment doesn't intersect with any road. Bridge declared at {bridge_point}, angle: {angle}")
+        #         bridges.append(new_bridge)
         return bridges
 
     def place_supply_depots(self):

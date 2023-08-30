@@ -16,7 +16,7 @@ def find_river_segments_for_crossing(rivers):
 
             if intersects:
                 reset_segment(new_point, river_segment, river_segments)
-                break
+                
 
             index += 1
 
