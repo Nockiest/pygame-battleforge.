@@ -7,23 +7,19 @@ vytvořit bojovou jednotku
 
    
     přidat kupování ve městech
-    změnit kursor nad jednotkou kterou mohu vybrat
+    **změnit kursor nad jednotkou kterou mohu vybrat
     první útok by měl vždy vyjít
     přidávat hráči každé kolo zásoby
     zvýšit atttack resistance v lese
     dát jednotkám kolem velitele větší resitenci
     vytvořit ikomnu observera nad jednotkou která má jeho bonus
 chyby
-     
-     opravit mosty
+    opravit klikání na neviditelná tlačítka
  
 musika
     najít 5 písniček
     
-prostředí
- 
-    **přidat zdi
-    
+prostředí   
     přidat opevnění ve městech
     počítat zabizé jednotky
     počítat kola

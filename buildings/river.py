@@ -60,21 +60,10 @@ class River(Structure):
                 for j in range(len(existing_river.points) - 1):
                     intersects = do_lines_intersect(self.points[len(self.points) - 2], self.points[len(self.points) - 3], existing_river.points[j], existing_river.points[j+1])
                     print("new intersection", intersects)
-                    # print(intersection, existing[j], existing[j+1] )
+                    
                     if intersects:
-                        # intersects = True  # Set the intersection flag to True
+                       
                         break
                 if intersects:
                     break
-            # if new_intersection == False:
-            #     intersects = False
-                
-                        # # print(intersection)
-                        # convergence_point = existing_river.points[j+1]  # Store the intersection point
-                        # possible_convergence_points.append(convergence_point)
-                        # intersecting_rivers.append(existing_river)
-            # possible_convergence_points
-        # if self.convergence_point  != None:
-        #     self.points[-1] = self.convergence_point   # Replace the last point with the intersection point
-
-  
+          

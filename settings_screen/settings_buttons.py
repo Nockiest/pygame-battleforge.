@@ -12,6 +12,7 @@ def apply_settings():
 def go_back():
     back_button.visible = False
     apply_button.visible = False
+     
     game_state.state = "start_screen"
  
 

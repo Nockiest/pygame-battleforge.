@@ -185,17 +185,27 @@ class BattleGround:
             # if the segment doesnt have two points continue
             if len(segment) < 2:
                 continue
-            # for i in len(segment) - 1 :
-            #     for road in self.roads:
-            #         start_point, mid_point, end_point = road.points
+           # for part in all_river_parts:
+            river_part_intersects = False
+      
+            for i in range(len(segment) - 1):
+                point1 = segment[i ]
+                point2 = segment[i +1]
+                line_segment = (point1, point2)
 
-            #         if do_lines_intersect(point1, point2,  start_point, mid_point):
-            #             # print(f"River segment {line_segment} intersects with road segment ({start_point}, {mid_point})")
-            #             river_part_intersects = True
-            #         elif do_lines_intersect(point1, point2, mid_point, end_point):
-            #             # print(f"River segment {line_segment} intersects with road segment ({mid_point}, {end_point})")
-            #             river_part_intersects = True
-            # choose random point excluding the last point
+                # print(point1, point2, "points")
+                for road in self.roads:
+                    start_point, mid_point, end_point = road.points
+
+                    if do_lines_intersect(point1, point2,  start_point, mid_point):
+                        # print(f"River segment {line_segment} intersects with road segment ({start_point}, {mid_point})")
+                        river_part_intersects = True
+                    elif do_lines_intersect(point1, point2, mid_point, end_point):
+                        # print(f"River segment {line_segment} intersects with road segment ({mid_point}, {end_point})")
+                        river_part_intersects = True
+            if river_part_intersects:
+                continue
+         
             start_point = random.choice(segment[:-1])
             end_point_index = segment.index(start_point) + 1
             end_point = segment[end_point_index]

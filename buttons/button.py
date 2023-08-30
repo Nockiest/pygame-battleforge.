@@ -31,7 +31,8 @@ class Button:
         text_rect = text_surface.get_rect(center=self.rect.center)
         screen.blit(text_surface, text_rect)
         
-        
+    def hide_button(self):
+        self.visible = False
 
     def is_clicked(self, pos):
         if not self.visible:

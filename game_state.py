@@ -23,8 +23,8 @@ battle_ground = None
 button_bar = None
 next_turn_button = None
 end_screen_button = None
- 
- 
+start_game_button = None
+settings_button = None
 game = None
 num_attacks = 0
 animations = []
@@ -37,8 +37,8 @@ for X in range(WIDTH):
         row.append(0)
     movement_costs.append(row)
     pixel_colors.append(row[:]) # Create a copy of the row list before appending 
-num_towns = 0
-num_rivers = 5
+num_towns = 3
+num_rivers = 3
 num_forests = 0
 num_Medics = 0
 num_Observers = 0
