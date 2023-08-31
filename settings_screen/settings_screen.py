@@ -63,8 +63,8 @@ structures_bar.add_slider("Rivers", 0, 5, game_state.num_rivers, update_num_rive
 structures_bar.add_slider("Forests", 0, 10, game_state.num_forests, update_num_forests)
  
 money_bar = SettingsBar("Money", 50, 400)
-money_bar.add_slider("Start Money", 0, 1000, game_state.num_forests, update_start_money)
-money_bar.add_slider("Turn Income", 0, 100, game_state.num_forests, update_income)
+money_bar.add_slider("Start Money", 0, 1000, game_state.starting_money, update_start_money)
+money_bar.add_slider("Turn Income", 0, 100, game_state.money_per_turn, update_income)
 # create a new SettingsBar object for units
 blue_player_bar = SettingsBar("Blue Player", 700, 100) 
 blue_player_bar.add_slider("Medics", 0, 10, game_state. blue_num_Medics  , lambda new_value:  update_blue_num_Medics(new_value))

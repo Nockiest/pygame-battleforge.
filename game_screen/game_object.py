@@ -151,9 +151,10 @@ class Game():
         for unit in game_state.living_units.array:
             unit.render()
 
-        for player in players:
+        for player in game_state.players:
             player.update_sorted_units()
-            player.supplies += game_state.money_per_turn
+            if player == game_state.players[game_state.cur_player]:
+             player.supplies += game_state.money_per_turn
 
         for depo in game_state.battle_ground.supply_depots:
             depo.dispense_ammo()

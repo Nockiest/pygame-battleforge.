@@ -82,6 +82,8 @@ def handle_right_mouse_clk(click_pos, game):
         game.activate_attack_mode(click_pos)
 
 def handle_mouse_motion(click_pos):
+    if game_state.players == []:
+        return
     player =  game_state.players[game_state.cur_player]
     if game_state.selected_for_movement_unit:
         game_state.selected_for_movement_unit.move_in_game_field(
