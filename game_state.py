@@ -47,12 +47,37 @@ for X in range(WIDTH):
 num_towns = 5
 num_rivers = 3
 num_forests = 0
-num_Medics = 0
-num_Observers = 2
-num_Supply_carts = 4
-num_Cannons = 0
-num_Musketeers = 0
-num_Pikemen = 0
-num_Shields = 0
-num_Knights = 0
-num_Commanders = 1
+# num_Medics = 0
+# num_Observers = 2
+# num_Supply_carts = 4
+# num_Cannons = 0
+# num_Musketeers = 0
+# num_Pikemen = 0
+# num_Shields = 0
+# num_Knights = 0
+# num_Commanders = 1
+# Initialize the variables for the blue player
+blue_player_units = {
+    "num_Medics": 0,
+    "num_Observers": 2,
+    "num_Supply_carts": 4,
+    "num_Cannons": 0,
+    "num_Musketeers": 0,
+    "num_Pikemen": 10,
+    "num_Shields": 0,
+    "num_Knights": 0,
+    "num_Commanders": 1
+}
+
+# Initialize the variables for the red player
+red_player_units = {
+    "num_Medics": 0,
+    "num_Observers": 2,
+    "num_Supply_carts": 4,
+    "num_Cannons": 0,
+    "num_Musketeers": 0,
+    "num_Pikemen": 0,
+    "num_Shields": 0,
+    "num_Knights": 0,
+    "num_Commanders": 1
+}

@@ -30,6 +30,8 @@ class SortedDict:
         if self.array.index(value):
          self.array.remove(value)
          self.dict = self._create_dict()
+        else:
+            print(value, "NOTH IN THE SORTED DICT ARRAY")
 
     def pop(self, index=-1):
         value = self.array.pop(index)

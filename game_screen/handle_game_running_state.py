@@ -70,6 +70,7 @@ def handle_right_mouse_clk(click_pos, game):
         game_state.hovered_button.callback()
     elif player.preview_unit != None:
         player.remove_self_unit( player.preview_unit )
+        player.supplies +=   player.preview_unit.cost
         player.preview_unit.__del__()
 
         player.preview_unit = None

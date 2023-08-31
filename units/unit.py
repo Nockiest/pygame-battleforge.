@@ -408,18 +408,6 @@ class Unit(pygame.sprite.Sprite):
                     pygame.draw.rect(screen,  GRAY, outline_rect, 0)
 
                     render_image("img/observer.png", (15, 15), (self.x+self.size//2, self.y-10 ), screen)
-                # # Load the observer image from the img/observer directory
-                # observer_image = pygame.image.load("img/observer.png")
-                # # Scale the image to 10x10 pixels
-                # observer_image = pygame.transform.scale(observer_image, (10, 10))
-                # # Create a surface with a gray background
-               
-                # gray_background = pygame.Surface((10, 10))
-                # gray_background.fill((128, 128, 128))
-                # # # Blit the observer image onto the gray background
-                # # gray_background.blit(observer_image, (0, 0))
-                # # # Blit the gray background onto the screen right above the unit's x and y coordinates
-                # screen.blit(gray_background,(self.x+self.size//2, self.y-10 ))
 
             # Create a rectangle outline around the unit
             outline_rect = pygame.Rect(

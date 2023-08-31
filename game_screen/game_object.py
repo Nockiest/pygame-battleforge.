@@ -49,24 +49,30 @@ class Game():
         self.get_pixel_values()
         ## create unit instances##
         unit_instances = {
-            "medic": (Medic, game_state.num_Medics),
-            "observer": (Observer, game_state.num_Observers),
-            "supply_cart": (SupplyCart, game_state.num_Supply_carts),
-            "cannon": (Cannon, game_state.num_Cannons),
-            "musketeer": (Musketeer, game_state.num_Musketeers),
-            "pikeman": (Pikeman, game_state.num_Pikemen),
-            "shield": (Shield, game_state.num_Shields),
-            "knight": (Knight, game_state.num_Knights),
-            "commander": (Commander, game_state.num_Commanders),
+            "medic": (Medic, "num_Medics"),
+            "observer": (Observer, "num_Observers"),
+            "supply_cart": (SupplyCart, "num_Supply_carts"),
+            "cannon": (Cannon, "num_Cannons"),
+            "musketeer": (Musketeer, "num_Musketeers"),
+            "pikeman": (Pikeman, "num_Pikemen"),
+            "shield": (Shield, "num_Shields"),
+            "knight": (Knight, "num_Knights"),
+            "commander": (Commander, "num_Commanders"),
         }
 
-        unit_array = []
+        # Create the units for each player
+        player_units = {
+            self.blue_player: (blue_player_units, 0),
+            self.red_player: (red_player_units, 1)
+        }
 
-        for unit_type, (unit_class, num_units) in unit_instances.items():
-            unit_array.extend([unit_class] * num_units)
-        for i, player in enumerate(game_state.players):
-            print("PLACING STAERTING UNITS", player)
-            player.place_starting_units(unit_array)
+        # Create the units for each player
+        for player, (units, i) in player_units.items():
+            unit_array = []
+            for unit_type, (unit_class, num_units_key) in unit_instances.items():
+                num_units = units[num_units_key]
+                unit_array.extend([unit_class] * num_units)
+            game_state.players[i].place_starting_units(unit_array)
         for unit in game_state.living_units.array:
             unit.get_units_movement_area()
 
@@ -218,8 +224,7 @@ class Game():
                 return True
         def check_valid_placement_position():
             if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
-                bought_unit.__del__()
-                print("Cannot place unit on river.")
+                abort_placement_mode(bought_unit)
                 return False
             buy_area_rect = pygame.Rect(*player.buy_area)
             buy_area_rect.inflate_ip(-bought_unit.size //
@@ -232,7 +237,7 @@ class Game():
             print("INDEX OF BOUGHT UNIT",
                   game_state.living_units.array.index(bought_unit))         
             game_state.unit_placement_mode = False
-            game_state.money_spent += bought_unit.cost
+            player.supplies += bought_unit.cost
             bought_unit.__del__()
             player.preview_unit = None
 
@@ -249,8 +254,20 @@ class Game():
                 # abort_placement_mode(bought_unit)
                 return
             else:
+                cursor_x, cursor_y = pygame.mouse.get_pos()
+                bought_unit.x = cursor_x - bought_unit.size // 2
+                bought_unit.y = cursor_y - bought_unit.size // 2
+                # bought_unit.center[0] =  bought_unit.x+ bought_unit.size // 2
+                # bought_unit.center[1] =  bought_unit.y+ bought_unit.size // 2
+                bought_unit.rect.x =cursor_x - bought_unit.size // 2
+                bought_unit.rect.y =cursor_y -bought_unit.size  // 2
+                bought_unit.start_turn_position = (
+                    bought_unit.x + bought_unit .size  // 2, bought_unit.y + bought_unit.size  // 2)
+                bought_unit.rect = pygame.Rect(bought_unit.x , bought_unit.y, bought_unit.size, bought_unit.size)
                 player.preview_unit = None
+               
                 game_state.unit_placement_mode = False
+                game_state.money_spent += bought_unit.cost
 
         else:
             print(

@@ -77,10 +77,15 @@ class Player:
     def create_preview_unit(self, unit_params):
         self.preview_unit = self.create_unit(unit_params)
     def pin_and_move_unit(self, unit):
-      
+  
+
         cursor_x, cursor_y = pygame.mouse.get_pos()
         unit.x = cursor_x - self.preview_unit.size // 2
         unit.y = cursor_y - self.preview_unit.size // 2
+        unit.rect.x =cursor_x - self.preview_unit.size // 2
+        unit.rect.y =cursor_y -self.preview_unit.size  // 2
+        unit.start_turn_position = (
+            unit.x + self.preview_unit.size  // 2, unit.y + self.preview_unit.size  // 2)
         unit.rect = pygame.Rect(self.preview_unit.x , self.preview_unit.y, self.preview_unit.size, self.preview_unit.size)
     def show_buy_area(self):
         buy_area_rect = pygame.Rect(*self.buy_area)
