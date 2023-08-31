@@ -5,7 +5,8 @@ from config import *
 from game_state import *
 from .template import Ranged
 from animations.shooting_animation import ShootingAnimation
-
+from pygame.locals import *
+from music_player import play_sound_file
 class Musketeer(Ranged):
     size=20
     cost = 15
@@ -31,6 +32,9 @@ class Musketeer(Ranged):
             if prevented:
                  
                 res = "Attack not possible"
+            else:
+                play_sound_file("_media/musketshot.wav")
+                play_sound_file("_media/reload1.wav")
             # Check if FORREST_GREEN is present in pixel colors
 
         return res

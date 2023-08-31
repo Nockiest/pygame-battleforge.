@@ -16,7 +16,7 @@ class Unit(pygame.sprite.Sprite):
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range 
-        self.attack_range_modifiers = {"base_modifier": 2}
+        self.attack_range_modifiers = {"base_modifier": 5}
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement *2
