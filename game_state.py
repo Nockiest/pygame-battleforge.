@@ -16,9 +16,10 @@ selected_for_movement_unit = None
 selected_attacking_unit = None
 unit_placement_mode = False
 lets_continue = True
- 
+
 hovered_unit = None
 hovered_button = None    
+
 battle_ground = None
 button_bar = None
 next_turn_button = None
@@ -26,11 +27,11 @@ end_screen_button = None
 start_game_button = None
 settings_button = None
 game = None
-starting_money = 100
-money_per_turn = 10
+
+ 
 ## game stats
-num_turns = 0 
-num_attacks = 0
+num_turns =  0  
+num_attacks =  0, 0 
 killed_units = 0
 enemies_killed = 0
 money_spent = 0
@@ -48,16 +49,7 @@ for X in range(WIDTH):
 num_towns = 5
 num_rivers = 3
 num_forests = 0
-# num_Medics = 0
-# num_Observers = 2
-# num_Supply_carts = 4
-# num_Cannons = 0
-# num_Musketeers = 0
-# num_Pikemen = 0
-# num_Shields = 0
-# num_Knights = 0
-# num_Commanders = 1
-# Initialize the variables for the blue player
+ 
 
 blue_num_Medics = 0
 blue_num_Observers = 2
@@ -65,14 +57,11 @@ blue_num_Supply_carts = 4
 blue_num_Cannons = 0
 blue_num_Musketeers = 0
 blue_num_Pikemen = 1
-
 blue_num_Shields = 0
 blue_num_Knights = 0
 blue_num_Commanders = 1
 
-
-# Initialize the variables for the red player
- 
+# Initialize the variables for the red player 
 red_num_Medics= 0
 red_num_Observers= 2
 red_num_Supply_carts= 4
@@ -82,3 +71,6 @@ red_num_Pikemen= 0
 red_num_Shields= 0
 red_num_Knights= 0
 red_num_Commanders= 1 
+
+starting_money = 100
+money_per_turn = 10

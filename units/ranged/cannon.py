@@ -48,8 +48,7 @@ class Cannon(Ranged):
             for unit in game_state.living_units.array.copy():
                 if unit.color == self.color:
                     continue
-                # if unit == attacked_unit:
-                #     continue
+               
                 point_x, point_y, interferes = check_precalculated_line_square_interference(
                     unit, line_points)
                 

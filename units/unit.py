@@ -416,6 +416,7 @@ class Unit(pygame.sprite.Sprite):
             pygame.draw.rect(screen, BLACK, outline_rect, 2)
 
             # Calculate the center coordinates of the unit
+            print("self.center is", self.center)
             center_x = self.center[0]
             center_y = self.center[1]
             # Draw a line from the start_turn_position attribute to the center of the unit in red color with a width of 2 pixels

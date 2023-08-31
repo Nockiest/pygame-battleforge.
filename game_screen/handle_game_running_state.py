@@ -66,15 +66,11 @@ def handle_left_mouse_clk(click_pos, game):
 def handle_right_mouse_clk(click_pos, game):
     
     player =  game_state.players[game_state.cur_player]
-    if game_state.hovered_button:
-        game_state.hovered_button.callback()
-    elif player.preview_unit != None:
-        player.remove_self_unit( player.preview_unit )
-        player.supplies +=   player.preview_unit.cost
-        player.preview_unit.__del__()
-
-        player.preview_unit = None
-        game_state.unit_placement_mode = False
+     
+    if  player.preview_unit != None:
+        abort_placement_mode(player, player.preview_unit)
+    elif  game_state.hovered_button:
+        game_state.hovered_button.callback(  ) 
     elif game_state.selected_attacking_unit:
         game.process_attack(
             game_state.selected_attacking_unit, click_pos)

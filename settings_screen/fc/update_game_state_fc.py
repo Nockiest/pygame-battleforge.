@@ -64,6 +64,6 @@ def update_red_num_Pikemen(new_value):
 
 def update_red_num_Shields(new_value):
     game_state.red_num_Shields = new_value
-    print("shields", game_state.red_num_Shields)
+  
 def update_red_num_Knights(new_value):
     game_state.red_num_Knights = new_value

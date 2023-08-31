@@ -292,9 +292,11 @@ def reset_game_state():
     game_state.enemies_killed = 0
     game_state.money_spent = 0
     game_state.shots_fired = 0
-    # for X in range(WIDTH):
-    #     row = []
-    #     for Y in range(HEIGHT):
-    #         row.append(0)
-    #         game_state.movement_costs.append(row)
-    #         game_state.pixel_colors.append(row[:]) # Create a copy of the row list before appending 
+ 
+def abort_placement_mode(player, bought_unit):
+    print("INDEX OF ABORTED UNIT",
+            game_state.living_units.array.index(bought_unit))         
+    game_state.unit_placement_mode = False
+    player.supplies += bought_unit.cost
+    bought_unit.__del__()
+    player.preview_unit = None

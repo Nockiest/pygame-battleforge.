@@ -99,6 +99,8 @@ class Game():
 
     def go_to_end_screen(self):
         game_state.state = "end_screen"
+        self.red_player.__del__()
+        self.blue_player.__del__()
         self.__del__()
 
     def __del__(self):
@@ -161,15 +163,6 @@ class Game():
 
         self.switch_player()
 
-    def remove_attack_point(self, ):
-        print("unit disabled for turn")
-        if game_state.selected_for_movement_unit:
-            game_state.selected_for_movement_unit.remain_actions -= 1
-        elif game_state.selected_attacking_unit:
-            game_state.selected_attacking_unit.remain_actions -= 1
-            print("units attack points",
-                  game_state.selected_attacking_unit.remain_actions)
-
     def deselect_unit(self, ):
         game_state.selected_for_movement_unit = None
         game_state.selected_attacking_unit = None
@@ -226,7 +219,8 @@ class Game():
         if attack_result == "UNIT ATTACKS" or attack_result == "UNIT MISSED":
             # remove_attack_point()
             self.deselect_unit()
-            game_state.num_attacks += 1
+            game_state.players[game_state.cur_player].num_attacks += 1
+            print("player did",  game_state.players[game_state.cur_player].num_attacks, "attacks")
         elif attack_result == "Attack not possible":
             self.deselect_unit()
 
@@ -246,7 +240,7 @@ class Game():
                 return True
         def check_valid_placement_position():
             if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
-                abort_placement_mode(bought_unit)
+                abort_placement_mode(player, bought_unit)
                 return False
             buy_area_rect = pygame.Rect(*player.buy_area)
             buy_area_rect.inflate_ip(-bought_unit.size //
@@ -255,13 +249,8 @@ class Game():
                 print("Cannot place unit outside of buy area.")
                 return False
             return True
-        def abort_placement_mode(bought_unit):
-            print("INDEX OF BOUGHT UNIT",
-                  game_state.living_units.array.index(bought_unit))         
-            game_state.unit_placement_mode = False
-            player.supplies += bought_unit.cost
-            bought_unit.__del__()
-            player.preview_unit = None
+      
+            
 
         player = game_state.players[game_state.cur_player]
         bought_unit = player.preview_unit
@@ -334,3 +323,13 @@ class Game():
         #         (Knight, 80, 100))
         #     # # # blue_player.create_starting_unit(
         #     # #     (Knight, 50, 500) )
+
+
+# def remove_attack_point(self, ):
+    #     print("unit disabled for turn")
+    #     if game_state.selected_for_movement_unit:
+    #         game_state.selected_for_movement_unit.remain_actions -= 1
+    #     elif game_state.selected_attacking_unit:
+    #         game_state.selected_attacking_unit.remain_actions -= 1
+    #         print("units attack points",
+    #               game_state.selected_attacking_unit.remain_actions)
