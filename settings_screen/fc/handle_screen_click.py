@@ -6,8 +6,7 @@ from ..settings_buttons import back_button, apply_button
 def handle_screen_click(event):
     """Handle click events on the settings screen."""
     global selected_slider
-    print("selected slider is")
-    print(selected_slider, )
+ 
     if event.type == pygame.QUIT:
         print(event)
         game_state.lets_continue = False

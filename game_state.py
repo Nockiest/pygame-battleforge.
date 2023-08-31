@@ -57,27 +57,27 @@ num_forests = 0
 # num_Knights = 0
 # num_Commanders = 1
 # Initialize the variables for the blue player
-blue_player_units = {
-    "num_Medics": 0,
-    "num_Observers": 2,
-    "num_Supply_carts": 4,
-    "num_Cannons": 0,
-    "num_Musketeers": 0,
-    "num_Pikemen": 10,
-    "num_Shields": 0,
-    "num_Knights": 0,
-    "num_Commanders": 1
-}
+
+blue_num_Medics = 0
+blue_num_Observers = 2
+blue_num_Supply_carts = 4
+blue_num_Cannons = 0
+blue_num_Musketeers = 0
+blue_num_Pikemen = 1
+
+blue_num_Shields = 0
+blue_num_Knights = 0
+blue_num_Commanders = 1
+
 
 # Initialize the variables for the red player
-red_player_units = {
-    "num_Medics": 0,
-    "num_Observers": 2,
-    "num_Supply_carts": 4,
-    "num_Cannons": 0,
-    "num_Musketeers": 0,
-    "num_Pikemen": 0,
-    "num_Shields": 0,
-    "num_Knights": 0,
-    "num_Commanders": 1
-}
+ 
+red_num_Medics= 0
+red_num_Observers= 2
+red_num_Supply_carts= 4
+red_num_Cannons= 0
+red_num_Musketeers= 0
+red_num_Pikemen= 0
+red_num_Shields= 0
+red_num_Knights= 0
+red_num_Commanders= 1 

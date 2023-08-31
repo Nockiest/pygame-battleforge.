@@ -62,17 +62,38 @@ class Game():
 
         # Create the units for each player
         player_units = {
-            self.blue_player: (blue_player_units, 0),
-            self.red_player: (red_player_units, 1)
+            self.blue_player: {
+                'num_Medics': game_state.blue_num_Medics,
+                'num_Observers': game_state.blue_num_Observers,
+                'num_Supply_carts': game_state.blue_num_Supply_carts,
+                'num_Cannons': game_state.blue_num_Cannons,
+                'num_Musketeers': game_state.blue_num_Musketeers,
+                'num_Pikemen': game_state.blue_num_Pikemen,
+                'num_Shields':game_state. blue_num_Shields,
+                'num_Knights': game_state.blue_num_Knights,
+                'num_Commanders': game_state.blue_num_Commanders
+            },
+            self.red_player: {
+                'num_Medics':game_state. red_num_Medics,
+                'num_Observers': game_state.red_num_Observers,
+                'num_Supply_carts': game_state.red_num_Supply_carts,
+                'num_Cannons': game_state.red_num_Cannons,
+                'num_Musketeers': game_state.red_num_Musketeers,
+                'num_Pikemen': game_state.red_num_Pikemen,
+                'num_Shields':game_state. red_num_Shields,
+                'num_Knights': game_state.red_num_Knights,
+                'num_Commanders': game_state.red_num_Commanders
+            }
         }
 
         # Create the units for each player
-        for player, (units, i) in player_units.items():
+        for player, units in player_units.items():
             unit_array = []
             for unit_type, (unit_class, num_units_key) in unit_instances.items():
                 num_units = units[num_units_key]
                 unit_array.extend([unit_class] * num_units)
-            game_state.players[i].place_starting_units(unit_array)
+            player.place_starting_units(unit_array)
+
         for unit in game_state.living_units.array:
             unit.get_units_movement_area()
 
