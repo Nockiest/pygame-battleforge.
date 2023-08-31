@@ -34,7 +34,7 @@ class Musketeer(Ranged):
                 res = "Attack not possible"
             else:
                 play_sound_file("_media/musketshot.wav")
-                play_sound_file("_media/reload1.wav")
+                # play_sound_file("_media/reload1.wav")
             # Check if FORREST_GREEN is present in pixel colors
 
         return res
