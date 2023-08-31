@@ -12,7 +12,7 @@ SCROLL_SPEED = 5
 
 class Player:
     def __init__(self, color, tender_x):
-        self.supplies = 100  # Initial supplies
+        self.supplies = game_state.starting_money  # Initial supplies
         self.units = []  # List to store units (use 'list()' to create a copy)
         self.sorted_by_class_units = {}
         self.color = color  # Player's color

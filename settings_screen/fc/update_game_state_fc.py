@@ -14,7 +14,10 @@ def update_num_forests(new_value):
 #     param = getattr(game_state, name_of_object)
 #     setattr(param, name_of_parameter, new_value)
 #     print("param",game_state.red_player_units)
-
+def update_start_money(new_value):
+    game_state.starting_money = new_value
+def update_income(new_value):
+    game_state.money_per_turn = new_value
  
  
 def update_blue_num_Medics(new_value):

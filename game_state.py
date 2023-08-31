@@ -26,6 +26,7 @@ end_screen_button = None
 start_game_button = None
 settings_button = None
 game = None
+starting_money = 100
 money_per_turn = 10
 ## game stats
 num_turns = 0 
