@@ -27,8 +27,9 @@ class SortedDict:
         self.dict = self._create_dict()
 
     def remove(self, value):
-        self.array.remove(value)
-        self.dict = self._create_dict()
+        if self.array.index(value):
+         self.array.remove(value)
+         self.dict = self._create_dict()
 
     def pop(self, index=-1):
         value = self.array.pop(index)

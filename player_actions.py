@@ -24,11 +24,16 @@ class Player:
         
         self.side = 0 if self.color == RED else WIDTH - self.spawn_width
         self.buy_area = ( self.side, UPPER_BAR_HEIGHT, self.spawn_width, HEIGHT - TENDER_HEIGHT - UPPER_BAR_HEIGHT)
+    
+    
     def __repr_(self):
         return f'Player{self.color}, has {self.units} sorted {self.sorted_by_class_units} and a buy area{self.buy_area}'
     
+
     def __del__(self):
         print("UNIT DELETED")
+
+
     def update_sorted_units(self):
         self.sorted_by_class_units = {}
         for unit in self.units:
@@ -36,8 +41,10 @@ class Player:
             self.sorted_by_class_units[unit_type] = self.sorted_by_class_units.get(
                 unit_type, 0) + 1
 
+
     def create_unit(self, unit_params):
         # Create the unit object
+        print(unit_params, "UNIT PARAMS")
         unit_class, x, y = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
 
@@ -57,6 +64,7 @@ class Player:
         # update_sorted_units()
 
         return unit
+    
 
     def create_starting_unit(self, unit_params):
         print("CALLED CREATE UNIT")
@@ -66,27 +74,34 @@ class Player:
         self.units.append(unit)
         self.update_sorted_units()
 
-    def show_unit_to_be_placed(self, unit_params):
-        unit_class_name, _, _ = unit_params
-
+    def create_preview_unit(self, unit_params):
+        self.preview_unit = self.create_unit(unit_params)
+    def pin_and_move_unit(self, unit):
+      
         cursor_x, cursor_y = pygame.mouse.get_pos()
-        try:
-            self.preview_unit = unit_class_name(x=-100, y=-100, color=BLACK)
-            self.preview_unit.x = cursor_x - self.preview_unit.size // 2
-            self.preview_unit.y = cursor_y - self.preview_unit.size // 2
-            # unit = unit_class_name(x=self.preview_unit.x , y=unit_y, color=self.color)
-            self.preview_unit.render()
-            
-            # Draw the buy area rectangle in orange
-            buy_area_rect = pygame.Rect(*self.buy_area)
-            pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)
-            
-            pygame.display.flip()
-            game_state.living_units.remove(self.preview_unit)
-            self.preview_unit.kill()
-            # print("living units",  living_units.array, living_units.dict)
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        unit.x = cursor_x - self.preview_unit.size // 2
+        unit.y = cursor_y - self.preview_unit.size // 2
+        unit.rect = pygame.Rect(self.preview_unit.x , self.preview_unit.y, self.preview_unit.size, self.preview_unit.size)
+    def show_buy_area(self):
+        buy_area_rect = pygame.Rect(*self.buy_area)
+        pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)      
+        # pygame.display.flip()
+    # def show_unit_to_be_placed(self, unit_params):
+    #     unit_class_name, _, _ = unit_params
+    #     cursor_x, cursor_y = pygame.mouse.get_pos()
+    #     try:
+    #         if self.preview_unit == None:
+    #          self.preview_unit = self.create_unit(unit_params)#unit_class_name(x=100, y=100, color=self.color)
+    #         self.preview_unit.x = cursor_x - self.preview_unit.size // 2
+    #         self.preview_unit.y = cursor_y - self.preview_unit.size // 2
+    #         self.preview_unit.rect = pygame.Rect(self.preview_unit.x , self.preview_unit.y, self.preview_unit.size, self.preview_unit.size)
+    #         self.preview_unit.render()
+    #         # Draw the buy area rectangle in orange
+    #         buy_area_rect = pygame.Rect(*self.buy_area)
+    #         pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)      
+    #         pygame.display.flip()
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
 
     def render_tender(self):
         # Render the tender rectangle on the screen at the specified position
@@ -156,9 +171,11 @@ class Player:
         # (e.g., increase attack, defense, or other attributes)
         pass
 
+  
     def announce_defeat(self):
         print("Player ", self.color, " has been defeated")
 
+  
     def remove_self_unit(self,  unit):
         # Find the unit in the player's units list and remove it
         if unit in self.units:
@@ -167,6 +184,7 @@ class Player:
         self.update_sorted_units()
         # update_sorted_units()
  
+  
     def place_starting_units(self, unit_class_list):
         sides = {
             "(255, 0, 0)": 0,
@@ -192,6 +210,7 @@ class Player:
             unit_params = (unit_class, x, y)
             self.create_starting_unit(unit_params)
 
+  
     def is_position_occupied(self, x, y,):
         for unit in living_units.array:
             if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:

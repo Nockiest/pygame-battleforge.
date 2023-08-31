@@ -23,6 +23,9 @@ def draw_ui(screen):
 
         if game_state.end_screen_button is not None:
             game_state.end_screen_button.draw(screen)
+
+        if game_state.unit_placement_mode:
+            game_state.players[game_state.cur_player].show_buy_area()
     except ValueError as e:
         print("Error in drawing ui",e)
 
@@ -30,7 +33,9 @@ def draw_ui(screen):
 def draw_units(screen):
    
     for unit in game_state.living_units.array:
-     
+        
+           
+
         unit.render()
         if unit == game_state.selected_for_movement_unit:
             game_state.selected_for_movement_unit.draw_possible_movement_area()
@@ -50,6 +55,9 @@ def draw_units(screen):
         game_state.selected_attacking_unit.draw_lines_to_enemies_in_range()
     if game_state.selected_attacking_unit:
         game_state.selected_attacking_unit.render_attack_circle()
-    if game_state.unit_placement_mode:
-        game_state.players[game_state.cur_player].show_unit_to_be_placed(
-            (game_state.unit_to_be_placed, 0, 0))
+    
+    # if game_state.unit_to_be_placed != None:
+    #   game_state.players[game_state.cur_player].show_unit_to_be_placed(
+    #         (game_state.unit_to_be_placed, 0, 0))
+    
+        

@@ -264,17 +264,19 @@ def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_st
 
 def reset_game_state():
     game_state.players = []
+    game_state.battle_ground.__del__()
     game_state.battle_ground = None
     game_state.players = []
     game_state.cur_player = 0
     game_state.game_won = False
     del game_state.living_units
+    del game_state.button_bar
     game_state.living_units = SortedDict([])# pygame.sprite.Group()
     # game_state.state = "start_screen"
     game_state.selected_for_movement_unit = None
     game_state.selected_attacking_unit = None
-    game_state.unit_placement_mode = None
-    game_state.unit_to_be_placed = None
+    game_state.unit_placement_mode = False
+    
     game_state.hovered_unit = None
     game_state.hovered_button = None    
     game_state.battle_ground = None      

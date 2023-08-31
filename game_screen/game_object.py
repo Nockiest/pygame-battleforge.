@@ -42,7 +42,6 @@ class Game():
         game_state.enemies_killed = 0
         game_state.money_spent = 0
         game_state.shots_fired = 0
-   
 
         ## create ui##
         draw_ui(background_screen)
@@ -62,13 +61,12 @@ class Game():
         }
 
         unit_array = []
+
         for unit_type, (unit_class, num_units) in unit_instances.items():
             unit_array.extend([unit_class] * num_units)
-
         for i, player in enumerate(game_state.players):
             print("PLACING STAERTING UNITS", player)
             player.place_starting_units(unit_array)
-
         for unit in game_state.living_units.array:
             unit.get_units_movement_area()
 
@@ -77,11 +75,6 @@ class Game():
         self.__del__()
 
     def __del__(self):
-        game_state.battle_ground.__del__()
-        del game_state.button_bar
-        for player in game_state.players:
-            for unit in player.units:
-                player.__del__()
         reset_game_state()
 
     def get_pixel_values(self):
@@ -95,16 +88,16 @@ class Game():
                 game_state.movement_costs[x][y] = cost
                 game_state.pixel_colors[x][y] = color
 
-    def enter_buy_mode(self, unit_type):
-        print("unit type to be bought", unit_type)
-        if unit_type.cost > game_state.players[game_state.cur_player].supplies:
+    def enter_buy_mode(self, unit_type):     
+        player = game_state.players[game_state.cur_player]
+        if unit_type.cost >player.supplies:
             return print("Player doesnt have enough money")
-        game_state.unit_to_be_placed = unit_type
-        print("unit to be placed", game_state.unit_to_be_placed)
-        print(
-            f"{game_state.players[game_state.cur_player].color} is going to buy {game_state.unit_to_be_placed}")
-        # players[cur_player].show_unit_to_be_placed((game_state.unit_to_be_placed, 0, 0), game_state.unit_to_be_placed)
-        game_state.unit_placement_mode = unit_type
+        game_state.unit_placement_mode = True
+        player.create_preview_unit(  (unit_type,0,0))
+        player.pin_and_move_unit(player.preview_unit)
+        print("unit to be placed",player.preview_unit)
+        print(f"{player.color} is going to buy {player.preview_unit}")
+      
 
     def switch_player(self, ):
         game_state.cur_player = (game_state.cur_player +
@@ -114,7 +107,7 @@ class Game():
         if len(game_state.animations) > 0:
             return
         game_state.num_turns += 1
-        
+
         self.deselect_unit()
         loading_message = default_font.render(
             "Loading Next Turn...", True, (255, 255, 255))
@@ -210,53 +203,58 @@ class Game():
             self.deselect_unit()
 
     def buy_unit(self, click_pos):
-        player = game_state.players[game_state.cur_player]
-        dummy = game_state.unit_to_be_placed(-100, -100, BLACK)
-        x = click_pos[0] - dummy.size // 2
-        y = click_pos[1] - dummy.size // 2
-        print("players buy area is ", player.buy_area)
-        if game_state.hovered_unit != None:
-            del dummy
-            return
-        for unit in game_state.living_units.array:
-            print("UNIT TO BE PLACED COLOR", player.color)
-            if unit.color == player.color:
-                continue
-
+        def check_unit_overlap(unit, player, bought_unit):
+            if unit == bought_unit:
+                return False
             # create a copy of the unit.rect object
             rect_copy = unit.rect.copy()
-
             # inflate the copy of the rect object
-            rect_copy.inflate_ip(dummy.size, dummy.size)
-
+            rect_copy.inflate_ip(bought_unit.size, bought_unit.size)
             # check if the inflated copy of the rect object collides with the click position
             if rect_copy.collidepoint(click_pos):
-                del dummy
-                return
-
-        if game_state.unit_to_be_placed:
-            game_state.money_spent += dummy.cost
-            # Check if the clicked position is not on the river
+                # game_state.living_units.remove(dummy)
+                # bought_unit.__del__()
+                # game_state.unit_to_be_placed = None
+                return True
+        def check_valid_placement_position():
             if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
-                del dummy
-                return print("Cannot place unit on river.")
-
-            # Check if the unit is being placed within the buy area
+                bought_unit.__del__()
+                print("Cannot place unit on river.")
+                return False
             buy_area_rect = pygame.Rect(*player.buy_area)
-            # Inflate the buy area rect by -dummy.size to create a smaller rect
-            buy_area_rect.inflate_ip(-dummy.size//2, -dummy.size//2)
+            buy_area_rect.inflate_ip(-bought_unit.size //
+                                     2, -bought_unit.size//2)
             if not buy_area_rect.collidepoint(click_pos):
-                del dummy
-                return print("Cannot place unit outside of buy area.")
-            player.create_unit((game_state.unit_to_be_placed, x, y))
-            game_state.unit_to_be_placed = False
-            game_state.unit_placement_mode = None
+                print("Cannot place unit outside of buy area.")
+                return False
+            return True
+        def abort_placement_mode(bought_unit):
+            print("INDEX OF BOUGHT UNIT",
+                  game_state.living_units.array.index(bought_unit))         
+            game_state.unit_placement_mode = False
+            game_state.money_spent += bought_unit.cost
+            bought_unit.__del__()
+            player.preview_unit = None
+
+        player = game_state.players[game_state.cur_player]
+        bought_unit = player.preview_unit
+        print("PREVIEW UNIT", bought_unit)
+        for unit in game_state.living_units.array:
+            res = check_unit_overlap(unit, player, bought_unit)
+            if res:
+                return
+        if bought_unit:
+            res = check_valid_placement_position()
+            if not res:
+                # abort_placement_mode(bought_unit)
+                return
+            else:
+                player.preview_unit = None
+                game_state.unit_placement_mode = False
 
         else:
             print(
-                f"Error: Unit type {game_state.unit_to_be_placed} not found.")
-        game_state.living_units.remove(dummy)
-        del dummy
+                f"Error: Unit type {bought_unit} not found.")
 
         # def place_starting_units(red_player, blue_player):
         #     # blue_player.create_starting_unit(

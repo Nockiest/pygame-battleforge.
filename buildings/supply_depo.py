@@ -27,15 +27,7 @@ class SupplyDepo(Structure, Ammo_dispenser):
         self.rect = pygame.Rect(x-self.dot_radius, y-self.dot_radius, self.dot_radius*2, self.dot_radius*2)
     def dispense_ammo(self):
         depleted_ammo = super().dispense_ammo(1   )
-       # self.ammo -= depleted_ammo
-        # for unit in  living_units.array:
-
-        #     if (isinstance(unit, Ranged) or isinstance(unit, SupplyCart)) and distance(self.center, unit.center) < RESUPPLY_RANGE:
-        #         animations.append(ResupplyAnimation(unit.x, unit.y))
-        #         animations.append(AmmoExpendedAnimation(self.x, self.y ))
-        #         unit.ammo += self.ammo_per_unit
-        #         self.ammo_count -= self.ammo_per_unit
-        #         print(f"Dispensing { self.ammo_per_unit} ammo. ")
+     
 
     def draw(self, screen):
         # Draw a yellow dot at the depot's position

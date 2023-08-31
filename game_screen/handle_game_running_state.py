@@ -51,17 +51,28 @@ def handle_left_mouse_clk(click_pos, game):
     # Check if any button in the button bar is clicked
     if game_state.hovered_button and game_state.hovered_button.hovered:
         game_state.hovered_button.callback()
-    if game_state.unit_placement_mode:
+        ## enter unit placement mode
+        ## new players unit is created
+        ## new unit is pinned to the playeers cursor
+        ## he moves it around 
+        ## unit gets placed on a valid position
+        ## money is subtracted
+        ## units gets unpinned
+    if game_state.unit_placement_mode and game_state.players[game_state.cur_player].preview_unit != None:
         game.buy_unit(click_pos)
     else:
         game.select_unit(click_pos)
 
 def handle_right_mouse_clk(click_pos, game):
-
+    
+    player =  game_state.players[game_state.cur_player]
     if game_state.hovered_button:
         game_state.hovered_button.callback()
-    elif game_state.unit_to_be_placed != None:
-        game_state.unit_to_be_placed = None
+    elif player.preview_unit != None:
+        player.remove_self_unit( player.preview_unit )
+        player.preview_unit.__del__()
+
+        player.preview_unit = None
         game_state.unit_placement_mode = False
     elif game_state.selected_attacking_unit:
         game.process_attack(
@@ -70,10 +81,12 @@ def handle_right_mouse_clk(click_pos, game):
         game.activate_attack_mode(click_pos)
 
 def handle_mouse_motion(click_pos):
-
+    player =  game_state.players[game_state.cur_player]
     if game_state.selected_for_movement_unit:
         game_state.selected_for_movement_unit.move_in_game_field(
             click_pos)
+    elif game_state.unit_placement_mode:
+        player.pin_and_move_unit(player.preview_unit)
 
 def get_hovered_element(cursor_x, cursor_y):
     cursor_hovers_over_unit = False

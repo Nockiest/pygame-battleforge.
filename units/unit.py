@@ -25,7 +25,8 @@ class Unit(pygame.sprite.Sprite):
         self.lines_to_enemies_in_range = []
         self.x = x
         self.y = y
-
+        self.rect = pygame.Rect(
+            self.x, self.y, self.size, self.size)
         self.size = size
         self.center = (self.x + self.size//2, self.y + self.size//2)
         self.start_turn_position = (
@@ -40,7 +41,7 @@ class Unit(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-
+        
         self.attack_circle = []
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
@@ -55,6 +56,10 @@ class Unit(pygame.sprite.Sprite):
     def __repr__(self):
         return f'{type(self).__name__}(hp={self.hp},x={self.x}, y={self.y}, ammo={self.ammo}, actions={ self.remain_actions } , '
 
+    def __del__(self):
+        game_state.living_units.remove(self)
+        print("DELETING", self )
+   
     def move_in_game_field(self, click_pos):
         new_center_x, new_center_y = click_pos
         point1 = shapely.geometry.Point(new_center_x, new_center_y)
