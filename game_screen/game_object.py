@@ -23,10 +23,11 @@ __all__ = [basename(f)[:-3] for f in modules if isfile(f)
 class Game():
 
     def __init__(self):
-       
+
         screen.fill(BLACK)
-        render_text(screen, "Loading game", WIDTH/2, HEIGHT/2, color=WHITE,  font_size=36,  )
-        
+        render_text(screen, "Loading game", WIDTH/2,
+                    HEIGHT/2, color=WHITE,  font_size=36,)
+
         pygame.display.flip()
         # when you change the positions here you have to change get_pixel_color function
         self.red_player = Player(RED, 0)
@@ -101,16 +102,16 @@ class Game():
                 game_state.movement_costs[x][y] = cost
                 game_state.pixel_colors[x][y] = color
 
-    def enter_buy_mode(self, unit_type):     
+    def enter_buy_mode(self, unit_type):
         player = game_state.players[game_state.cur_player]
-        if unit_type.cost >player.supplies:
+        if unit_type.cost > player.supplies:
             return print("Player doesnt have enough money")
         game_state.unit_placement_mode = True
-        player.create_preview_unit(  (unit_type,0,0))
+        player.create_preview_unit((unit_type, 0, 0))
         player.pin_and_move_unit(player.preview_unit)
-        print("unit to be placed",player.preview_unit)
+        print("unit to be placed", player.preview_unit)
         print(f"{player.color} is going to buy {player.preview_unit}")
-      
+
     def switch_player(self, ):
         game_state.cur_player = (game_state.cur_player +
                                  1) % len(game_state.players)
@@ -123,7 +124,8 @@ class Game():
         game_state.num_turns += 1
 
         self.deselect_unit()
-        loading_message = default_font.render("Loading Next Turn...", True, (255, 255, 255))
+        loading_message = default_font.render(
+            "Loading Next Turn...", True, (255, 255, 255))
         draw_units(screen)
         self.get_occupied_towns()
         screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))
@@ -135,46 +137,52 @@ class Game():
         for player in game_state.players:
             player.update_sorted_units()
             if player == game_state.players[game_state.cur_player]:
-             player.supplies += game_state.money_per_turn
+                player.supplies += game_state.money_per_turn + len(player.occupied_towns)*10
         for depo in game_state.battle_ground.supply_depots:
             depo.dispense_ammo()
 
         self.switch_player()
-         
-    def get_occupied_towns(self):
-        # get the array of towns rects
-        towns = game_state.battle_ground.towns
 
-        # get the units, whose centers are inside of the town rect
-        for town in towns:
+    def get_occupied_towns(self):
+        def get_units_inside_town():
             units_inside_town = []
             for unit in game_state.living_units.array:
                 if town.rect.collidepoint(unit.center):
                     units_inside_town.append(unit)
-
-            if len(units_inside_town) < 1:
-                town.occupied_by = None
-                continue
-            units_are_same_color = True
+            return units_inside_town
+        def check_controlled_by_one_team():
             first_unit_color = units_inside_town[0].color
             for unit in units_inside_town:
                 if unit.color != first_unit_color:
-                    units_are_same_color = False
+                    return False
+            return True
+        def occupy_town():
+            first_unit_color = units_inside_town[0].color
+            town.occupied_by = first_unit_color
+        def update_players_occupied_towns():
+            for player in game_state.players:
+                player.occupied_towns = []
+                for town in towns:
 
+                    if player.color == town.occupied_by:
+                        player.occupied_towns.append(town)
+                        print("players occupied towns", player.occupied_towns)
+
+        towns = game_state.battle_ground.towns
+
+        # get the units, whose centers are inside of the town rect
+        for town in towns:
+            units_inside_town = get_units_inside_town()
+            if len(units_inside_town) < 1:
+                town.occupied_by = None
+                continue
+            
+            units_are_same_color = check_controlled_by_one_team()
             if units_are_same_color:
-                town.occupied_by = first_unit_color
-      
-        for player in game_state.players:
-            player.occupied_towns = []
-            for town in towns:  
-                
-                if player.color == town.occupied_by:
-                    player.occupied_towns.append(town)
-                    print("players occupied towns", player.occupied_towns)
-        # if all the units are from a same team, change the state of the town to be the players team
+                occupy_town()
+        update_players_occupied_towns()
 
 
-         
     def deselect_unit(self, ):
         game_state.selected_for_movement_unit = None
         game_state.selected_attacking_unit = None
@@ -232,7 +240,8 @@ class Game():
             # remove_attack_point()
             self.deselect_unit()
             game_state.players[game_state.cur_player].num_attacks += 1
-            print("player did",  game_state.players[game_state.cur_player].num_attacks, "attacks")
+            print(
+                "player did",  game_state.players[game_state.cur_player].num_attacks, "attacks")
         elif attack_result == "Attack not possible":
             self.deselect_unit()
 
@@ -250,6 +259,7 @@ class Game():
                 # bought_unit.__del__()
                 # game_state.unit_to_be_placed = None
                 return True
+
         def check_valid_placement_position():
             if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
                 abort_placement_mode(player, bought_unit)
@@ -261,8 +271,6 @@ class Game():
                 print("Cannot place unit outside of buy area.")
                 return False
             return True
-      
-            
 
         player = game_state.players[game_state.cur_player]
         bought_unit = player.preview_unit
@@ -282,13 +290,14 @@ class Game():
                 bought_unit.y = cursor_y - bought_unit.size // 2
                 # bought_unit.center[0] =  bought_unit.x+ bought_unit.size // 2
                 # bought_unit.center[1] =  bought_unit.y+ bought_unit.size // 2
-                bought_unit.rect.x =cursor_x - bought_unit.size // 2
-                bought_unit.rect.y =cursor_y -bought_unit.size  // 2
+                bought_unit.rect.x = cursor_x - bought_unit.size // 2
+                bought_unit.rect.y = cursor_y - bought_unit.size // 2
                 bought_unit.start_turn_position = (
-                    bought_unit.x + bought_unit .size  // 2, bought_unit.y + bought_unit.size  // 2)
-                bought_unit.rect = pygame.Rect(bought_unit.x , bought_unit.y, bought_unit.size, bought_unit.size)
+                    bought_unit.x + bought_unit .size // 2, bought_unit.y + bought_unit.size // 2)
+                bought_unit.rect = pygame.Rect(
+                    bought_unit.x, bought_unit.y, bought_unit.size, bought_unit.size)
                 player.preview_unit = None
-               
+
                 game_state.unit_placement_mode = False
                 game_state.money_spent += bought_unit.cost
 
