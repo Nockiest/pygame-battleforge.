@@ -28,7 +28,6 @@ start_game_button = None
 settings_button = None
 game = None
 
- 
 ## game stats
 num_turns =  0  
 num_attacks =  0, 0 
@@ -45,11 +44,11 @@ for X in range(WIDTH):
         row.append(0)
     movement_costs.append(row)
     pixel_colors.append(row[:]) # Create a copy of the row list before appending 
+
 # settings config
-num_towns = 5
-num_rivers = 3
+num_towns = 7
+num_rivers = 0
 num_forests = 0
- 
 blue_player = {
     'num_Medics': 0,
     'num_Observers': 2,
@@ -61,7 +60,6 @@ blue_player = {
     'num_Knights': 0,
     'num_Commanders': 1
 }
-
 red_player = {
     'num_Medics': 0,
     'num_Observers': 2,
@@ -73,27 +71,5 @@ red_player = {
     'num_Knights': 0,
     'num_Commanders': 1
 }
- 
-blue_num_Medics = 0
-blue_num_Observers = 2
-blue_num_Supply_carts = 4
-blue_num_Cannons = 0
-blue_num_Musketeers = 0
-blue_num_Pikemen = 1
-blue_num_Shields = 0
-blue_num_Knights = 0
-blue_num_Commanders = 1
-
-# Initialize the variables for the red player 
-red_num_Medics= 0
-red_num_Observers= 2
-red_num_Supply_carts= 4
-red_num_Cannons= 0
-red_num_Musketeers= 0
-red_num_Pikemen= 0
-red_num_Shields= 0
-red_num_Knights= 0
-red_num_Commanders= 1 
-
 starting_money = 100
 money_per_turn = 10

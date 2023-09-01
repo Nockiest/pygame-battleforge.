@@ -3,6 +3,8 @@ from config import *
 import game_state
 from utils.classdict import SortedDict
 from settings_screen.settings_globs import *
+
+
 def get_two_units_center_distance(unit1, unit2):
     # Calculate the distance between the center points of the units, considering their sizes
     dx = (unit1.x + unit1.size // 2) - (unit2.x + unit2.size // 2)
@@ -16,6 +18,7 @@ def sum_values(obj):
     for value in obj.values():
         total_sum += value
     return total_sum
+
 
 def bresenham_line(x0, y0, x1, y1):
     points = []
@@ -39,9 +42,9 @@ def bresenham_line(x0, y0, x1, y1):
 
         if x0 == x1 and y0 == y1:
             break
-        if 0> x0 or x0 > WIDTH or 0 > y0 or y0 > HEIGHT- BUTTON_BAR_HEIGHT:
-            
-            return points 
+        if 0 > x0 or x0 > WIDTH or 0 > y0 or y0 > HEIGHT - BUTTON_BAR_HEIGHT:
+
+            return points
         e2 = 2 * err
         if e2 > -dy:
             err -= dy
@@ -52,18 +55,18 @@ def bresenham_line(x0, y0, x1, y1):
 
     return points
 
+
 def check_precalculated_line_square_interference(attacked_unit, line_points):
     for point_x, point_y in line_points:
 
-       
         if attacked_unit.rect.collidepoint((point_x, point_y)):
             # print(f"Interfering point: ({point_x}, {point_y}  ) ")
             interferes = True
             return (point_x, point_y,  interferes)
 
-    
     return (None, None, False)
-################for when I already have the bersenham line
+# for when I already have the bersenham line
+
 
 def check_square_line_interference(attacked_unit, line_start_x, line_start_y, line_end_x, line_end_y):
     # Calculate the center of the square
@@ -74,31 +77,31 @@ def check_square_line_interference(attacked_unit, line_start_x, line_start_y, li
 
     for point_x, point_y in line_points:
 
-        
         if attacked_unit.rect.collidepoint((point_x, point_y)):
             # print(f"Interfering point: ({point_x}, {point_y}  ) ")
             return (point_x, point_y, False)
 
-  
-    return  (None, None, False)
+    return (None, None, False)
+
 
 def draw_bezier_curve(self, screen, points):
-            num_segments = 100
-            curve_points = []
-            for t in range(num_segments + 1):
-                t_normalized = t / num_segments
-                x = int((1 - t_normalized)**3 * points[0][0] +
-                        3 * (1 - t_normalized)**2 * t_normalized * points[2][0] +
-                        3 * (1 - t_normalized) * t_normalized**2 * points[3][0] +
-                        t_normalized**3 * points[1][0])
-                y = int((1 - t_normalized)**3 * points[0][1] +
-                        3 * (1 - t_normalized)**2 * t_normalized * points[2][1] +
-                        3 * (1 - t_normalized) * t_normalized**2 * points[3][1] +
-                        t_normalized**3 * points[1][1])
-                curve_points.append((x, y))
-           
-            pygame.draw.lines(screen, (128, 128, 128), False, curve_points, 2)
-            
+    num_segments = 100
+    curve_points = []
+    for t in range(num_segments + 1):
+        t_normalized = t / num_segments
+        x = int((1 - t_normalized)**3 * points[0][0] +
+                3 * (1 - t_normalized)**2 * t_normalized * points[2][0] +
+                3 * (1 - t_normalized) * t_normalized**2 * points[3][0] +
+                t_normalized**3 * points[1][0])
+        y = int((1 - t_normalized)**3 * points[0][1] +
+                3 * (1 - t_normalized)**2 * t_normalized * points[2][1] +
+                3 * (1 - t_normalized) * t_normalized**2 * points[3][1] +
+                t_normalized**3 * points[1][1])
+        curve_points.append((x, y))
+
+    pygame.draw.lines(screen, (128, 128, 128), False, curve_points, 2)
+
+
 def move_unit_along_line(line_points, intersecting_point, unit, screen):
     # Find the index of the intersecting point in the line_points list
     intersecting_index = line_points.index(intersecting_point)
@@ -133,12 +136,10 @@ def find_edge_points(points):
     for x_axis in range(leftmost_x, rightmost_x + 1, square_size):
         same_x_points = [(x, y) for x, y in points if x == x_axis]
         if same_x_points:
-          
 
             # Find points with lowest and highest y-values in the same_x_points array
             lowest_y_point = min(same_x_points, key=lambda p: p[1])
             highest_y_point = max(same_x_points, key=lambda p: p[1])
-            
 
             # Add lowest and highest points to the result array
             result.insert(0, lowest_y_point)
@@ -185,34 +186,36 @@ def do_lines_intersect(p1, p2, p3, p4):
 
     return False
 
+
 def get_pixel_colors(points, surface):
     points_colors = []
     for point in points:
 
-        if is_inside_rectangle(point[0], point[1], 0, HEIGHT-TENDER_HEIGHT, TENDER_WIDTH, TENDER_HEIGHT ):
+        if is_inside_rectangle(point[0], point[1], 0, HEIGHT-TENDER_HEIGHT, TENDER_WIDTH, TENDER_HEIGHT):
             points_colors.append(TERMINATE_COLOR)  # terminate color
-        elif is_inside_rectangle(point[0], point[1], WIDTH - TENDER_WIDTH, HEIGHT-TENDER_HEIGHT, TENDER_WIDTH, TENDER_HEIGHT ):
+        elif is_inside_rectangle(point[0], point[1], WIDTH - TENDER_WIDTH, HEIGHT-TENDER_HEIGHT, TENDER_WIDTH, TENDER_HEIGHT):
             points_colors.append(TERMINATE_COLOR)  # terminate color
         elif point[0] >= 0 and point[0] < WIDTH and point[1] >= 0 and point[1] < HEIGHT:
-            
+
             pixel_color = surface.get_at(point)
             points_colors.append(pixel_color)
         else:
             points_colors.append(TERMINATE_COLOR)  # terminate color
-          
+
     return points_colors
+
 
 def calculate_movement_cost(color_list):
     movement_costs = []
     total_cost = 0
     for i, color in enumerate(color_list):
-        
+
         if color == FORREST_GREEN:
             total_cost += 2
         elif color == ROAD_GRAY:
             total_cost += 0.5
         elif color == RIVER_BLUE:
-            total_cost += 1000000 # to prevent the unit from going over the river 
+            total_cost += 1000000  # to prevent the unit from going over the river
         elif color == BRIDGE_COLOR:
             total_cost += 1
         elif color == TOWN_RED or color == HOUSE_PURPLE:
@@ -223,9 +226,9 @@ def calculate_movement_cost(color_list):
             return movement_costs
         else:
             total_cost += 1  # Default movement cost
-        
+
         movement_costs.append((total_cost, i, color))
-    
+
     return movement_costs
 
 # def update_sorted_units(   ) :
@@ -234,7 +237,7 @@ def calculate_movement_cost(color_list):
 #         for unit in living_units.array:
 #             unit_type = unit.__class__.__name__
 #             sorted_living_units.setdefault(unit_type, []).append(unit)
- 
+
 
 def is_inside_rectangle(x, y, left, top, width, height):
     if left <= x <= left + width and top <= y <= top + height:
@@ -242,25 +245,27 @@ def is_inside_rectangle(x, y, left, top, width, height):
     else:
         return False
 
+
 def update_players_unit():
     for player in game_state.players:
         for unit in player.units:
             if unit not in game_state.living_units.array:
-                player.remove_self_unit(  unit)
+                player.remove_self_unit(unit)
+
 
 def new_point_interferes_with_unit(self,  point_x, point_y, living_units=game_state.living_units.array):
-        # Create a new rectangle for the unit's position
+    # Create a new rectangle for the unit's position
 
-        new_rect = pygame.Rect(point_x - self.size // 2,
-                               point_y - self.size // 2, self.size, self.size)
+    new_rect = pygame.Rect(point_x - self.size // 2,
+                           point_y - self.size // 2, self.size, self.size)
 
-        for unit in living_units:
-            if unit is self:
-                continue
-            res = unit.rect.colliderect(new_rect)
-            if res:
-                return True
-        return False
+    for unit in living_units:
+        if unit is self:
+            continue
+        res = unit.rect.colliderect(new_rect)
+        if res:
+            return True
+    return False
 
 
 def reset_game_state():
@@ -271,19 +276,19 @@ def reset_game_state():
     game_state.cur_player = 0
     game_state.game_won = False
     if game_state.living_units:
-     del game_state.living_units
+        del game_state.living_units
     if game_state.button_bar:
-     del game_state.button_bar
-     game_state.button_bar = None
-    game_state.living_units = SortedDict([])# pygame.sprite.Group()
+        del game_state.button_bar
+        game_state.button_bar = None
+    game_state.living_units = SortedDict([])  # pygame.sprite.Group()
     # game_state.state = "start_screen"
     game_state.selected_for_movement_unit = None
     game_state.selected_attacking_unit = None
     game_state.unit_placement_mode = False
-    
+
     game_state.hovered_unit = None
-    game_state.hovered_button = None    
-    game_state.battle_ground = None      
+    game_state.hovered_button = None
+    game_state.battle_ground = None
     game_state.game = None
     game_state.num_attacks = 0
     game_state.animations = []
@@ -293,23 +298,25 @@ def reset_game_state():
     game_state.enemies_killed = 0
     game_state.money_spent = 0
     game_state.shots_fired = 0
- 
+
+
 def abort_placement_mode(player, bought_unit):
     print("INDEX OF ABORTED UNIT",
-            game_state.living_units.array.index(bought_unit))         
+          game_state.living_units.array.index(bought_unit))
     game_state.unit_placement_mode = False
     player.supplies += bought_unit.cost
     bought_unit.__del__()
     player.preview_unit = None
 
-def get_hovered_element( ):
+
+def get_hovered_element():
     cursor_x, cursor_y = pygame.mouse.get_pos()
     global hovered_slider
     cursor_hovers_over_unit = False
     cursor_hovers_over_button = False
     cursor_hovers_over_slider = False
     state = game_state.state
-   
+
     for unit in game_state.living_units.array:
         if unit.rect.collidepoint((cursor_x, cursor_y)):
             game_state.hovered_unit = unit
@@ -321,11 +328,11 @@ def get_hovered_element( ):
             cursor_hovers_over_button = True
         else:
             button.hovered = False
-      
+
     for slider in settings_sliders:
-        if slider.is_hovered((cursor_x,cursor_y)):
+        if slider.is_hovered((cursor_x, cursor_y)):
             hovered_slider = slider
-             
+
             cursor_hovers_over_slider = True
             break
     if not cursor_hovers_over_slider:
@@ -336,10 +343,10 @@ def get_hovered_element( ):
     if not cursor_hovers_over_button:
         game_state.hovered_button = None
 
+
 def set_cursor():
     global hovered_slider
     if game_state.hovered_button != None or game_state.hovered_unit != None or hovered_slider != None:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
     else:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-    

@@ -1,18 +1,17 @@
-vytvořit bojovou jednotku      
-    
-       
+vytvořit bojovou jednotku        
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
-    **přidat kupování ve městech
-   
+    **přidat kupování ve městech  
+        p5idat capture m2sta
+            
+            zvýšit příjem hráče za okupované město
+            
     **první útok by měl vždy vyjít
     **zvýšit atttack resistance v lese
     **dát jednotkám kolem velitele větší resitenci
     
 chyby
     **resupply_supplycart?
-     
- 
 musika
     najít 5 písniček
     
@@ -23,9 +22,7 @@ prostředí
 ui
     přidat ukliádání
     přidat načítání
-    přidat loading game zprávu
-    zprovozni endgame screen
-        vypsat staty ze hry
+     
     vytvořit game_event/information window
     **přidat click animacci pro tlačítka
 
@@ -36,9 +33,10 @@ outreach
     zjisti jak vydat demo verzi
     
 jiné:
-    
+    zrychlit rychlost bullet animace
+    předělat všecchno na spritesheets
     vytvořit proper bullet flying animaci
-
+    přepsat kod abych nepoužíval těch 6 rádku pygame.load v configu
  ** == není poviné
 
  

@@ -23,9 +23,9 @@ def draw_end_screen():
         f"Money Spent: {game_state.money_spent}",
         f"Shots Fired: {game_state.shots_fired}",
         f"Red Killed: {stats.num_attacks_stats['(255, 0, 0)']}",
-        f"Blue Killed:  {stats.num_attacks_stats['(0, 0, 255)']}"
-        f"Red Bought: {stats.num_bought_stats['(255, 0, 0)']}"
-        f"Blue Bought:  {stats.num_bought_stats['(0, 0, 255)']}"
+        f"Blue Killed:  {stats.num_attacks_stats['(0, 0, 255)']}",
+        f"Red Bought: {stats.num_bought_stats['(255, 0, 0)']}",
+        f"Blue Bought:  {stats.num_bought_stats['(0, 0, 255)']}",
     ]
     y_offset = 0
     for var in game_state_vars:

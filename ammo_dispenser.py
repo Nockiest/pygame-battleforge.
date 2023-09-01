@@ -31,6 +31,6 @@ class Ammo_dispenser():
                 depleted_ammo += amount
                 
                 print(f"Dispensing {amount} ammo. Remaining ammo: {self.ammo} to {unit}vv")
-        print("depleted ammo", depleted_ammo)
+        # print("depleted ammo", depleted_ammo)
         return depleted_ammo
 

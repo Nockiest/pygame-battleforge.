@@ -23,14 +23,12 @@ __all__ = [basename(f)[:-3] for f in modules if isfile(f)
 class Game():
 
     def __init__(self):
-        # when you change the positions here you have to change get_pixel_color function
+       
         screen.fill(BLACK)
-        # loading_text = default_font.render("Loading game", True, WHITE)
-        # loading_text_rect = loading_text.get_rect(center=(WIDTH/2, HEIGHT/2))
         render_text(screen, "Loading game", WIDTH/2, HEIGHT/2, color=WHITE,  font_size=36,  )
-        # screen.blit(loading_text, loading_text_rect)
+        
         pygame.display.flip()
-
+        # when you change the positions here you have to change get_pixel_color function
         self.red_player = Player(RED, 0)
         # when you change the positions here you have to change get_pixel_color function
         self.blue_player = Player(BLUE, WIDTH - TENDER_WIDTH)
@@ -120,34 +118,63 @@ class Game():
     def next_turn(self, ):
         if len(game_state.animations) > 0:
             return
+        if game_state.unit_placement_mode:
+            return
         game_state.num_turns += 1
 
         self.deselect_unit()
-        loading_message = default_font.render(
-            "Loading Next Turn...", True, (255, 255, 255))
+        loading_message = default_font.render("Loading Next Turn...", True, (255, 255, 255))
         draw_units(screen)
+        self.get_occupied_towns()
         screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))
         pygame.display.update()
         for unit in game_state.living_units.array:
-            # unit.center = unit.start_turn_position
             unit.reset_for_next_turn()
             unit.render()
-
-            # if unit.color == game_state.players[game_state.cur_player].color:
             unit.get_units_movement_area()
-        for unit in game_state.living_units.array:
-            unit.render()
-
         for player in game_state.players:
             player.update_sorted_units()
             if player == game_state.players[game_state.cur_player]:
              player.supplies += game_state.money_per_turn
-
         for depo in game_state.battle_ground.supply_depots:
             depo.dispense_ammo()
 
         self.switch_player()
+         
+    def get_occupied_towns(self):
+        # get the array of towns rects
+        towns = game_state.battle_ground.towns
 
+        # get the units, whose centers are inside of the town rect
+        for town in towns:
+            units_inside_town = []
+            for unit in game_state.living_units.array:
+                if town.rect.collidepoint(unit.center):
+                    units_inside_town.append(unit)
+
+            if len(units_inside_town) < 1:
+                town.occupied_by = None
+                continue
+            units_are_same_color = True
+            first_unit_color = units_inside_town[0].color
+            for unit in units_inside_town:
+                if unit.color != first_unit_color:
+                    units_are_same_color = False
+
+            if units_are_same_color:
+                town.occupied_by = first_unit_color
+      
+        for player in game_state.players:
+            player.occupied_towns = []
+            for town in towns:  
+                
+                if player.color == town.occupied_by:
+                    player.occupied_towns.append(town)
+                    print("players occupied towns", player.occupied_towns)
+        # if all the units are from a same team, change the state of the town to be the players team
+
+
+         
     def deselect_unit(self, ):
         game_state.selected_for_movement_unit = None
         game_state.selected_attacking_unit = None

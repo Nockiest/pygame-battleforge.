@@ -46,11 +46,8 @@ class Town(Structure):
         self.houses = []
         self.rect = pygame.Rect(self.x, self.y, self.size[0], self.size[1])
         self.center = (self.x + self.size[0] // 2, self.y +  self.size[1] // 2)
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.size, self.size))
-        pygame.draw.rect(screen, (0, 0, 0), (self.x + 10, self.y + 10, self.size - 20, self.size - 20))
-
+        self.occupied_by = None  # value of color
+    
     def place_houses(self, rivers):
         for _ in range(self.num_houses):
             placed_house = False
@@ -74,7 +71,13 @@ class Town(Structure):
 
     def draw_self(self, screen):
         pygame.draw.rect(screen, TOWN_RED , self.rect)  # Red rectangle for town center with reduced opacity
-
+      
+        if self.occupied_by is   None:
+            
+            pygame.draw.rect(screen, BLACK, self.rect, 1)
+        else:
+             pygame.draw.rect(screen, self.occupied_by , self.rect, 2)
+        
     def draw_houses(self, screen):
         for house in self.houses:
             house.draw(screen)

@@ -25,7 +25,7 @@ class Player:
         # stats
         self.num_attacks = 0
         self.num_bought_units = 0 
-
+        self.occupied_towns = [] # unused
 
 
         self.side = 0 if self.color == RED else WIDTH - self.spawn_width
@@ -81,8 +81,11 @@ class Player:
         self.units.append(unit)
         self.update_sorted_units()
 
+
     def create_preview_unit(self, unit_params):
         self.preview_unit = self.create_unit(unit_params)
+   
+   
     def pin_and_move_unit(self, unit):
   
 
@@ -96,6 +99,8 @@ class Player:
         unit.start_turn_position = (
             unit.x + unit.size  // 2, unit.y + unit.size  // 2)
         unit.rect = pygame.Rect(unit.x , unit.y, unit.size,unit.size)
+   
+   
     def show_buy_area(self):
         buy_area_rect = pygame.Rect(*self.buy_area)
         pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)      
@@ -150,6 +155,7 @@ class Player:
 
             unit_y += 30  # Move down for the next unit type
 
+   
     def handle_input(self):
         #  # Check if there is hidden content below the visible are
         keys = pygame.key.get_pressed()
@@ -164,16 +170,13 @@ class Player:
             # Ensure scroll position doesn't exceed max
             self.scroll_position = min(self.scroll_position, 0)
 
+
     def get_boost(self):
         # Add logic to calculate and apply boost to the player's units
         # (e.g., increase attack, defense, or other attributes)
         pass
 
-  
-    def announce_defeat(self):
-        print("Player ", self.color, " has been defeated")
-
-  
+     
     def remove_self_unit(self,  unit):
         # Find the unit in the player's units list and remove it
         if unit in self.units:
@@ -214,3 +217,7 @@ class Player:
             if abs(unit.x - x) < unit.size and abs(unit.y - y) < unit.size:
                 return True
         return False
+
+
+# def announce_defeat(self):
+#         print("Player ", self.color, " has been defeated")
