@@ -50,16 +50,17 @@ class Slider:
         new_value = max(self.min_value, min(new_value, self.max_value))
         if new_value != self.value:
             # update the value of the connected variable using the update function
-            # self.update_function(new_value)
+            # update_game_state(self.attribute,new_value)
             # update the value of the slider
             self.value = new_value
+
     def is_hovered(self, pos):
         return self.slider_rect.collidepoint(pos) and game_state.state == "settings_screen"
      
-
-    def alter_original_value(self   ):
+    def alter_original_value(self):
         """Alter the original value of the connected variable."""
-        # update the value of the connected variable using the update function
+        
+         # update the value of the connected variable using the update function
+        #  if callable(self.update_function):
         self.update_function(self.value)
-        # update the value of the slider
         

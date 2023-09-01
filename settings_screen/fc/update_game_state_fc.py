@@ -1,6 +1,10 @@
 
 import game_state
 # define update functions for each connected variable in your game state
+def update_game_state(attribute, new_value):
+    setattr(game_state, attribute, new_value)
+
+
 def update_num_towns(new_value):
     game_state.num_towns = new_value
      
