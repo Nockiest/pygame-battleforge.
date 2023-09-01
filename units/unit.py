@@ -48,6 +48,48 @@ class Unit(pygame.sprite.Sprite):
         self.lines_to_enemies_in_range = []
 
         game_state.living_units.append(self)
+    def to_dict(self):
+        return {
+            'hp': self.hp,
+            'base_hp': self.base_hp,
+            'attack_range': self.attack_range,
+            'attack_range_modifiers': self.attack_range_modifiers,
+            'remain_actions': self.remain_actions,
+            'base_actions': self.base_actions,
+            'base_movement': self.base_movement,
+            'attack_resistance': self.attack_resistance,
+            'enemies_in_range': [enemy.to_dict() for enemy in self.enemies_in_range],
+            'x': self.x,
+            'y': self.y,
+            'size': self.size,
+            'center': self.center,
+            'start_turn_position': self.start_turn_position,
+            'color': self.color,
+            'ammo': self.ammo,
+            'cost': self.cost
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        unit = cls.__new__(cls)
+        unit.hp = data['hp']
+        unit.base_hp = data['base_hp']
+        unit.attack_range = data['attack_range']
+        unit.attack_range_modifiers = data['attack_range_modifiers']
+        unit.remain_actions = data['remain_actions']
+        unit.base_actions = data['base_actions']
+        unit.base_movement = data['base_movement']
+        unit.attack_resistance = data['attack_resistance']
+        unit.enemies_in_range = [Unit.from_dict(enemy_data) for enemy_data in data['enemies_in_range']]
+        unit.x = data['x']
+        unit.y = data['y']
+        unit.size = data['size']
+        unit.center = data['center']
+        unit.start_turn_position = data['start_turn_position']
+        unit.color = data['color']
+        unit.ammo = data['ammo']
+        unit.cost = data['cost']
+        return unit
 
     def update(self):
         # Add any necessary update logic here

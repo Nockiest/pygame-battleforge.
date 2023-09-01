@@ -6,9 +6,9 @@ from utils.image_utils import render_image
 from utils.utils import *
 from units.support.observer import Observer
 import end_screen.stats as stats
+from units.unit import Unit
 # import game_state
-SCROLL_SPEED = 5
-
+ 
 
 class Player:
     def __init__(self, color, tender_x):
@@ -34,7 +34,34 @@ class Player:
     
     def __repr_(self):
         return f'Player{self.color}, has {self.units} sorted {self.sorted_by_class_units} and a buy area{self.buy_area}'
-    
+    def to_dict(self):
+        return {
+            'supplies': self.supplies,
+            # 'units': [unit.to_dict() for unit in self.units],
+            'color': self.color,
+            'tender_x': self.tender_x,
+            'scroll_position': self.scroll_position,
+            # 'preview_unit': self.preview_unit.to_dict() if self.preview_unit else None,
+            'spawn_width': self.spawn_width,
+            'num_attacks': self.num_attacks,
+            'num_bought_units': self.num_bought_units,
+            # 'occupied_towns': self.occupied_towns
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        player = cls.__new__(cls)
+        player.supplies = data['supplies']
+        # player.units = [Unit.from_dict(unit_data) for unit_data in data['units']]
+        player.color = data['color']
+        player.tender_x = data['tender_x']
+        player.scroll_position = data['scroll_position']
+        # player.preview_unit = Unit.from_dict(data['preview_unit']) if data['preview_unit'] else None
+        player.spawn_width = data['spawn_width']
+        player.num_attacks = data['num_attacks']
+        player.num_bought_units = data['num_bought_units']
+        player.occupied_towns = data['occupied_towns']
+        return player
 
     def __del__(self):
         stats.num_bought_stats[str(self.color)] = self.num_bought_units

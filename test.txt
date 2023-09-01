@@ -1,0 +1,1 @@
+{"num_Medics": 0, "num_Observers": 2, "num_Supply_carts": 4, "num_Cannons": 0, "num_Musketeers": 0, "num_Pikemen": 0, "num_Shields": 0, "num_Knights": 0, "num_Commanders": 1}

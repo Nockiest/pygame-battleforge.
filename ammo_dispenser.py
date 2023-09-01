@@ -11,8 +11,7 @@ class Ammo_dispenser():
         pass
     
     def dispense_ammo(self, amount ):
-        if game_state.players[game_state.cur_player].color != self.color:
-            return 0
+         
         depleted_ammo = 0
         for unit in game_state.living_units.array:
             if self.ammo <= 0:

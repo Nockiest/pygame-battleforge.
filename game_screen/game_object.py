@@ -81,16 +81,38 @@ class Game():
 
         for unit in game_state.living_units.array:
             unit.get_units_movement_area()
+    def to_dict(self):
+        return {
+            'red_player': self.red_player.to_dict(),
+            'blue_player': self.blue_player.to_dict(),
+            'num_turns': game_state.num_turns,
+            'enemies_killed': game_state.enemies_killed,
+            'money_spent': game_state.money_spent,
+            'shots_fired': game_state.shots_fired
+        }
 
+    @classmethod
+    def from_dict(cls, data):
+        game = cls.__new__(cls)
+        game.red_player = Player.from_dict(data['red_player'])
+        game.blue_player = Player.from_dict(data['blue_player'])
+        game_state.num_turns = data['num_turns']
+        game_state.enemies_killed = data['enemies_killed']
+        game_state.money_spent = data['money_spent']
+        game_state.shots_fired = data['shots_fired']
+        return game
+    
     def go_to_end_screen(self):
         game_state.state = "end_screen"
         self.red_player.__del__()
         self.blue_player.__del__()
         self.__del__()
 
+  
     def __del__(self):
         reset_game_state()
 
+  
     def get_pixel_values(self):
         for x in range(WIDTH):
             for y in range(HEIGHT):
@@ -102,6 +124,7 @@ class Game():
                 game_state.movement_costs[x][y] = cost
                 game_state.pixel_colors[x][y] = color
 
+  
     def enter_buy_mode(self, unit_type):
         player = game_state.players[game_state.cur_player]
         if unit_type.cost > player.supplies:
@@ -112,17 +135,18 @@ class Game():
         print("unit to be placed", player.preview_unit)
         print(f"{player.color} is going to buy {player.preview_unit}")
 
+
     def switch_player(self, ):
         game_state.cur_player = (game_state.cur_player +
                                  1) % len(game_state.players)
 
+   
     def next_turn(self, ):
         if len(game_state.animations) > 0:
             return
         if game_state.unit_placement_mode:
             return
         game_state.num_turns += 1
-
         self.deselect_unit()
         loading_message = default_font.render(
             "Loading Next Turn...", True, (255, 255, 255))
@@ -143,6 +167,7 @@ class Game():
 
         self.switch_player()
 
+   
     def get_occupied_towns(self):
         def get_units_inside_town():
             units_inside_town = []
@@ -187,6 +212,7 @@ class Game():
         game_state.selected_for_movement_unit = None
         game_state.selected_attacking_unit = None
 
+
     def select_unit(self, clicked_pos):
 
         if game_state.selected_for_movement_unit and game_state.selected_for_movement_unit.rect.collidepoint(clicked_pos):
@@ -218,6 +244,7 @@ class Game():
             return
         # print("7")
 
+
     def activate_attack_mode(self, click_pos):
         if not game_state.hovered_unit:
             return
@@ -230,6 +257,7 @@ class Game():
         print(game_state.hovered_unit, "unit to b eactivated")
         game_state.selected_attacking_unit.get_attackable_units()
         print("attack mode activated")
+
 
     def process_attack(self, attacker, attacked_pos):
         attack_result = attacker.try_attack(
@@ -244,6 +272,7 @@ class Game():
                 "player did",  game_state.players[game_state.cur_player].num_attacks, "attacks")
         elif attack_result == "Attack not possible":
             self.deselect_unit()
+
 
     def buy_unit(self, click_pos):
         def check_unit_overlap(unit, player, bought_unit):

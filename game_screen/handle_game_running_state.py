@@ -4,6 +4,44 @@ from config import *
 from utils.render_utils import *
 from utils.utils import *
 from utils.text_utils import *
+import json
+def save_game_state(game_state, filename):
+    data = {
+        'animations': game_state.animations,
+        # 'all_buttons': game_state.all_buttons,
+        'players': game_state.players,
+        'cur_player': game_state.cur_player,
+        'living_units': game_state.living_units,
+        'state': game_state.state,
+        'selected_for_movement_unit': game_state.selected_for_movement_unit,
+        'selected_attacking_unit': game_state.selected_attacking_unit,
+        'unit_placement_mode': game_state.unit_placement_mode,
+        'battle_ground': game_state.battle_ground,
+        # 'button_bar': game_state.button_bar,
+        # 'next_turn_button': game_state.next_turn_button,
+        # 'end_screen_button': game_state.end_screen_button,
+        # 'start_game_button': game_state.start_game_button,
+        # 'settings_button': game_state.settings_button,
+        'game': game_state.game,
+        'num_turns': game_state.num_turns,
+        'num_attacks': game_state.num_attacks,
+        'killed_units': game_state.killed_units,
+        'enemies_killed': game_state.enemies_killed,
+        'money_spent': game_state.money_spent,
+        'shots_fired': game_state.shots_fired,
+        'movement_costs': game_state.movement_costs,
+        'pixel_colors': game_state.pixel_colors,
+        'num_towns': game_state.num_towns,
+        'num_rivers': game_state.num_rivers,
+        'num_forests': game_state.num_forests,
+        'blue_player': game_state.blue_player,
+        'red_player': game_state.red_player,
+        'starting_money': game_state.starting_money,
+        'money_per_turn': game_state.money_per_turn
+    }
+    with open(filename, 'w') as f:
+        json.dump(data, f)
+
 def handle_game_running_state(game):
    
     if game == None:
@@ -13,9 +51,10 @@ def handle_game_running_state(game):
     # get_hovered_element(cursor_x, cursor_y)
 
     for event in pygame.event.get():
-
+        
         if event.type == pygame.QUIT:
             print(event)
+            save_game_state(game_state, "game_state.json")
             game_state.lets_continue = False
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             handle_left_mouse_clk(event.pos, game)
@@ -44,9 +83,7 @@ def handle_game_running_state(game):
 
     # RENDER ELEMENTS ON THE BACKGROUND SCREEN
     draw_ui(background_screen,)
-
-    clock.tick(fps)
-
+ 
 def handle_left_mouse_clk(click_pos, game):
     # Check if any button in the button bar is clicked
     if game_state.hovered_button and game_state.hovered_button.hovered:

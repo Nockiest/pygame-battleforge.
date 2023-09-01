@@ -21,11 +21,13 @@ class SupplyDepo(Structure, Ammo_dispenser):
         self.center = (x, y)
         self.dot_radius = 20
         self.ammo_count = 100
-        
+        self.color = game_state.players[game_state.cur_player].color
+        self.ammo = 10000000000
         self.image = pygame.image.load("img/block-house.png")
         self.image = pygame.transform.scale(self.image, (self.dot_radius*2, self.dot_radius*2))
         self.rect = pygame.Rect(x-self.dot_radius, y-self.dot_radius, self.dot_radius*2, self.dot_radius*2)
     def dispense_ammo(self):
+        print("CALLED",  self.center )
         depleted_ammo = super().dispense_ammo(1   )
      
 

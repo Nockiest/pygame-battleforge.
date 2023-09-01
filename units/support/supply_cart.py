@@ -18,7 +18,8 @@ class SupplyCart(Support, Ammo_dispenser):
    
     def reset_for_next_turn(self,  ):
         super().reset_for_next_turn( )
-        
+        if game_state.players[game_state.cur_player].color != self.color:
+            return 0
         depleted_ammo = super().dispense_ammo(1)
         print(depleted_ammo)
         self.ammo -= depleted_ammo

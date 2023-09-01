@@ -20,7 +20,26 @@ class Button:
         self.game_state_screen = game_state_screen
     def __repr__(self):
          return f'{type(self).__name__}, rect: {self.rect},description: {self.description}, callback:{self.callback} '
-   
+    def __todict__(self):
+        return {
+            'description': self.description,
+            'x': self.x,
+            'y': self.y,
+            'width': self.width,
+            'height': self.height,
+            'callback': self.callback,
+            'game_state_screen': self.game_state_screen
+        }
+    def from_dict(cls, data):
+        return cls(
+            description=data['description'],
+            x=data['x'],
+            y=data['y'],
+            width=data['width'],
+            height=data['height'],
+            callback=data['callback'],
+            game_state_screen=data['game_state_screen']
+        )
     def draw(self, screen):
         # Draw the outline of the button
          

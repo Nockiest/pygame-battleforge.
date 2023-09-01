@@ -77,3 +77,24 @@ class BuyButton(Button):
 
     def set_hovered(self, hovered):
         self.hovered = hovered
+
+    def __todict__(self):
+        return {
+            'icon': self.icon,
+            'unit_type': self.unit_type,
+            'description': self.description,
+            'x': self.x,
+            'enter_buy_mode': self.enter_buy_mode,
+            'width': self.width,
+            'height': self.height
+        }
+    def from_dict(cls, data):
+        return cls(
+            icon=data['icon'],
+            unit_type=data['unit_type'],
+            description=data['description'],
+            x=data['x'],
+            enter_buy_mode=data['enter_buy_mode'],
+            width=data['width'],
+            height=data['height']
+        )

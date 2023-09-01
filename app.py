@@ -19,6 +19,8 @@ from game_screen.game_object import Game
 from game_screen.handle_game_running_state import handle_game_running_state
 from pygame.locals import *
 from pygame import mixer
+import json
+
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [basename(f)[:-3] for f in modules if isfile(f)
            and not f.endswith('__init__.py')]
@@ -26,7 +28,7 @@ __all__ = [basename(f)[:-3] for f in modules if isfile(f)
 # mixer.init()
 # mixer.music.load('_media/background-life.wav')
 # mixer.music.play()
-
+ 
 pygame.init()
 pygame.display.set_caption('BattleForge')
 
@@ -34,7 +36,12 @@ pygame.display.set_caption('BattleForge')
 while game_state.lets_continue:
     get_hovered_element( )
     set_cursor()
-   
+    # for event in pygame.event.get():
+
+    #     if event.type == pygame.QUIT:
+    #         print(event)
+    #         save_game_state(game_state, "game_state.json")
+            # game_state.lets_continue = False
     if game_state.state == "game_is_running":
 
         handle_game_running_state(game_state.game)
@@ -50,6 +57,7 @@ while game_state.lets_continue:
         draw_settings_screen()
     else:
         print("this game screen doesnt exist", game_state.state)
+    clock.tick(fps)
 
     # Add more game states and handling logic here
 pygame.quit()

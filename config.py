@@ -19,6 +19,7 @@ square_size = 10  # Adjust the size range as needed
 TENDER_WIDTH = 80
 TENDER_HEIGHT = BUTTON_BAR_HEIGHT * 2
 BUTTON_BAR_Y = HEIGHT - 100
+SCROLL_SPEED = 5
 
 GREEN = (20, 200, 50)
 WHITE = (255, 255, 255)

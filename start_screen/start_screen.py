@@ -50,4 +50,4 @@ def handle_start_screen():
     # Render everything on the display
     pygame.display.update()
 
-    clock.tick(fps)
+   

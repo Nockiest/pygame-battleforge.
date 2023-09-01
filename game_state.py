@@ -52,7 +52,7 @@ num_forests = 0
 blue_player = {
     'num_Medics': 0,
     'num_Observers': 2,
-    'num_Supply_carts': 4,
+    'num_Supply_carts': 0,
     'num_Cannons': 0,
     'num_Musketeers': 0,
     'num_Pikemen': 1,
@@ -63,7 +63,7 @@ blue_player = {
 red_player = {
     'num_Medics': 0,
     'num_Observers': 2,
-    'num_Supply_carts': 4,
+    'num_Supply_carts': 0,
     'num_Cannons': 0,
     'num_Musketeers': 0,
     'num_Pikemen': 0,

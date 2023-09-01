@@ -51,10 +51,26 @@ class ButtonBar:
 
         self.background_color = (192, 192, 192)  # Gray color
 
-        def add_button(self, button):
-            self.button_instances(button)
-            self.update_button_positions()
-
+    def add_button(self, button):
+        self.button_instances(button)
+        self.update_button_positions()
+    def __todict__(self):
+        return {
+            'button_instances': [button.__todict__() for button in self.button_instances],
+            'button_width': self.button_width,
+            'width': self.width,
+            'button_spacing': self.button_spacing,
+            'background_color': self.background_color
+        }
+    def from_dict(cls, data):
+        button_instances = [Button.from_dict(button_data) for button_data in data['button_instances']]
+        return cls(
+            button_instances=button_instances,
+            button_width=data['button_width'],
+            width=data['width'],
+            button_spacing=data['button_spacing'],
+            background_color=data['background_color']
+        )
     def update_button_positions(self):
         total_button_width = sum(self.button_width for button in self.button_instances) + (
             len(self.button_instances) - 1) * self.button_spacing
