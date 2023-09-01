@@ -309,7 +309,7 @@ def get_hovered_element( ):
     cursor_hovers_over_button = False
     cursor_hovers_over_slider = False
     state = game_state.state
-    print("called")
+   
     for unit in game_state.living_units.array:
         if unit.rect.collidepoint((cursor_x, cursor_y)):
             game_state.hovered_unit = unit
@@ -325,7 +325,7 @@ def get_hovered_element( ):
     for slider in settings_sliders:
         if slider.is_hovered((cursor_x,cursor_y)):
             hovered_slider = slider
-            print("HOVERED SLIDER IS", hovered_slider)
+             
             cursor_hovers_over_slider = True
             break
     if not cursor_hovers_over_slider:

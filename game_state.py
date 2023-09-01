@@ -50,7 +50,30 @@ num_towns = 5
 num_rivers = 3
 num_forests = 0
  
+blue_player = {
+    'num_Medics': 0,
+    'num_Observers': 2,
+    'num_Supply_carts': 4,
+    'num_Cannons': 0,
+    'num_Musketeers': 0,
+    'num_Pikemen': 1,
+    'num_Shields': 0,
+    'num_Knights': 0,
+    'num_Commanders': 1
+}
 
+red_player = {
+    'num_Medics': 0,
+    'num_Observers': 2,
+    'num_Supply_carts': 4,
+    'num_Cannons': 0,
+    'num_Musketeers': 0,
+    'num_Pikemen': 0,
+    'num_Shields': 0,
+    'num_Knights': 0,
+    'num_Commanders': 1
+}
+ 
 blue_num_Medics = 0
 blue_num_Observers = 2
 blue_num_Supply_carts = 4

@@ -62,28 +62,8 @@ class Game():
 
         # Create the units for each player
         player_units = {
-            self.blue_player: {
-                'num_Medics': game_state.blue_num_Medics,
-                'num_Observers': game_state.blue_num_Observers,
-                'num_Supply_carts': game_state.blue_num_Supply_carts,
-                'num_Cannons': game_state.blue_num_Cannons,
-                'num_Musketeers': game_state.blue_num_Musketeers,
-                'num_Pikemen': game_state.blue_num_Pikemen,
-                'num_Shields':game_state. blue_num_Shields,
-                'num_Knights': game_state.blue_num_Knights,
-                'num_Commanders': game_state.blue_num_Commanders
-            },
-            self.red_player: {
-                'num_Medics':game_state. red_num_Medics,
-                'num_Observers': game_state.red_num_Observers,
-                'num_Supply_carts': game_state.red_num_Supply_carts,
-                'num_Cannons': game_state.red_num_Cannons,
-                'num_Musketeers': game_state.red_num_Musketeers,
-                'num_Pikemen': game_state.red_num_Pikemen,
-                'num_Shields':game_state. red_num_Shields,
-                'num_Knights': game_state.red_num_Knights,
-                'num_Commanders': game_state.red_num_Commanders
-            }
+            self.blue_player: game_state.blue_player,
+            self.red_player: game_state.red_player
         }
 
         # Create the units for each player

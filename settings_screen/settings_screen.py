@@ -11,7 +11,7 @@ def draw_settings_screen():
     """Draw the settings screen."""
     # fill the screen with white color
     screen.fill(WHITE)
-    change_cursor()
+    # change_cursor()
     # draw the back button
      
     settings_btn.back_button.draw(screen)  
@@ -31,64 +31,9 @@ def draw_settings_screen():
     pygame.display.update()
 
  
-def change_cursor():
-    global hovered_slider
-    global selected_slider
-    pos = pygame.mouse.get_pos()
-     # change the cursor to a pointer when selected_slider is not None
-    # if selected_slider is not None or hovered_slider is not None:
-    #     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-    # else:
-    #     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-    
-    # for button in game_state.all_buttons:
-    #     button.hovered = False
-    #     if button.rect.collidepoint(pos):
-    #         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-    #         button.hovered = True
-    #         break
-    someething_is_hovered = False
-    for slider in settings_sliders:
-        if slider.is_hovered(pos):
-            hovered_slider = slider
-            print("HOVERED SLIDER IS", hovered_slider)
-            someething_is_hovered = True
-            break
-    if not someething_is_hovered:
-        hovered_slider = None
  
 
 # create a new SettingsBar object for structures
- 
-# structures_bar = SettingsBar("Structures", 50, 100)
-# structures_bar.add_slider("Towns", 0, 10, game_state.num_towns, update_num_towns)
-# structures_bar.add_slider("Rivers", 0, 5, game_state.num_rivers, update_num_rivers)
-# structures_bar.add_slider("Forests", 0, 10, game_state.num_forests, update_num_forests)
- 
-# money_bar = SettingsBar("Money", 50, 400)
-# money_bar.add_slider("Start Money", 0, 1000, game_state.starting_money, update_start_money)
-# money_bar.add_slider("Turn Income", 0, 100, game_state.money_per_turn, update_income)
-# # create a new SettingsBar object for units
-# blue_player_bar = SettingsBar("Blue Player", 700, 100) 
-# blue_player_bar.add_slider("Medics", 0, 10, game_state. blue_num_Medics  , lambda new_value:  update_blue_num_Medics(new_value))
-# blue_player_bar.add_slider("Observers", 0, 10, game_state. blue_num_Observers , lambda new_value:  update_blue_num_Observers(new_value))
-# blue_player_bar.add_slider("Supply Carts", 0, 10,game_state. blue_num_Supply_carts , lambda new_value:  updateblue_num_Supply_carts(new_value))
-# blue_player_bar.add_slider("Cannons", 0, 10, game_state. blue_num_Cannons  , lambda new_value: update_blue_num_Cannons(new_value))
-# blue_player_bar.add_slider("Musketeers", 0, 10, game_state. blue_num_Musketeers , lambda new_value:  update_blue_num_Musketeers(new_value))
-# blue_player_bar.add_slider("Pikemen", 0, 10, game_state. blue_num_Pikemen  , lambda new_value:  update_blue_num_Pikemen(new_value))
-# blue_player_bar.add_slider("Shields", 0, 10, game_state. blue_num_Shields  , lambda new_value:  update_blue_num_Shields(new_value))
-# blue_player_bar.add_slider("Knights", 0, 10, game_state. blue_num_Knights  , lambda new_value:  update_blue_num_Knights(new_value))
-
-# red_player_bar = SettingsBar("Red Player", 300, 100)
-# red_player_bar.add_slider("Medics", 0, 10,  game_state. red_num_Medics , lambda new_value: update_red_num_Medics(new_value)) 
-# red_player_bar.add_slider("Observers", 0, 10,  game_state. red_num_Observers , lambda new_value:  update_red_num_Observers(new_value))
-# red_player_bar.add_slider("Supply Carts", 0, 10, game_state. red_num_Supply_carts , lambda new_value:  updatered_num_Supply_carts(new_value))
-# red_player_bar.add_slider("Cannons", 0, 10,  game_state. red_num_Cannons , lambda new_value: update_red_num_Cannons(new_value))
-# red_player_bar.add_slider("Musketeers", 0, 10, game_state. red_num_Musketeers , lambda new_value: update_red_num_Musketeers(new_value))
-# red_player_bar.add_slider("Pikemen", 0, 10,game_state. red_num_Pikemen  , lambda new_value:  update_red_num_Pikemen(new_value))
-# red_player_bar.add_slider("Shields", 0, 10, game_state. red_num_Shields ,  lambda new_value:  update_red_num_Shields(new_value))
-# red_player_bar.add_slider("Knights", 0, 10,game_state. red_num_Knights  , lambda new_value:  update_red_num_Knights(new_value))
- 
 structures_bar = SettingsBar("Structures", 50, 100)
 structures_bar.add_slider("Towns", 0, 10, game_state.num_towns, lambda new_value: update_game_state('num_towns', new_value))
 structures_bar.add_slider("Rivers", 0, 5, game_state.num_rivers, lambda new_value: update_game_state('num_rivers', new_value))
@@ -99,21 +44,21 @@ money_bar.add_slider("Start Money", 0, 1000, game_state.starting_money, lambda n
 money_bar.add_slider("Turn Income", 0, 100, game_state.money_per_turn, lambda new_value: update_game_state('money_per_turn', new_value))
 
 blue_player_bar = SettingsBar("Blue Player", 700, 100)
-blue_player_bar.add_slider("Medics", 0, 10, game_state.blue_num_Medics, lambda new_value: update_game_state('blue_num_Medics', new_value))
-blue_player_bar.add_slider("Observers", 0, 10, game_state.blue_num_Observers, lambda new_value: update_game_state('blue_num_Observers', new_value))
-blue_player_bar.add_slider("Supply Carts", 0, 10, game_state.blue_num_Supply_carts, lambda new_value: update_game_state('blue_num_Supply_carts', new_value))
-blue_player_bar.add_slider("Cannons", 0, 10, game_state.blue_num_Cannons, lambda new_value: update_game_state('blue_num_Cannons', new_value))
-blue_player_bar.add_slider("Musketeers", 0, 10, game_state.blue_num_Musketeers, lambda new_value: update_game_state('blue_num_Musketeers', new_value))
-blue_player_bar.add_slider("Pikemen", 0, 10, game_state.blue_num_Pikemen, lambda new_value: update_game_state('blue_num_Pikemen', new_value))
-blue_player_bar.add_slider("Shields", 0, 10, game_state.blue_num_Shields, lambda new_value: update_game_state('blue_num_Shields', new_value))
-blue_player_bar.add_slider("Knights", 0, 10, game_state.blue_num_Knights, lambda new_value: update_game_state('blue_num_Knights', new_value))
+blue_player_bar.add_slider("Medics", 0, 10, game_state.blue_player['num_Medics'], lambda new_value: update_game_state('blue_player.num_Medics', new_value))
+blue_player_bar.add_slider("Observers", 0, 10, game_state.blue_player['num_Observers'], lambda new_value: update_game_state('blue_player.num_Observers', new_value))
+blue_player_bar.add_slider("Supply Carts", 0, 10, game_state.blue_player['num_Supply_carts'], lambda new_value: update_game_state('blue_player.num_Supply_carts', new_value))
+blue_player_bar.add_slider("Cannons", 0, 10, game_state.blue_player['num_Cannons'], lambda new_value: update_game_state('blue_player.num_Cannons', new_value))
+blue_player_bar.add_slider("Musketeers", 0, 10, game_state.blue_player['num_Musketeers'], lambda new_value: update_game_state('blue_player.num_Musketeers', new_value))
+blue_player_bar.add_slider("Pikemen", 0, 10, game_state.blue_player['num_Pikemen'], lambda new_value: update_game_state('blue_player.num_Pikemen', new_value))
+blue_player_bar.add_slider("Shields", 0, 10, game_state.blue_player['num_Shields'], lambda new_value: update_game_state('blue_player.num_Shields', new_value))
+blue_player_bar.add_slider("Knights", 0, 10, game_state.blue_player['num_Knights'], lambda new_value: update_game_state('blue_player.num_Knights', new_value))
 
 red_player_bar = SettingsBar("Red Player", 300, 100)
-red_player_bar.add_slider("Medics", 0, 10, game_state.red_num_Medics , lambda new_value: update_game_state('red_num_Medics', new_value))
-red_player_bar.add_slider("Observers", 0, 10 , game_state.red_num_Observers , lambda new_value: update_game_state('red_num_Observers', new_value))
-red_player_bar.add_slider("Supply Carts", 0 ,10 ,game_state.red_num_Supply_carts , lambda new_value: update_game_state('red_num_Supply_carts',new_value))
-red_player_bar.add_slider("Cannons",0 ,10 ,game_state.red_num_Cannons ,lambda new_value:update_game_state('red_num_Cannons' ,new_value))
-red_player_bar.add_slider("Musketeers" ,0 ,10 ,game_state.red_num_Musketeers ,lambda new_value:update_game_state('red_num_Musketeers' ,new_value))
-red_player_bar.add_slider("Pikemen" ,0 ,10 ,game_state.red_num_Pikemen ,lambda new_value:update_game_state('red_num_Pikemen' ,new_value))
-red_player_bar.add_slider("Shields" ,0 ,10 ,game_state.red_num_Shields ,lambda new_value:update_game_state('red_num_Shields' ,new_value))
-red_player_bar.add_slider("Knights" ,0 ,10 ,game_state.red_num_Knights ,lambda new_value:update_game_state('red_num_Knights' ,new_value))
+red_player_bar.add_slider("Medics", 0, 10, game_state.red_player['num_Medics'] , lambda new_value: update_game_state('red_player.num_Medics', new_value))
+red_player_bar.add_slider("Observers", 0, 10 , game_state.red_player['num_Observers'] , lambda new_value: update_game_state('red_player.num_Observers', new_value))
+red_player_bar.add_slider("Supply Carts", 0 ,10 ,game_state.red_player['num_Supply_carts'] , lambda new_value: update_game_state('red_player.num_Supply_carts',new_value))
+red_player_bar.add_slider("Cannons",0 ,10 ,game_state.red_player['num_Cannons'] ,lambda new_value:update_game_state('red_player.num_Cannons' ,new_value))
+red_player_bar.add_slider("Musketeers" ,0 ,10 ,game_state.red_player['num_Musketeers'] ,lambda new_value:update_game_state('red_player.num_Musketeers' ,new_value))
+red_player_bar.add_slider("Pikemen" ,0 ,10 ,game_state.red_player['num_Pikemen'] ,lambda new_value:update_game_state('red_player.num_Pikemen' ,new_value))
+red_player_bar.add_slider("Shields" ,0 ,10 ,game_state.red_player['num_Shields'] ,lambda new_value:update_game_state('red_player.num_Shields' ,new_value))
+red_player_bar.add_slider("Knights" ,0 ,10 ,game_state.red_player['num_Knights'] ,lambda new_value:update_game_state('red_player.num_Knights' ,new_value))
