@@ -1,16 +1,14 @@
 from config import *
 import game_state
 from buttons.button import Button
-from .settings_bar import SettingsBar, Slider 
+from .settings_bar import SettingsBar 
+from .slider import Slider
 from .settings_globs import *
 from .fc.update_game_state_fc import *
 from .fc.handle_screen_click import handle_screen_click
 import settings_screen.settings_buttons as settings_btn
 def draw_settings_screen():  
     """Draw the settings screen."""
-    create_buttons()
-    # settings_btn.back_button.visible = True
-    # settings_btn.apply_button.visible = True
     # fill the screen with white color
     screen.fill(WHITE)
     change_cursor()
@@ -23,7 +21,7 @@ def draw_settings_screen():
     blue_player_bar.draw(screen)
     money_bar.draw(screen)
      # draw the structures settings bar
-    # print("units",game_state.red_player_units)
+   
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             print(event)
@@ -33,26 +31,31 @@ def draw_settings_screen():
     pygame.display.update()
 
  
-def create_buttons():
-    settings_btn.back_button.visible = True
-    settings_btn.apply_button.visible = True
-   
-
 def change_cursor():
+    global hovered_slider
     global selected_slider
     pos = pygame.mouse.get_pos()
      # change the cursor to a pointer when selected_slider is not None
-    if selected_slider is not None:
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-    else:
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+    # if selected_slider is not None or hovered_slider is not None:
+    #     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+    # else:
+    #     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
     
-    for button in game_state.all_buttons:
-        button.hovered = False
-        if button.rect.collidepoint(pos):
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            button.hovered = True
+    # for button in game_state.all_buttons:
+    #     button.hovered = False
+    #     if button.rect.collidepoint(pos):
+    #         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+    #         button.hovered = True
+    #         break
+    someething_is_hovered = False
+    for slider in settings_sliders:
+        if slider.is_hovered(pos):
+            hovered_slider = slider
+            print("HOVERED SLIDER IS", hovered_slider)
+            someething_is_hovered = True
             break
+    if not someething_is_hovered:
+        hovered_slider = None
  
 
 # create a new SettingsBar object for structures

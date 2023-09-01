@@ -1,11 +1,10 @@
 vytvořit bojovou jednotku      
     
-        přidat movement soundfile
-
+       
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
     **přidat kupování ve městech
-    **změnit kursor nad jednotkou kterou mohu vybrat
+   
     **první útok by měl vždy vyjít
     **zvýšit atttack resistance v lese
     **dát jednotkám kolem velitele větší resitenci
@@ -19,30 +18,28 @@ musika
     
 prostředí   
     přidat opevnění ve městech
-    počítat zabizé jednotky
     
-vymazat hru po skončení hry
-
+ 
 ui
     přidat ukliádání
     přidat načítání
     přidat loading game zprávu
-           
+    cursor zmwnit nad sliderem
     zprovozni endgame screen
         vypsat staty ze hry
     vytvořit game_event/information window
     **přidat click animacci pro tlačítka
 
-    vylepšit settings
-     **přidat nastavení počátečních peněz
-     **přidat nastavení výše příjmu
- ** == není poviné
-
+    
  
 outreach
     
     zjisti jak vydat demo verzi
-    vydat článek
-next up:
-  
+    
+jiné:
+    získat zpátky kod t brokensliders  
     vytvořit proper bullet flying animaci
+
+ ** == není poviné
+
+ 

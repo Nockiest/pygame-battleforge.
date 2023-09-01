@@ -15,7 +15,7 @@ def set_up_game_screen():
 
 
 def open_settings():
-    game_state.state = "settings"
+    game_state.state = "settings_screen"
 
 
 def start_game():

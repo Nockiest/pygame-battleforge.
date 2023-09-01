@@ -2,6 +2,7 @@ import math
 from config import *
 import game_state
 from utils.classdict import SortedDict
+from settings_screen.settings_globs import *
 def get_two_units_center_distance(unit1, unit2):
     # Calculate the distance between the center points of the units, considering their sizes
     dx = (unit1.x + unit1.size // 2) - (unit2.x + unit2.size // 2)
@@ -300,3 +301,45 @@ def abort_placement_mode(player, bought_unit):
     player.supplies += bought_unit.cost
     bought_unit.__del__()
     player.preview_unit = None
+
+def get_hovered_element( ):
+    cursor_x, cursor_y = pygame.mouse.get_pos()
+    global hovered_slider
+    cursor_hovers_over_unit = False
+    cursor_hovers_over_button = False
+    cursor_hovers_over_slider = False
+    state = game_state.state
+    print("called")
+    for unit in game_state.living_units.array:
+        if unit.rect.collidepoint((cursor_x, cursor_y)):
+            game_state.hovered_unit = unit
+            cursor_hovers_over_unit = True
+    for button in game_state.all_buttons:
+        if button.is_hovered((cursor_x, cursor_y)):
+            game_state.hovered_button = button
+            game_state.hovered_button.hovered = True
+            cursor_hovers_over_button = True
+        else:
+            button.hovered = False
+      
+    for slider in settings_sliders:
+        if slider.is_hovered((cursor_x,cursor_y)):
+            hovered_slider = slider
+            print("HOVERED SLIDER IS", hovered_slider)
+            cursor_hovers_over_slider = True
+            break
+    if not cursor_hovers_over_slider:
+        hovered_slider = None
+
+    if not cursor_hovers_over_unit:
+        game_state.hovered_unit = None
+    if not cursor_hovers_over_button:
+        game_state.hovered_button = None
+
+def set_cursor():
+    global hovered_slider
+    if game_state.hovered_button != None or game_state.hovered_unit != None or hovered_slider != None:
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+    else:
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+    

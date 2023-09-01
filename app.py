@@ -32,7 +32,10 @@ pygame.display.set_caption('BattleForge')
 
 
 while game_state.lets_continue:
+    get_hovered_element( )
+    set_cursor()
     if game_state.state == "game_is_running":
+
         handle_game_running_state(game_state.game)
 
     elif game_state.state == "start_screen":
@@ -41,7 +44,7 @@ while game_state.lets_continue:
     elif game_state.state == "end_screen":
 
         draw_end_screen()
-    elif game_state.state == "settings":
+    elif game_state.state == "settings_screen":
 
         draw_settings_screen()
     else:
@@ -49,3 +52,5 @@ while game_state.lets_continue:
 
     # Add more game states and handling logic here
 pygame.quit()
+
+ 

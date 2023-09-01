@@ -10,7 +10,7 @@ def handle_game_running_state(game):
         return
 
     cursor_x, cursor_y = pygame.mouse.get_pos()
-    get_hovered_element(cursor_x, cursor_y)
+    # get_hovered_element(cursor_x, cursor_y)
 
     for event in pygame.event.get():
 
@@ -51,13 +51,7 @@ def handle_left_mouse_clk(click_pos, game):
     # Check if any button in the button bar is clicked
     if game_state.hovered_button and game_state.hovered_button.hovered:
         game_state.hovered_button.callback()
-        ## enter unit placement mode
-        ## new players unit is created
-        ## new unit is pinned to the playeers cursor
-        ## he moves it around 
-        ## unit gets placed on a valid position
-        ## money is subtracted
-        ## units gets unpinned
+ 
     if game_state.unit_placement_mode and game_state.players[game_state.cur_player].preview_unit != None:
         game.buy_unit(click_pos)
     else:

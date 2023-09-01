@@ -18,9 +18,7 @@ def handle_screen_click(event):
         selected_slider = None
     
     if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1:
-        for slider in settings_bars:
-            if slider != selected_slider and selected_slider is not None:
-                continue
+        for slider in settings_sliders:
             if slider.slider_rect.collidepoint(event.pos):
                 slider.handle_click(event.pos)
                 selected_slider = slider
