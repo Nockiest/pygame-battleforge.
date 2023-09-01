@@ -24,7 +24,6 @@ ui
     přidat ukliádání
     přidat načítání
     přidat loading game zprávu
-    cursor zmwnit nad sliderem
     zprovozni endgame screen
         vypsat staty ze hry
     vytvořit game_event/information window
@@ -37,7 +36,7 @@ outreach
     zjisti jak vydat demo verzi
     
 jiné:
-    získat zpátky kod t brokensliders  
+    
     vytvořit proper bullet flying animaci
 
  ** == není poviné

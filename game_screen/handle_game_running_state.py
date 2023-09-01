@@ -37,7 +37,7 @@ def handle_game_running_state(game):
     text = "game" + (" ended  " if game_state.game_won else "  is running ")
 
     render_text(screen, text,
-                WIDTH // 2, 10, color=(255, 255, 255), font=None, font_size=24)
+                WIDTH // 2, 10, color=(255, 255, 255),   font_size=24)
 
     # Render everything on the display
     pygame.display.update()

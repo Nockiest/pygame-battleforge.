@@ -24,6 +24,12 @@ class Game():
 
     def __init__(self):
         # when you change the positions here you have to change get_pixel_color function
+        screen.fill(BLACK)
+        # loading_text = default_font.render("Loading game", True, WHITE)
+        # loading_text_rect = loading_text.get_rect(center=(WIDTH/2, HEIGHT/2))
+        render_text(screen, "Loading game", WIDTH/2, HEIGHT/2, color=WHITE,  font_size=36,  )
+        # screen.blit(loading_text, loading_text_rect)
+        pygame.display.flip()
 
         self.red_player = Player(RED, 0)
         # when you change the positions here you have to change get_pixel_color function
@@ -107,7 +113,6 @@ class Game():
         print("unit to be placed",player.preview_unit)
         print(f"{player.color} is going to buy {player.preview_unit}")
       
-
     def switch_player(self, ):
         game_state.cur_player = (game_state.cur_player +
                                  1) % len(game_state.players)
