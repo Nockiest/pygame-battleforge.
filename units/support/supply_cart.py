@@ -21,5 +21,5 @@ class SupplyCart(Support, Ammo_dispenser):
         if game_state.players[game_state.cur_player].color != self.color:
             return 0
         depleted_ammo = super().dispense_ammo(1)
-        print(depleted_ammo)
+        # print(depleted_ammo)
         self.ammo -= depleted_ammo

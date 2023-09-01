@@ -47,28 +47,28 @@ for X in range(WIDTH):
 
 # settings config
 num_towns = 7
-num_rivers = 0
-num_forests = 0
+num_rivers = 2
+num_forests = 10
 blue_player = {
-    'num_Medics': 0,
+    'num_Medics': 1,
     'num_Observers': 2,
-    'num_Supply_carts': 0,
-    'num_Cannons': 0,
-    'num_Musketeers': 0,
+    'num_Supply_carts': 1,
+    'num_Cannons': 1,
+    'num_Musketeers': 1,
     'num_Pikemen': 1,
-    'num_Shields': 0,
-    'num_Knights': 0,
+    'num_Shields': 1,
+    'num_Knights': 1,
     'num_Commanders': 1
 }
 red_player = {
-    'num_Medics': 0,
+    'num_Medics': 1,
     'num_Observers': 2,
-    'num_Supply_carts': 0,
-    'num_Cannons': 0,
-    'num_Musketeers': 0,
-    'num_Pikemen': 0,
-    'num_Shields': 0,
-    'num_Knights': 0,
+    'num_Supply_carts': 1,
+    'num_Cannons': 1,
+    'num_Musketeers': 1,
+    'num_Pikemen': 1,
+    'num_Shields': 1,
+    'num_Knights': 1,
     'num_Commanders': 1
 }
 starting_money = 100

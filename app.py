@@ -36,12 +36,7 @@ pygame.display.set_caption('BattleForge')
 while game_state.lets_continue:
     get_hovered_element( )
     set_cursor()
-    # for event in pygame.event.get():
 
-    #     if event.type == pygame.QUIT:
-    #         print(event)
-    #         save_game_state(game_state, "game_state.json")
-            # game_state.lets_continue = False
     if game_state.state == "game_is_running":
 
         handle_game_running_state(game_state.game)

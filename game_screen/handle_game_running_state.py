@@ -73,10 +73,10 @@ def handle_game_running_state(game):
     draw_units(screen)
     for animation in game_state.animations:
         animation.render()
-    text = "game" + (" ended  " if game_state.game_won else "  is running ")
+    # text = "game" + (" ended  " if game_state.game_won else "  is running ")
 
-    render_text(screen, text,
-                WIDTH // 2, 10, color=(255, 255, 255),   font_size=24)
+    # render_text(screen, text,
+    #             WIDTH // 2, 10, color=(255, 255, 255),   font_size=24)
 
     # Render everything on the display
     pygame.display.update()

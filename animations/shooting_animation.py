@@ -37,6 +37,8 @@ class ShootingAnimation(Animation):
             if interferes :
                 # res = self.attacker.try_attack( self.path[self.current_pos_index],unit)
                 # if res == "UNIT ATTACKS":
+                if not unit.check_if_hit():
+                    return
                 remain_hp = unit.take_damage(self.attacker)
                 self.units_in_attack_path.remove(unit)
                

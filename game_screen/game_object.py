@@ -136,20 +136,22 @@ class Game():
         print(f"{player.color} is going to buy {player.preview_unit}")
 
 
-    def switch_player(self, ):
+    def switch_player(self ):
         game_state.cur_player = (game_state.cur_player +
                                  1) % len(game_state.players)
 
    
-    def next_turn(self, ):
+    def next_turn(self  ):
         if len(game_state.animations) > 0:
             return
         if game_state.unit_placement_mode:
             return
         game_state.num_turns += 1
         self.deselect_unit()
+        pygame.display.update()
         loading_message = default_font.render(
             "Loading Next Turn...", True, (255, 255, 255))
+        
         draw_units(screen)
         self.get_occupied_towns()
         screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))

@@ -20,7 +20,7 @@ class Unit(pygame.sprite.Sprite):
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement *2
-        self.attack_resistance = attack_resistance  -1
+        self.attack_resistances =  {"base_resistance":  attack_resistance  }  
         self.enemies_in_range = []
         self.lines_to_enemies_in_range = []
         self.x = x
@@ -46,51 +46,9 @@ class Unit(pygame.sprite.Sprite):
         self.valid_movement_positions = []
         self.valid_movement_positions_edges = []
         self.lines_to_enemies_in_range = []
-
+        self.apply_modifiers()
         game_state.living_units.append(self)
-    def to_dict(self):
-        return {
-            'hp': self.hp,
-            'base_hp': self.base_hp,
-            'attack_range': self.attack_range,
-            'attack_range_modifiers': self.attack_range_modifiers,
-            'remain_actions': self.remain_actions,
-            'base_actions': self.base_actions,
-            'base_movement': self.base_movement,
-            'attack_resistance': self.attack_resistance,
-            'enemies_in_range': [enemy.to_dict() for enemy in self.enemies_in_range],
-            'x': self.x,
-            'y': self.y,
-            'size': self.size,
-            'center': self.center,
-            'start_turn_position': self.start_turn_position,
-            'color': self.color,
-            'ammo': self.ammo,
-            'cost': self.cost
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        unit = cls.__new__(cls)
-        unit.hp = data['hp']
-        unit.base_hp = data['base_hp']
-        unit.attack_range = data['attack_range']
-        unit.attack_range_modifiers = data['attack_range_modifiers']
-        unit.remain_actions = data['remain_actions']
-        unit.base_actions = data['base_actions']
-        unit.base_movement = data['base_movement']
-        unit.attack_resistance = data['attack_resistance']
-        unit.enemies_in_range = [Unit.from_dict(enemy_data) for enemy_data in data['enemies_in_range']]
-        unit.x = data['x']
-        unit.y = data['y']
-        unit.size = data['size']
-        unit.center = data['center']
-        unit.start_turn_position = data['start_turn_position']
-        unit.color = data['color']
-        unit.ammo = data['ammo']
-        unit.cost = data['cost']
-        return unit
-
+ 
     def update(self):
         # Add any necessary update logic here
         pass
@@ -130,10 +88,23 @@ class Unit(pygame.sprite.Sprite):
         self.rect = pygame.Rect(
             self.x, self.y, self.size, self.size)
         self.center = (self.x + self.size//2, self.y + self.size//2)
+        self.apply_modifiers( )
+         
         # check if they are in range
 
         # if one is give bonus to range and break the loop
 
+    def apply_modifiers(self):
+        new_pos_color = game_state.pixel_colors[self.center[0]][self.center[1]]
+        if new_pos_color == FORREST_GREEN:
+            self.attack_resistances["IN FORREST" ] = 0.3
+        else:
+            self.attack_resistances["IN FORREST" ] = 0
+    
+        for commander in game_state.living_units.dict["Commanders"]:
+            if commander.color == self.color and commander != self:
+                commander.give_deffense_boost(self)
+        # print("NEW POS COLOR",new_pos_color)
     def get_units_movement_area(self):
         num_samples = 180
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
@@ -296,13 +267,11 @@ class Unit(pygame.sprite.Sprite):
         return "Attack not possible"
 
     def check_if_hit(self):
-        # i will augment base_hit_chance by some variables
-        # if num_attacks == 0:
-        #     print("UNIT WAS HIT, num attacks", 0)
-        #     return True  # Unit is hit
+        attack_resistance =   sum(self.attack_resistances.values())
+      
        
-        final_hit_probability = 1 - self.attack_resistance
-        print("final hit probability", final_hit_probability, )
+        final_hit_probability = 1 - attack_resistance
+        
         # Generate a random float between 0 and 1
         hit_treshold_value = random.random()
 
@@ -442,7 +411,7 @@ class Unit(pygame.sprite.Sprite):
         # Try to execute the following block of code
         try:
             # Check if the attack_range_modifiers attribute contains "in_observers_range"
-            print("attac range mod", self.attack_range_modifiers)
+            
             if "in_observer_range" in self.attack_range_modifiers   :
                 if self.attack_range_modifiers[ "in_observer_range"] > 0:
                     outline_rect = pygame.Rect(
@@ -458,7 +427,7 @@ class Unit(pygame.sprite.Sprite):
             pygame.draw.rect(screen, BLACK, outline_rect, 2)
 
             # Calculate the center coordinates of the unit
-            print("self.center is", self.center)
+           
             center_x = self.center[0]
             center_y = self.center[1]
             # Draw a line from the start_turn_position attribute to the center of the unit in red color with a width of 2 pixels
@@ -469,6 +438,48 @@ class Unit(pygame.sprite.Sprite):
             # Print an error message with the exception details
             print("An error occurred in draw as active:", e)
 
+    def to_dict(self):
+        return {
+            'hp': self.hp,
+            'base_hp': self.base_hp,
+            'attack_range': self.attack_range,
+            'attack_range_modifiers': self.attack_range_modifiers,
+            'remain_actions': self.remain_actions,
+            'base_actions': self.base_actions,
+            'base_movement': self.base_movement,
+            'attack_resistance': self.attack_resistance,
+            'enemies_in_range': [enemy.to_dict() for enemy in self.enemies_in_range],
+            'x': self.x,
+            'y': self.y,
+            'size': self.size,
+            'center': self.center,
+            'start_turn_position': self.start_turn_position,
+            'color': self.color,
+            'ammo': self.ammo,
+            'cost': self.cost
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        unit = cls.__new__(cls)
+        unit.hp = data['hp']
+        unit.base_hp = data['base_hp']
+        unit.attack_range = data['attack_range']
+        unit.attack_range_modifiers = data['attack_range_modifiers']
+        unit.remain_actions = data['remain_actions']
+        unit.base_actions = data['base_actions']
+        unit.base_movement = data['base_movement']
+        unit.attack_resistance = data['attack_resistance']
+        unit.enemies_in_range = [Unit.from_dict(enemy_data) for enemy_data in data['enemies_in_range']]
+        unit.x = data['x']
+        unit.y = data['y']
+        unit.size = data['size']
+        unit.center = data['center']
+        unit.start_turn_position = data['start_turn_position']
+        unit.color = data['color']
+        unit.ammo = data['ammo']
+        unit.cost = data['cost']
+        return unit
 
 
 
