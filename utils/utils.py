@@ -69,7 +69,7 @@ def check_precalculated_line_square_interference(attacked_unit, line_points):
 
 
 def check_square_line_interference(attacked_unit, line_start_x, line_start_y, line_end_x, line_end_y):
-    # Calculate the center of the square
+    
 
     # Generate all the points on the line segment using Bresenham's algorithm
     line_points = bresenham_line(

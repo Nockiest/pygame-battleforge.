@@ -20,7 +20,8 @@ from game_screen.handle_game_running_state import handle_game_running_state
 from pygame.locals import *
 from pygame import mixer
 import json
-
+ 
+# sys.setrecursionlimit(100000)  # Set the maximum recursion depth to 2000
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [basename(f)[:-3] for f in modules if isfile(f)
            and not f.endswith('__init__.py')]

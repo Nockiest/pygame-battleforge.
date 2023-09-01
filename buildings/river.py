@@ -59,7 +59,7 @@ class River(Structure):
             for existing_river in  rivers:
                 for j in range(len(existing_river.points) - 1):
                     intersects = do_lines_intersect(self.points[len(self.points) - 2], self.points[len(self.points) - 3], existing_river.points[j], existing_river.points[j+1])
-                    print("new intersection", intersects)
+                    # print("new intersection", intersects)
                     
                     if intersects:
                        

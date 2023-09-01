@@ -101,7 +101,7 @@ class Player:
     
 
     def create_starting_unit(self, unit_params):
-        print("CALLED CREATE UNIT")
+        # print("CALLED CREATE UNIT")
         unit_class, x, y,   = unit_params
         unit = unit_class(x=x, y=y,  color=self.color)
         # game_state.living_units.array.append(unit)

@@ -105,7 +105,7 @@ class Road(Structure):
         
         # Check for road intersections
         for road in roads:
-            print("road", road, self)
+             
             _, road_start_point, road_end_point = road.points                
             mid_point,  _ = augment_mid_point(road_end_point, road_start_point, mid_point)
 

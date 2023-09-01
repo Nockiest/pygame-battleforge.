@@ -180,8 +180,8 @@ class BattleGround:
     def place_bridges(self):
         bridges = []
        
-        print("here are the river segments", self.river_segments)
-        print("here are the rivers", [river.points for river in self.rivers])
+        # print("here are the river segments", self.river_segments)
+        # print("here are the rivers", [river.points for river in self.rivers])
 
         # for every river segment
         for segment in self.river_segments:

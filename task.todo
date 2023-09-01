@@ -2,13 +2,10 @@ vytvořit bojovou jednotku
     dát jednotkám smysluplné ceny
     více odlišit různé druhy jednotek
     **první útok by měl vždy vyjít
-    **zvýšit atttack resistance v lese
-        ## získat barvu pozice na které jednotka pozice
-        ## dát jí proměnou když ano
-        ## přidat ho i jednotkám které jsem zrovna koupil
-        ## při propočtu try attack ji přidat k tresholdu
+   
     **dát jednotkám kolem velitele větší resitenci
-    ## přidat unit hit animaci
+    přidt do movement calculation subfunkci propočítávájíci "movement visibility polygon"
+
 chyby
     **resupply_supplycart?
 musika
