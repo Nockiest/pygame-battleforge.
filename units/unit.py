@@ -20,7 +20,7 @@ class Unit(pygame.sprite.Sprite):
         self.attack_range_modifiers = {"base_modifier": 5}
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
-        self.base_movement = base_movement  *5
+        self.base_movement = base_movement   
         self.attack_resistances =  {"base_resistance":  attack_resistance  }  
         self.enemies_in_range = []
         self.lines_to_enemies_in_range = []
@@ -179,7 +179,7 @@ class Unit(pygame.sprite.Sprite):
             if len(line) <= 2:
                 return
             line_is_without_obstacles = True
-            print( "point",point1, point2, len(line))
+            
             for point in line:       
                 color = game_state.pixel_colors[point[0]][point[1]]
                 

@@ -4,7 +4,7 @@ from config import *
 from buttons.button import Button
 from .start_scree_state import *
 from game_screen.game_object import Game
-
+from utils.text_utils import render_text
 
 def set_up_game_screen():
     game_state.start_game_button = Button("BEGIN GAME", WIDTH//2-50,
@@ -36,6 +36,10 @@ def handle_start_screen():
     game_state.start_game_button.draw(screen)
     game_state.settings_button.draw(screen)
 
+   
+    render_text(screen, "BATTLEFORGE", WIDTH//2, HEIGHT//2-150, color=BLACK, font=None, font_size=60)
+   
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             print(event)
@@ -49,5 +53,3 @@ def handle_start_screen():
 
     # Render everything on the display
     pygame.display.update()
-
-   

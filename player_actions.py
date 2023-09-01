@@ -230,7 +230,7 @@ class Player:
                     UPPER_BAR_HEIGHT, HEIGHT - TENDER_HEIGHT - unit_class.size)
                 # Replace with your actual pixel color fetching function
                 pixel_color =  pixel_colors[x+unit_class.size//2][ y+unit_class.size//2 ]
-                print(pixel_color)
+               
                 # Check if the position is valid (not on river and not occupied)
                 if pixel_color  != RIVER_BLUE and not self.is_position_occupied(x, y, ):
                     break
