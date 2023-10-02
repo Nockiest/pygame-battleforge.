@@ -17,7 +17,7 @@ class Unit(pygame.sprite.Sprite):
         self.hp = hp
         self.base_hp = hp
         self.attack_range = attack_range 
-        self.attack_range_modifiers = {"base_modifier": 5}
+        self.attack_range_modifiers = {"base_modifier": 1}
         self.remain_actions = 1  # base_actions
         self.base_actions = base_actions
         self.base_movement = base_movement   
@@ -58,7 +58,7 @@ class Unit(pygame.sprite.Sprite):
         return f'{type(self).__name__}(hp={self.hp},x={self.x}, y={self.y}, ammo={self.ammo}, actions={ self.remain_actions } , '
 
     def __del__(self):
-        game_state.living_units.remove(self)
+        game_state.living_units.remove(self) ## možníá smazat
         print("DELETING", self )
    
     def move_in_game_field(self, click_pos):
@@ -91,10 +91,7 @@ class Unit(pygame.sprite.Sprite):
             self.x, self.y, self.size, self.size)
         self.center = (self.x + self.size//2, self.y + self.size//2)
         self.apply_modifiers( )
-         
-        # check if they are in range
-
-        # if one is give bonus to range and break the loop
+ 
 
   
     def apply_modifiers(self):
@@ -103,13 +100,17 @@ class Unit(pygame.sprite.Sprite):
             self.attack_resistances["IN FORREST" ] = 0.3
         else:
             self.attack_resistances["IN FORREST" ] = 0
+
+        for town in game_state.battle_ground.towns:
+            if town.rect.collidepoint(self.center):
+                print("IN TOWN RECT", self)
+                self.attack_resistances["IN TOWN" ] = 0.1
+                break
     
         for commander in game_state.living_units.dict["Commanders"]:
             if commander.color == self.color and commander != self:
                 commander.give_deffense_boost(self)
-        # print("NEW POS COLOR",new_pos_color)
-   
-   
+      
     def get_units_movement_area(self):
         num_samples = 180
         center_x, center_y = self.start_turn_position[0], self.start_turn_position[1]
@@ -213,49 +214,7 @@ class Unit(pygame.sprite.Sprite):
             point2 = movement_outline[(i + 1) % len(movement_outline)]
             
             check_for_obstacles(point1, point2, i)     
-        # for i, point in enumerate(movement_outline.copy()):
-        #     def return_next_point():
-        #         if i + 1 >= len(movement_outline):
-        #             return 0
-        #         else:
-        #             return  i + 1 
-        #     next_point = return_next_point()
-        #     def get_line_between_points():
-        #         if i == len(movement_outline) -1:
-        #             return  bresenham_line(point[0], point[1], movement_outline[0][0], movement_outline[0][1])
-        #         else:
-        #             return  bresenham_line(point[0], point[1], movement_outline[next_point][0], movement_outline[next_point][1])
-            
-            
-        #     line_to_next_point = get_line_between_points()  
-        #     line_is_without_obstacles = True
-        #     for point in line_to_next_point:
-        #         try:
-        #             color = game_state.pixel_colors[point[0]][point[1]]
-        #             if color == RIVER_BLUE:
-        #                 line_is_without_obstacles = False
-        #         except Exception as e:
-        #             print(f"An error occurred: {e}", point[0], point[1])
-        #     if not line_is_without_obstacles:
-                    
-            
-        #        ## if there is an obstacle in the line, take the middle point of the line
-        #         mid_point = line_to_next_point[len(line_to_next_point)//2]
-        #         line_to_center =  bresenham_line(center_x, center_y, mid_point[0], mid_point[1])
-        #         cost = 0
-        #         farthest_valid_point = (center_x, center_y)
-        #         for point in line_to_center:
-        #             if cost > self.base_movement:
-        #                 break
-                    
-        #             try:
-        #                 cost += game_state.movement_costs[point[0]][point[1]]
-        #                 farthest_valid_point = point
-        #             except Exception as e:
-        #                 print(f"An error occurred: {e}", point[0], point[1])
-
-        #         line1 =  bresenham_line(farthest_valid_point[0], farthest_valid_point[1], movement_outline[i][0], movement_outline[i][1])
-        #         line2 =  bresenham_line(farthest_valid_point[0], farthest_valid_point[1], movement_outline[next_point][0], movement_outline[next_point][1])
+   
         #         self.valid_movement_positions_edges.insert(i, farthest_valid_point)
             ## make a calcuation from the units center to this point and find the farthest point on this vertecy
             ## insert the point into the movement outline
@@ -407,9 +366,12 @@ class Unit(pygame.sprite.Sprite):
 
     
     def reset_for_next_turn(self):
+        self.attack_resistances =  {"base_resistance":  1 }  
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
         self.remain_actions = self.base_actions
+        self.get_units_movement_area()
+        self.apply_modifiers()
 
     def draw_lines_to_enemies_in_range(self):
         for line in self.lines_to_enemies_in_range:
@@ -702,3 +664,48 @@ class Unit(pygame.sprite.Sprite):
             # if line_points:
             #     self.valid_movement_positions_edges.append(
             #         line_points[len(line_points) - 1])
+
+
+      # for i, point in enumerate(movement_outline.copy()):
+        #     def return_next_point():
+        #         if i + 1 >= len(movement_outline):
+        #             return 0
+        #         else:
+        #             return  i + 1 
+        #     next_point = return_next_point()
+        #     def get_line_between_points():
+        #         if i == len(movement_outline) -1:
+        #             return  bresenham_line(point[0], point[1], movement_outline[0][0], movement_outline[0][1])
+        #         else:
+        #             return  bresenham_line(point[0], point[1], movement_outline[next_point][0], movement_outline[next_point][1])
+            
+            
+        #     line_to_next_point = get_line_between_points()  
+        #     line_is_without_obstacles = True
+        #     for point in line_to_next_point:
+        #         try:
+        #             color = game_state.pixel_colors[point[0]][point[1]]
+        #             if color == RIVER_BLUE:
+        #                 line_is_without_obstacles = False
+        #         except Exception as e:
+        #             print(f"An error occurred: {e}", point[0], point[1])
+        #     if not line_is_without_obstacles:
+                    
+            
+        #        ## if there is an obstacle in the line, take the middle point of the line
+        #         mid_point = line_to_next_point[len(line_to_next_point)//2]
+        #         line_to_center =  bresenham_line(center_x, center_y, mid_point[0], mid_point[1])
+        #         cost = 0
+        #         farthest_valid_point = (center_x, center_y)
+        #         for point in line_to_center:
+        #             if cost > self.base_movement:
+        #                 break
+                    
+        #             try:
+        #                 cost += game_state.movement_costs[point[0]][point[1]]
+        #                 farthest_valid_point = point
+        #             except Exception as e:
+        #                 print(f"An error occurred: {e}", point[0], point[1])
+
+        #         line1 =  bresenham_line(farthest_valid_point[0], farthest_valid_point[1], movement_outline[i][0], movement_outline[i][1])
+        #         line2 =  bresenham_line(farthest_valid_point[0], farthest_valid_point[1], movement_outline[next_point][0], movement_outline[next_point][1])

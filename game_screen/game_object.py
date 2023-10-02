@@ -127,6 +127,8 @@ class Game():
   
     def enter_buy_mode(self, unit_type):
         player = game_state.players[game_state.cur_player]
+        if game_state.unit_placement_mode == True:
+            return
         if unit_type.cost > player.supplies:
             return print("Player doesnt have enough money")
         game_state.unit_placement_mode = True
@@ -148,24 +150,24 @@ class Game():
             return
         game_state.num_turns += 1
         self.deselect_unit()
-        pygame.display.update()
+        
         loading_message = default_font.render(
             "Loading Next Turn...", True, (255, 255, 255))
         
         draw_units(screen)
-        self.get_occupied_towns()
+        
         screen.blit(loading_message, (WIDTH // 2 - 100,  HEIGHT // 2))
         pygame.display.update()
         for unit in game_state.living_units.array:
             unit.reset_for_next_turn()
-            unit.render()
-            unit.get_units_movement_area()
+            # unit.render() 
         for player in game_state.players:
             player.update_sorted_units()
             if player == game_state.players[game_state.cur_player]:
-                player.supplies += game_state.money_per_turn + len(player.occupied_towns)*10
+                player.supplies += game_state.money_per_turn + len(player.occupied_towns)* game_state.city_turn_revenue
         for depo in game_state.battle_ground.supply_depots:
             depo.dispense_ammo()
+        self.get_occupied_towns()
 
         self.switch_player()
 
@@ -303,20 +305,27 @@ class Game():
                 return False
             return True
 
+        def point_in_occupied_town():
+            for town in player.occupied_towns:
+                if town.rect.collidepoint((cursor_x,cursor_y)):
+                    print("YOU CAN BUY IT IN THIS TOWN", town)
+                    return True
+            return False
         player = game_state.players[game_state.cur_player]
         bought_unit = player.preview_unit
+        cursor_x, cursor_y = pygame.mouse.get_pos()
         print("PREVIEW UNIT", bought_unit)
         for unit in game_state.living_units.array:
             res = check_unit_overlap(unit, player, bought_unit)
             if res:
                 return
         if bought_unit:
-            res = check_valid_placement_position()
-            if not res:
+            check_valid_placement_position()
+            if  not check_valid_placement_position() and not point_in_occupied_town():
                 # abort_placement_mode(bought_unit)
                 return
             else:
-                cursor_x, cursor_y = pygame.mouse.get_pos()
+              
                 bought_unit.x = cursor_x - bought_unit.size // 2
                 bought_unit.y = cursor_y - bought_unit.size // 2
                 # bought_unit.center[0] =  bought_unit.x+ bought_unit.size // 2

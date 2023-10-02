@@ -130,8 +130,10 @@ class Player:
    
     def show_buy_area(self):
         buy_area_rect = pygame.Rect(*self.buy_area)
-        pygame.draw.rect(screen, ORANGE, buy_area_rect, 2)      
-    
+        pygame.draw.rect(screen, ORANGE, buy_area_rect, 2) 
+        for town in self.occupied_towns:
+            # town_rect = pygame.Rect(*town)
+            pygame.draw.rect(screen, ORANGE, town.rect, 2)
 
     def render_tender(self):
         # Render the tender rectangle on the screen at the specified position

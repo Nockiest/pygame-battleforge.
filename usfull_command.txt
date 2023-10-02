@@ -1,1 +1,2 @@
 python app.py | tee output.txt    
+pyinstaller --onefile -w  app.py

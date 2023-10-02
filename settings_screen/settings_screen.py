@@ -42,6 +42,7 @@ structures_bar.add_slider("Forests", 0, 10, game_state.num_forests, lambda new_v
 money_bar = SettingsBar("Money", 50, 400)
 money_bar.add_slider("Start Money", 0, 1000, game_state.starting_money, lambda new_value: update_game_state('starting_money', new_value))
 money_bar.add_slider("Turn Income", 0, 100, game_state.money_per_turn, lambda new_value: update_game_state('money_per_turn', new_value))
+money_bar.add_slider("City Revnue", 0, 100, game_state.city_turn_revenue, lambda new_value: update_game_state('city_turn_revenue', new_value))
 
 blue_player_bar = SettingsBar("Blue Player", 700, 100)
 blue_player_bar.add_slider("Medics", 0, 10, game_state.blue_player['num_Medics'], lambda new_value: update_game_state('blue_player.num_Medics', new_value))

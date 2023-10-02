@@ -73,3 +73,4 @@ red_player = {
 }
 starting_money = 100
 money_per_turn = 10
+city_turn_revenue = 10

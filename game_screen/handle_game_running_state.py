@@ -3,6 +3,7 @@ import game_state
 from config import *
 from utils.render_utils import *
 from utils.utils import *
+from utils.debug import *
 from utils.text_utils import *
 import json
 def save_game_state(game_state, filename):
@@ -79,6 +80,10 @@ def handle_game_running_state(game):
     #             WIDTH // 2, 10, color=(255, 255, 255),   font_size=24)
 
     # Render everything on the display
+    mouse_x,mouse_y = pygame.mouse.get_pos()
+    pixel_color=game_state.pixel_colors[mouse_x][mouse_y]
+    debug(pygame.mouse.get_pos(),mouse_y, mouse_x)
+    debug(pixel_color  )
     pygame.display.update()
 
     # RENDER ELEMENTS ON THE BACKGROUND SCREEN

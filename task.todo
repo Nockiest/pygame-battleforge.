@@ -4,18 +4,24 @@ vytvořit bojovou jednotku
     **první útok by měl vždy vyjít
    
     **dát jednotkám kolem velitele větší resitenci
-    přidt do movement calculation subfunkci propočítávájíci "movement visibility polygon"
-
+    vylepšit movement calculation subfunkci propočítávájíci "movement visibility polygon"
+ 
 chyby
     **resupply_supplycart?
+    opravit attack lines, když je ranged jednotka v lese, zbarví se až u nepřítele
 musika
-    najít 5 písniček
+    vytvořit hudbu do pozadí
+    přidat zvuk pro melee jednotky
+přidat zvuk pro pohyb
 prostředí   
-    přidat opevnění ve městech
     přidat kupování ve městech
+    zabrat město, pokud v něm má hráč víc jednotek než nepřítel
+    
 ui
     přidat ukliádání
     přidat načítání
+    přidat nastavení na to kolik dá město peněz za kolo
+    
     vytvořit game_event/information window    
     **přidat click animacci pro tlačítka
 outreach
@@ -28,6 +34,7 @@ jiné:
     vytvořit proper bullet flying animaci
     otestovat jestli se supply cart odeítají náboje
     přepsat kod abych nepoužíval těch 6 rádku pygame.load v configu
+    použít na všechno rendrování textu render text funki v utilech
  ** == není poviné
 
  
