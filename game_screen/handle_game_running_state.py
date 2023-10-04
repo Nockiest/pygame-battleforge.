@@ -55,7 +55,7 @@ def handle_game_running_state(game):
         
         if event.type == pygame.QUIT:
             print(event)
-            save_game_state(game_state, "game_state.json")
+            # save_game_state(game_state, "game_state.json")
             game_state.lets_continue = False
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             handle_left_mouse_clk(event.pos, game)

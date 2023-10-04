@@ -288,11 +288,8 @@ class Game():
             rect_copy.inflate_ip(bought_unit.size, bought_unit.size)
             # check if the inflated copy of the rect object collides with the click position
             if rect_copy.collidepoint(click_pos):
-                # game_state.living_units.remove(dummy)
-                # bought_unit.__del__()
-                # game_state.unit_to_be_placed = None
+    
                 return True
-
         def check_valid_placement_position():
             if background_screen.get_at((click_pos[0], click_pos[1])) == RIVER_BLUE:
                 abort_placement_mode(player, bought_unit)
@@ -308,7 +305,6 @@ class Game():
         def point_in_occupied_town():
             for town in player.occupied_towns:
                 if town.rect.collidepoint((cursor_x,cursor_y)):
-                    print("YOU CAN BUY IT IN THIS TOWN", town)
                     return True
             return False
         player = game_state.players[game_state.cur_player]
@@ -325,22 +321,9 @@ class Game():
                 # abort_placement_mode(bought_unit)
                 return
             else:
-              
-                bought_unit.x = cursor_x - bought_unit.size // 2
-                bought_unit.y = cursor_y - bought_unit.size // 2
-                # bought_unit.center[0] =  bought_unit.x+ bought_unit.size // 2
-                # bought_unit.center[1] =  bought_unit.y+ bought_unit.size // 2
-                bought_unit.rect.x = cursor_x - bought_unit.size // 2
-                bought_unit.rect.y = cursor_y - bought_unit.size // 2
-                bought_unit.start_turn_position = (
-                    bought_unit.x + bought_unit .size // 2, bought_unit.y + bought_unit.size // 2)
-                bought_unit.rect = pygame.Rect(
-                    bought_unit.x, bought_unit.y, bought_unit.size, bought_unit.size)
                 player.preview_unit = None
-
                 game_state.unit_placement_mode = False
                 game_state.money_spent += bought_unit.cost
-
         else:
             print(
                 f"Error: Unit type {bought_unit} not found.")

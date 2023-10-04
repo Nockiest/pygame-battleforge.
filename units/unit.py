@@ -95,11 +95,11 @@ class Unit(pygame.sprite.Sprite):
 
   
     def apply_modifiers(self):
+        self.attack_resistances =  {"base_resistance":  1 }  
         new_pos_color = game_state.pixel_colors[self.center[0]][self.center[1]]
         if new_pos_color == FORREST_GREEN:
             self.attack_resistances["IN FORREST" ] = 0.3
-        else:
-            self.attack_resistances["IN FORREST" ] = 0
+        
 
         for town in game_state.battle_ground.towns:
             if town.rect.collidepoint(self.center):
@@ -366,7 +366,7 @@ class Unit(pygame.sprite.Sprite):
 
     
     def reset_for_next_turn(self):
-        self.attack_resistances =  {"base_resistance":  1 }  
+       
         self.start_turn_position = (
             self.x + self.size//2, self.y + self.size//2)
         self.remain_actions = self.base_actions

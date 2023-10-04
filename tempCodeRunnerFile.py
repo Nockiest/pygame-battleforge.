@@ -1,1 +1,1 @@
-clock
+end_screen.
